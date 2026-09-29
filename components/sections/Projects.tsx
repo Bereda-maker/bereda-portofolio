@@ -2,7 +2,7 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
 import { ArrowUpRight, Github } from 'lucide-react';
-import { PROJECTS, STACK_ICON, type Project } from '@/data/content';
+import { STACK_ICON, type Project } from '@/data/content';
 import TechIcon from '@/components/ui/TechIcon';
 import PictureSlot from '@/components/ui/PictureSlot';
 
@@ -46,7 +46,7 @@ function Card({ p, i, n, progress }: { p: Project; i: number; n: number; progres
   );
 }
 
-export default function Projects() {
+export default function Projects({ projects }: { projects: Project[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   return (
@@ -59,7 +59,7 @@ export default function Projects() {
       </div>
       <h2 className="h2 hero-heading mb-16 sm:mb-20 md:mb-28 relative">Projects</h2>
       <div ref={ref} className="max-w-6xl mx-auto relative">
-        {PROJECTS.map((p, i) => <Card key={p.title} p={p} i={i} n={PROJECTS.length} progress={scrollYProgress} />)}
+        {projects.map((p, i) => <Card key={p.title} p={p} i={i} n={projects.length} progress={scrollYProgress} />)}
       </div>
     </section>
   );

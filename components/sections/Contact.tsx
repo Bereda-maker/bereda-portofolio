@@ -6,27 +6,43 @@ import ParallaxImage from '@/components/ui/ParallaxImage';
 import { SITE } from '@/data/content';
 
 const NEEDS = ['Web app', 'API / backend', 'SaaS product', 'AI feature', 'Something else'];
-type Err = { field: 'name' | 'email' | 'msg'; text: string } | null;
+type Err = { field: 'name' | 'email' | 'msg' | 'form'; text: string } | null;
 
 export default function Contact() {
   const [f, setF] = useState({ name: '', email: '', msg: '' });
   const [needs, setNeeds] = useState<string[]>([NEEDS[0]]);
   const [budget, setBudget] = useState(2000);
   const [err, setErr] = useState<Err>(null);
+  const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [copied, setCopied] = useState(false);
   const money = `$${budget.toLocaleString()}${budget === 20000 ? '+' : ''}`;
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const name = f.name.trim(), email = f.email.trim(), msg = f.msg.trim();
     if (!name) return setErr({ field: 'name', text: 'Please enter your name.' });
     if (!/^\S+@\S+\.\S+$/.test(email)) return setErr({ field: 'email', text: 'Enter a valid email address.' });
     if (msg.length < 10) return setErr({ field: 'msg', text: 'Please add a little more detail (10+ characters).' });
     setErr(null);
-    const body = `Name: ${name}\nEmail: ${email}\nNeed: ${needs.join(', ') || 'Not specified'}\nBudget: ${money}\n\n${msg}`;
-    window.location.href = `mailto:${SITE.email}?subject=${encodeURIComponent('Project inquiry from ' + name)}&body=${encodeURIComponent(body)}`;
-    setSent(true);
+    setSending(true);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message: msg, needs, budget }),
+      });
+      const data: { ok?: true; error?: string } = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setErr({ field: 'form', text: data.error ?? 'Something went wrong. Please try again.' });
+        return;
+      }
+      setSent(true);
+    } catch {
+      setErr({ field: 'form', text: 'Could not reach the server. Check your connection and try again.' });
+    } finally {
+      setSending(false);
+    }
   };
   const copy = async () => { try { await navigator.clipboard.writeText(SITE.email); } catch {} setCopied(true); setTimeout(() => setCopied(false), 1600); };
   const cls = (k: string) => `fld${err?.field === k ? ' err' : ''}`;
@@ -74,14 +90,16 @@ export default function Contact() {
                 <div className="text-right text-xs text-[#D7E2EA] opacity-50 mt-1">{f.msg.length}/600</div>
               </div>
               <div className="text-sm min-h-[1.25rem]" style={{ color: '#ff5c7a' }}>{err?.text}</div>
-              <button type="submit" className="cbtn rounded-full text-white font-medium uppercase tracking-widest px-12 py-4 self-start hover:scale-[1.03] transition-transform">Send Message</button>
+              <button type="submit" disabled={sending} className="cbtn rounded-full text-white font-medium uppercase tracking-widest px-12 py-4 self-start hover:scale-[1.03] transition-transform disabled:opacity-60 disabled:hover:scale-100">
+                {sending ? 'Sending…' : 'Send Message'}
+              </button>
             </form>
             {sent && (
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 text-[#D7E2EA]" style={{ background: '#0C0C0C' }}>
                 <Check size={64} className="mb-4" />
-                <div className="font-black uppercase mb-2" style={{ fontSize: 'clamp(1.6rem,3vw,2.6rem)' }}>Message ready</div>
-                <p className="font-light opacity-80 max-w-sm">Your email app should open with everything filled in. Just hit send.</p>
-                <button className="chip mt-6" type="button" onClick={() => { setSent(false); setF({ name: '', email: '', msg: '' }); setBudget(2000); }}>Write another</button>
+                <div className="font-black uppercase mb-2" style={{ fontSize: 'clamp(1.6rem,3vw,2.6rem)' }}>Message sent</div>
+                <p className="font-light opacity-80 max-w-sm">Thanks — Bereda will get back to you soon.</p>
+                <button className="chip mt-6" type="button" onClick={() => { setSent(false); setF({ name: '', email: '', msg: '' }); setBudget(2000); setNeeds([NEEDS[0]]); }}>Write another</button>
               </div>
             )}
           </div>

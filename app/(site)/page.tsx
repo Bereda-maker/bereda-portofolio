@@ -5,12 +5,18 @@ import Services from '@/components/sections/Services';
 import Projects from '@/components/sections/Projects';
 import Contact from '@/components/sections/Contact';
 import ScrollProgress from '@/components/ScrollProgress';
+import { getProjects } from '@/lib/projects';
 
-export default function Page() {
+// Re-render this page at most once every 60 seconds, picking up any project
+// edits made from the admin dashboard without needing a full redeploy.
+export const revalidate = 60;
+
+export default async function Page() {
+  const projects = await getProjects();
   return (
     <main style={{ overflowX: 'clip', background: '#0C0C0C' }}>
       <ScrollProgress />
-      <Hero /><Marquee /><About /><Services /><Projects /><Contact />
+      <Hero /><Marquee /><About /><Services /><Projects projects={projects} /><Contact />
     </main>
   );
 }
