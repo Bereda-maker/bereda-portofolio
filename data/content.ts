@@ -1,6 +1,6 @@
-export const SITE = { name: 'Bereda', role: 'Full Stack Software Engineer', email: 'hello@bereda.dev', github: '#', linkedin: '#' };
+export const SITE = { name: 'Bereda', role: 'Product-minded full stack engineer', email: 'hello@bereda.dev', github: 'https://github.com/Bereda-maker', linkedin: '#' };
 export const NAV = [{ label: 'About', href: '#about' }, { label: 'Services', href: '#services' }, { label: 'Projects', href: '#projects' }, { label: 'Contact', href: '#contact' }];
-export const ROLES = ['Full Stack Engineer', 'TypeScript · Python · Go', 'APIs · Databases · AI', 'Idea to production'];
+export const ROLES = ['Product engineer', 'TypeScript · Python · Go', 'Systems that feel simple', 'Idea to production'];
 export const HERO_CHIPS = [
   { t: 'Next.js', s: { left: '9%', top: '42%' } }, { t: 'TypeScript', s: { right: '9%', top: '38%', animationDelay: '-2s' } },
   { t: 'Go', s: { left: '17%', top: '64%', animationDelay: '-1s' } }, { t: 'PostgreSQL', s: { right: '15%', top: '60%', animationDelay: '-3s' } },
@@ -9,23 +9,23 @@ export const TECH: [string, string][] = [["TypeScript", "typescript"], ["Next.js
 export const SERVICES: { name: string; text: string }[] = [
  {
   "name": "Frontend Development",
-  "text": "Fast, accessible interfaces built with React and Next.js, with the right rendering strategy for each page."
+  "text": "Interfaces with a point of view: fast, accessible and shaped around the way people actually use the product."
  },
  {
   "name": "Backend & APIs",
-  "text": "Clean, well-tested APIs and services in TypeScript, Python, PHP, Go, Java and C#."
+  "text": "The dependable layer underneath: clear contracts, useful errors and services that stay understandable as they grow."
  },
  {
   "name": "Databases & Search",
-  "text": "Schema design and queries on PostgreSQL, MySQL, MongoDB, SQLite and pgvector, plus caching with Redis."
+  "text": "Data models that make the next feature easier, from PostgreSQL and MongoDB to search, caching and vector retrieval."
  },
  {
   "name": "Real-Time & Background Jobs",
-  "text": "WebSocket messaging, queues and workers that keep working across multiple server processes."
+  "text": "The invisible machinery that makes a product feel alive: live updates, queues, workers and resilient background workflows."
  },
  {
   "name": "AI & SaaS Products",
-  "text": "Retrieval-augmented AI features and multi-tenant SaaS with subscription billing, from first commit to production."
+  "text": "Useful AI and SaaS features — grounded in real data, shipped with guardrails, and connected to the rest of the product."
  }
 ];
 export type Project = { title: string; category: string; description: string; stack: string[]; demo: string; repo: string };

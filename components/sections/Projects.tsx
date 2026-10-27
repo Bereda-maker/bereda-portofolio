@@ -21,10 +21,11 @@ function Card({ p, i, n, progress }: { p: Project; i: number; n: number; progres
               <div className="font-light tracking-widest text-xs sm:text-sm opacity-70">{p.category}</div>
               <div className="font-medium" style={{ fontSize: 'clamp(1rem,2.2vw,2.1rem)' }}>{p.title}</div>
             </div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#D7E2EA]/40 uppercase tracking-widest text-xs sm:text-sm px-5 py-2"><i className="w-2 h-2 rounded-full bg-green-400" />Completed</span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#D7E2EA]/40 uppercase tracking-widest text-xs sm:text-sm px-5 py-2"><i className="w-2 h-2 rounded-full bg-green-400" />Build log / {String(i + 1).padStart(2, '0')}</span>
           </div>
           <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
             <div>
+              <p className="project-kicker">A small proof of range</p>
               <p className="font-light leading-relaxed text-[#D7E2EA] mb-6" style={{ fontSize: 'clamp(.95rem,1.6vw,1.3rem)' }}>{p.description}</p>
               <div className="flex flex-wrap gap-2 mb-7">
                 {p.stack.map((t) => (
@@ -57,7 +58,10 @@ export default function Projects({ projects }: { projects: Project[] }) {
           <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 50% 40%,rgba(118,33,176,.35),transparent 62%),linear-gradient(#0C0C0C,transparent 18%,transparent 82%,#0C0C0C)' }} />
         </div>
       </div>
-      <h2 className="h2 hero-heading mb-16 sm:mb-20 md:mb-28 relative">Projects</h2>
+      <div className="relative max-w-6xl mx-auto mb-16 sm:mb-20 md:mb-28 flex items-end justify-between gap-8">
+        <div><p className="eyebrow mb-4">02 / Selected builds</p><h2 className="h2 hero-heading text-left">Work<br /><span className="text-[#D7E2EA]">in progress.</span></h2></div>
+        <p className="hidden md:block max-w-[220px] text-[#D7E2EA] opacity-55 font-light leading-relaxed text-sm">A rotating archive of things I&apos;ve designed, engineered and shipped.</p>
+      </div>
       <div ref={ref} className="max-w-6xl mx-auto relative">
         {projects.map((p, i) => <Card key={p.title} p={p} i={i} n={projects.length} progress={scrollYProgress} />)}
       </div>
