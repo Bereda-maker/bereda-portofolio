@@ -17,14 +17,16 @@ export default function AnimatedText({ text, className }: { text: string; classN
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.8', 'end 0.2'] });
   let i = 0;
   return (
-    <p ref={ref} className={className}>
-      {text.split(' ').map((w, wi) => (
-        <Fragment key={wi}>
-          <span className="inline-block whitespace-nowrap">
-            {[...w].map((c) => { const k = i++; return <Char key={k} c={c} p={scrollYProgress} s={k / text.length} e={(k + 1) / text.length} />; })}
-          </span>{' '}
-        </Fragment>
-      ))}
+    <p ref={ref} className={className} aria-label={text}>
+      <span aria-hidden="true">
+        {text.split(' ').map((w, wi) => (
+          <Fragment key={wi}>
+            <span className="inline-block whitespace-nowrap">
+              {[...w].map((c) => { const k = i++; return <Char key={k} c={c} p={scrollYProgress} s={k / text.length} e={(k + 1) / text.length} />; })}
+            </span>{' '}
+          </Fragment>
+        ))}
+      </span>
     </p>
   );
 }

@@ -37,8 +37,8 @@ function Card({ p, i, n, progress }: { p: Project; i: number; n: number; progres
               </div>
               <div className="flex flex-wrap gap-3">
                 <Link href={`/projects/${p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`} className="inline-flex items-center gap-2 rounded-full border-2 border-[#D7E2EA] text-[#D7E2EA] font-medium uppercase tracking-widest px-8 py-3.5 text-sm sm:text-base hover:bg-[#D7E2EA]/10 transition">Build log <ArrowUpRight size={16} /></Link>
-                <a href={p.demo} target="_blank" rel="noopener noreferrer" className="cbtn demo inline-flex items-center gap-2 rounded-full text-white font-medium uppercase tracking-widest px-8 py-3.5 text-sm sm:text-base">Live Demo <ArrowUpRight size={16} /></a>
-                <a href={p.repo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border-2 border-[#D7E2EA] text-[#D7E2EA] font-medium uppercase tracking-widest px-8 py-3.5 text-sm sm:text-base hover:bg-[#D7E2EA]/10 transition"><Github size={16} />Source</a>
+                {p.demo !== '#' && <a href={p.demo} target="_blank" rel="noopener noreferrer" className="cbtn demo inline-flex items-center gap-2 rounded-full text-white font-medium uppercase tracking-widest px-8 py-3.5 text-sm sm:text-base">Live Demo <ArrowUpRight size={16} /></a>}
+                {p.repo !== '#' && <a href={p.repo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border-2 border-[#D7E2EA] text-[#D7E2EA] font-medium uppercase tracking-widest px-8 py-3.5 text-sm sm:text-base hover:bg-[#D7E2EA]/10 transition"><Github size={16} />Source</a>}
               </div>
             </div>
             <PictureSlot p={p} hue={i * 36} />
@@ -61,7 +61,7 @@ export default function Projects({ projects }: { projects: Project[] }) {
         </div>
       </div>
       <div className="relative max-w-6xl mx-auto mb-16 sm:mb-20 md:mb-28 flex items-end justify-between gap-8">
-        <div><p className="eyebrow mb-4">02 / Selected builds</p><h2 className="h2 hero-heading text-left">Work<br /><span className="text-[#D7E2EA]">in progress.</span></h2></div>
+        <div><p className="eyebrow mb-4">02 / Selected work</p><h2 className="h2 hero-heading text-left">Selected<br /><span className="text-[#D7E2EA]">work.</span></h2></div>
         <p className="hidden md:block max-w-[220px] text-[#D7E2EA] opacity-55 font-light leading-relaxed text-sm">A rotating archive of things I&apos;ve designed, engineered and shipped.</p>
       </div>
       <div ref={ref} className="max-w-6xl mx-auto relative">
