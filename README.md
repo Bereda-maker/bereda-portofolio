@@ -113,3 +113,8 @@ persisted).
 — section background photos. `public/video/projects-bg.mp4` — Projects
 section background video. `data/icons.ts` — brand icon paths (Simple Icons,
 CC0).
+
+## Backend foundation and integrations
+The Drizzle schema also includes books/categories, videos, mentorship profiles/sessions/usage, appointments and availability, opportunities/companies/applications, newsletter subscribers, audit logs, site settings, and media assets. The additive migration in `drizzle/` does not recreate the existing `projects` or `messages` tables.
+
+Typed domain helpers live under `lib/services/` for mentorship pricing/usage ledger entries, appointment conflict validation, and opportunity match scoring. Payment, storage, email, calendar, and AI provider abstractions intentionally return `setup_required` until the corresponding provider and credentials are configured; no credentials or sample records are included.

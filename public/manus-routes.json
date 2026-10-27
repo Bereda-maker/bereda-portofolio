@@ -1,0 +1,1 @@
+{"routes":[{"path":"/","title":"Home"},{"path":"/books","title":"Books"},{"path":"/mentorship","title":"Mentorship"},{"path":"/videos","title":"Videos"},{"path":"/opportunities","title":"Opportunities"},{"path":"/journey","title":"Journey"},{"path":"/projects/:slug-or-id","title":"Project detail"}]}

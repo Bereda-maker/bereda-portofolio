@@ -1,0 +1,8 @@
+import Link from 'next/link';
+import { PublicPage } from '@/components/PublicPage';
+
+const TOPICS = ['Getting unstuck on a technical decision', 'Finding a practical path into full-stack work', 'Turning a rough product idea into a small first release'];
+
+export default function MentorshipPage() {
+  return <PublicPage eyebrow="07 / Mentorship" title={<>Make the next<br /><span className="text-[#D7E2EA]">step clearer.</span></>} intro="Mentorship here means thoughtful, focused conversations—not a course, community or automated matching service."><section className="mx-auto grid max-w-6xl gap-8 px-5 pb-20 sm:px-8 md:grid-cols-[1.1fr_.9fr] md:px-10"><div className="rounded-[32px] bg-white p-7 text-[#0C0C0C] sm:p-10"><p className="mb-8 text-xs uppercase tracking-[.2em] opacity-50">A useful conversation might cover</p><ul className="space-y-5">{TOPICS.map((topic, i) => <li key={topic} className="flex gap-4 border-t border-[#0C0C0C]/15 pt-5 text-lg font-light leading-relaxed"><span className="font-black opacity-40">0{i + 1}</span><span>{topic}</span></li>)}</ul></div><div className="rounded-[32px] border border-[#D7E2EA]/20 bg-[#D7E2EA]/[.04] p-7 sm:p-10"><p className="mb-4 text-xs uppercase tracking-[.2em] text-[#B600A8]">What is available</p><p className="mb-8 text-lg font-light leading-relaxed text-[#D7E2EA]/75">There is no booking calendar or paid program connected at this time. If you have a specific question and would like to see whether a conversation is a fit, send a note through the contact form.</p><Link href="/#contact" className="cbtn inline-flex rounded-full px-7 py-3.5 text-sm font-medium uppercase tracking-widest text-white">Say hello</Link></div></section></PublicPage>;
+}

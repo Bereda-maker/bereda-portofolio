@@ -2,6 +2,7 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
 import { ArrowUpRight, Github } from 'lucide-react';
+import Link from 'next/link';
 import { STACK_ICON, type Project } from '@/data/content';
 import TechIcon from '@/components/ui/TechIcon';
 import PictureSlot from '@/components/ui/PictureSlot';
@@ -35,6 +36,7 @@ function Card({ p, i, n, progress }: { p: Project; i: number; n: number; progres
                 ))}
               </div>
               <div className="flex flex-wrap gap-3">
+                <Link href={`/projects/${p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`} className="inline-flex items-center gap-2 rounded-full border-2 border-[#D7E2EA] text-[#D7E2EA] font-medium uppercase tracking-widest px-8 py-3.5 text-sm sm:text-base hover:bg-[#D7E2EA]/10 transition">Build log <ArrowUpRight size={16} /></Link>
                 <a href={p.demo} target="_blank" rel="noopener noreferrer" className="cbtn demo inline-flex items-center gap-2 rounded-full text-white font-medium uppercase tracking-widest px-8 py-3.5 text-sm sm:text-base">Live Demo <ArrowUpRight size={16} /></a>
                 <a href={p.repo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border-2 border-[#D7E2EA] text-[#D7E2EA] font-medium uppercase tracking-widest px-8 py-3.5 text-sm sm:text-base hover:bg-[#D7E2EA]/10 transition"><Github size={16} />Source</a>
               </div>
