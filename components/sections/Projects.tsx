@@ -1,72 +1,23 @@
 'use client';
-import { useRef } from 'react';
-import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
-import { ArrowUpRight, Github } from 'lucide-react';
 import Link from 'next/link';
+import { ArrowUpRight, Github } from 'lucide-react';
 import { STACK_ICON, type Project } from '@/data/content';
 import TechIcon from '@/components/ui/TechIcon';
 import PictureSlot from '@/components/ui/PictureSlot';
 
-const R = 'rounded-[40px] sm:rounded-[50px] md:rounded-[60px]';
+function slugify(title: string) { return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
 
-function Card({ p, i, n, progress }: { p: Project; i: number; n: number; progress: MotionValue<number> }) {
-  const scale = useTransform(progress, [i / n, 1], [1, 1 - (n - 1 - i) * 0.03]);
-  return (
-    <div className="h-[85vh]">
-      <div className="sticky top-24 md:top-32">
-        <motion.div style={{ scale, marginTop: i * 28, transformOrigin: 'top center', background: 'rgba(12,12,12,.74)', backdropFilter: 'blur(16px)' }}
-          className={`border-2 border-[#D7E2EA] ${R} p-5 sm:p-7 md:p-9`}>
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-5 text-[#D7E2EA]">
-            <div className="num hero-heading">{String(i + 1).padStart(2, '0')}</div>
-            <div className="uppercase">
-              <div className="font-light tracking-widest text-xs sm:text-sm opacity-70">{p.category}</div>
-              <div className="font-medium" style={{ fontSize: 'clamp(1rem,2.2vw,2.1rem)' }}>{p.title}</div>
-            </div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#D7E2EA]/40 uppercase tracking-widest text-xs sm:text-sm px-5 py-2"><i className="w-2 h-2 rounded-full bg-green-400" />Build log / {String(i + 1).padStart(2, '0')}</span>
-          </div>
-          <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
-            <div>
-              <p className="project-kicker">A small proof of range</p>
-              <p className="font-light leading-relaxed text-[#D7E2EA] mb-6" style={{ fontSize: 'clamp(.95rem,1.6vw,1.3rem)' }}>{p.description}</p>
-              <div className="flex flex-wrap gap-2 mb-7">
-                {p.stack.map((t) => (
-                  <span key={t} className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs sm:text-sm uppercase tracking-wider text-[#D7E2EA]" style={{ background: 'rgba(215,226,234,.1)', border: '1px solid rgba(215,226,234,.12)' }}>
-                    <TechIcon k={STACK_ICON[t]} />{t}
-                  </span>
-                ))}
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <Link href={`/projects/${p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`} className="inline-flex items-center gap-2 rounded-full border-2 border-[#D7E2EA] text-[#D7E2EA] font-medium uppercase tracking-widest px-8 py-3.5 text-sm sm:text-base hover:bg-[#D7E2EA]/10 transition">Build log <ArrowUpRight size={16} /></Link>
-                {p.demo !== '#' && <a href={p.demo} target="_blank" rel="noopener noreferrer" className="cbtn demo inline-flex items-center gap-2 rounded-full text-white font-medium uppercase tracking-widest px-8 py-3.5 text-sm sm:text-base">Live Demo <ArrowUpRight size={16} /></a>}
-                {p.repo !== '#' && <a href={p.repo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border-2 border-[#D7E2EA] text-[#D7E2EA] font-medium uppercase tracking-widest px-8 py-3.5 text-sm sm:text-base hover:bg-[#D7E2EA]/10 transition"><Github size={16} />Source</a>}
-              </div>
-            </div>
-            <PictureSlot p={p} hue={i * 36} />
-          </div>
-        </motion.div>
-      </div>
+function ProjectCard({ project, index }: { project: Project; index: number }) {
+  return <article className="reference-project-card">
+    <div className="reference-project-media"><PictureSlot p={project} hue={index * 42} /></div>
+    <div className="reference-project-body"><div className="flex items-start justify-between gap-4"><div><p className="reference-project-category">{project.category}</p><h3>{project.title}</h3></div><span className="reference-project-number">0{index + 1}</span></div>
+      <p className="reference-project-description">{project.description}</p>
+      <div className="reference-project-stack">{project.stack.slice(0, 4).map((tech) => <span key={tech}><TechIcon k={STACK_ICON[tech]} size={15} />{tech}</span>)}</div>
+      <div className="reference-project-actions"><Link href={`/projects/${slugify(project.title)}`} className="reference-project-link">Build log <ArrowUpRight size={16} /></Link>{project.repo !== '#' && <a href={project.repo} target="_blank" rel="noopener noreferrer" className="reference-project-link reference-project-link-muted"><Github size={15} /> Source</a>}</div>
     </div>
-  );
+  </article>;
 }
 
 export default function Projects({ projects }: { projects: Project[] }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  return (
-    <section id="projects" className="relative overflow-clip rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 sm:-mt-12 md:-mt-14 z-10 px-5 sm:px-8 md:px-10 py-20 sm:py-24 md:py-32" style={{ background: '#0C0C0C' }}>
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="sticky top-0 h-screen overflow-hidden">
-          <video autoPlay muted loop playsInline src="/video/projects-bg.mp4" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6, filter: 'saturate(1.2) brightness(1.35)' }} />
-          <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 50% 40%,rgba(118,33,176,.35),transparent 62%),linear-gradient(#0C0C0C,transparent 18%,transparent 82%,#0C0C0C)' }} />
-        </div>
-      </div>
-      <div className="relative max-w-6xl mx-auto mb-16 sm:mb-20 md:mb-28 flex items-end justify-between gap-8">
-        <div><p className="eyebrow mb-4">02 / Selected work</p><h2 className="h2 hero-heading text-left">Selected<br /><span className="text-[#D7E2EA]">work.</span></h2></div>
-        <p className="hidden md:block max-w-[220px] text-[#D7E2EA] opacity-55 font-light leading-relaxed text-sm">A rotating archive of things I&apos;ve designed, engineered and shipped.</p>
-      </div>
-      <div ref={ref} className="max-w-6xl mx-auto relative">
-        {projects.map((p, i) => <Card key={p.title} p={p} i={i} n={projects.length} progress={scrollYProgress} />)}
-      </div>
-    </section>
-  );
+  return <section id="projects" className="reference-section reference-projects relative px-5 py-24 sm:px-8 md:px-10 md:py-36"><div className="reference-section-inner relative z-10 mx-auto max-w-6xl"><div className="flex flex-wrap items-end justify-between gap-8"><div><p className="reference-eyebrow">03 / SELECTED WORK</p><h2 className="reference-section-title">Things I&apos;ve<br /><span>been building.</span></h2></div><p className="reference-body-copy max-w-sm">Real project records, honest descriptions, and the technical decisions behind the interface.</p></div><div className="reference-project-grid mt-14">{projects.slice(0, 6).map((project, index) => <ProjectCard key={project.title} project={project} index={index} />)}</div></div></section>;
 }
