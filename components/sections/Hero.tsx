@@ -1,51 +1,54 @@
+'use client';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import FadeIn from '@/components/ui/FadeIn';
 import ContactButton from '@/components/ui/ContactButton';
-import { NAV, SITE } from '@/data/content';
+import { NAV, ROLES, HERO_CHIPS } from '@/data/content';
 
 export default function Hero() {
+  const [i, setI] = useState(0);
+  const [show, setShow] = useState(true);
+  useEffect(() => {
+    const t = setInterval(() => { setShow(false); setTimeout(() => { setI((n) => (n + 1) % ROLES.length); setShow(true); }, 350); }, 2400);
+    return () => clearInterval(t);
+  }, []);
+
   return (
-    <section id="top" className="hero-section">
-      <div className="hero-backdrop" aria-hidden="true"><div className="hero-grid" /><div className="hero-halo" /></div>
-      <div className="hero-shell">
-        <nav className="site-nav" aria-label="Main navigation">
-          <a className="site-brand" href="#top" aria-label="Bereda — back to top">
-            <span className="brand-mark"><i /><i /><i /></span>
-            <span className="brand-copy"><b>{SITE.name}</b><small>PRODUCT ENGINEER</small></span>
-          </a>
-          <div className="site-nav-links">
-            {NAV.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}
-          </div>
-          <a className="nav-contact" href="#contact">Let&apos;s talk <span>↗</span></a>
+    <section id="top" className="h-screen flex flex-col relative" style={{ overflowX: 'clip' }}>
+      <FadeIn y={-20} className="relative z-20">
+        <nav className="flex justify-between px-6 md:px-10 pt-6 md:pt-8 text-sm md:text-lg lg:text-[1.4rem] font-medium uppercase tracking-wider text-[#D7E2EA]">
+          {NAV.map((n) => <a key={n.label} href={n.href} className="hover:opacity-70 transition-opacity duration-200">{n.label}</a>)}
         </nav>
+      </FadeIn>
 
-        <div className="hero-main">
-          <div className="hero-copy">
-            <FadeIn y={20}>
-              <div className="hero-kicker"><span className="status-dot" />FULL-STACK ENGINEER <i /> FRONT TO BACK</div>
-              <h1>I build the<br />whole <em>product.</em></h1>
-              <p className="hero-description">From a sharp interface to the systems behind it, I turn ambitious ideas into dependable software people can use.</p>
-              <div className="hero-actions">
-                <a className="button-primary" href="#projects">Explore selected work <span>↓</span></a>
-                <ContactButton className="button-quiet" />
-              </div>
-            </FadeIn>
-          </div>
+      <FadeIn delay={0.15} y={40} className="overflow-hidden relative z-0">
+        <h1 className="hero-heading font-black uppercase tracking-tight leading-none whitespace-nowrap w-full text-[12vw] sm:text-[13vw] md:text-[14vw] lg:text-[15vw] mt-6 sm:mt-4 md:-mt-5">Hi, i&apos;m bereda</h1>
+      </FadeIn>
 
-          <FadeIn delay={0.12} y={24} className="hero-visual-wrap">
-            <div className="hero-visual">
-              <div className="portrait-frame">
-                <div className="portrait-light" />
-                <Image src="/images/hero.png" alt="Portrait of Bereda" fill priority sizes="(max-width: 760px) 90vw, 44vw" className="hero-portrait" />
-                <div className="portrait-edge" />
-                <div className="portrait-caption"><span>IDEA&nbsp; / &nbsp;ENGINEERING&nbsp; / &nbsp;SHIP</span><span>01 — 08</span></div>
-              </div>
-              <div className="hero-index"><span>BUILDING</span><b>WITH INTENT</b></div>
-            </div>
-          </FadeIn>
-        </div>
+      <div className="text-center mt-4 md:mt-6 uppercase tracking-[.35em] text-[#D7E2EA] text-[.7rem] sm:text-sm md:text-lg relative z-20 transition-all duration-300"
+        style={{ opacity: show ? 1 : 0, transform: show ? 'none' : 'translateY(8px)' }}>{ROLES[i]}</div>
 
-        <div className="hero-foot"><span>Independent software engineer</span><a href="#about">Scroll to explore <span>↓</span></a></div>
+      <div className="mt-auto flex justify-between items-end px-6 md:px-10 pb-7 sm:pb-8 md:pb-10 relative z-20">
+        <FadeIn delay={0.35} y={20}>
+          <p className="font-light uppercase tracking-wide leading-snug text-[#D7E2EA] max-w-[160px] sm:max-w-[220px] md:max-w-[260px]" style={{ fontSize: 'clamp(.75rem,1.4vw,1.5rem)' }}>
+            a full stack software engineer building complete products, end to end
+          </p>
+        </FadeIn>
+        <FadeIn delay={0.5} y={20}><ContactButton /></FadeIn>
+      </div>
+
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="gridbg" />
+        <div className="orb" style={{ width: '38vw', height: '38vw', left: '12%', top: '25%', background: '#7621B0', opacity: 0.38 }} />
+        <div className="orb" style={{ width: '30vw', height: '30vw', right: '8%', top: '35%', background: '#BE4C00', opacity: 0.28, animationDelay: '-4s' }} />
+        <div className="orb" style={{ width: '26vw', height: '26vw', left: '38%', bottom: '-8%', background: '#B600A8', opacity: 0.3, animationDelay: '-7s' }} />
+      </div>
+      {HERO_CHIPS.map((c) => <span key={c.t} className="hchip" style={c.s}>{c.t}</span>)}
+
+      <div className="absolute left-1/2 -translate-x-1/2 z-10 w-[360px] sm:w-[560px] md:w-[720px] lg:w-[900px] max-w-[130vw] top-1/2 -translate-y-1/2 sm:top-auto sm:translate-y-0 sm:bottom-0">
+        <FadeIn delay={0.6} y={30}>
+          <Image src="/images/hero.png" alt="Bereda" width={1100} height={859} priority className="w-full h-auto" />
+        </FadeIn>
       </div>
     </section>
   );
