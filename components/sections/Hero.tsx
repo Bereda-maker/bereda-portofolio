@@ -6,6 +6,7 @@ export default function Hero() {
   return (
     <section id="top" className="hero-shell overflow-hidden">
       <div className="hero-panel relative isolate overflow-hidden">
+        <div className="hero-top-seam" aria-hidden="true" />
         <div className="hero-panel-grid" aria-hidden="true" />
         <div className="hero-panel-glow" aria-hidden="true" />
         <div className="wrap relative z-10 grid items-center gap-7 px-5 py-10 sm:gap-10 sm:px-8 sm:py-14 lg:items-start lg:grid-cols-[.9fr_1.1fr] lg:gap-0 lg:py-8">
@@ -33,13 +34,14 @@ export default function Hero() {
             <Image src="/images/hero-laptop.png" alt={`Portrait of ${SITE.name} holding a laptop`} fill priority sizes="(max-width: 1024px) 100vw, 55vw" className="hero-stage-image" />
           </div>
         </div>
-        <div className="hero-metrics relative z-10 grid gap-5 px-5 pb-7 sm:grid-cols-3 sm:px-8 sm:pb-9 lg:grid-cols-[.8fr_.8fr_.8fr_1.65fr] lg:gap-0 lg:px-[max(2rem,calc((100vw-68rem)/2))]">
+        <div className="hero-metrics relative z-10 grid gap-5 px-5 pb-7 pt-5 sm:grid-cols-3 sm:px-8 sm:pb-9 sm:pt-6 lg:grid-cols-[.8fr_.8fr_.8fr_1.65fr] lg:gap-0 lg:px-[max(2rem,calc((100vw-68rem)/2))]">
           <div className="hero-metric"><strong>04</strong><span>products in the showcase</span></div>
           <div className="hero-metric"><strong>E2E</strong><span>schema to interface</span></div>
           <div className="hero-metric"><strong>QA</strong><span>evidence linked per project</span></div>
           <div className="hero-capabilities"><p>What I can own</p><div><span>Product UI</span><span>Typed APIs</span><span>Data + deploy</span></div></div>
         </div>
       </div>
+      <div className="hero-bottom-seam" aria-hidden="true" />
     </section>
   );
 }

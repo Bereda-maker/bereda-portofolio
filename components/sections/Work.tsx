@@ -9,7 +9,7 @@ const linkCls = 'inline-flex items-center gap-1.5 font-display text-[.88rem] fon
 
 export default function Work({ projects }: { projects: Project[] }) {
   return (
-    <section id="work" className="border-b border-rule">
+    <section id="work" className="work-section border-b border-rule">
       <div className="wrap py-20 md:py-28">
         <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
           <div><p className="eyebrow">Selected work</p><h2 className="section-title mt-3 max-w-[13ch]">Complete products, real workflows.</h2></div>
