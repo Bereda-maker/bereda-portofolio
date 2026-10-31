@@ -2,34 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: light;
+  --paper: 247 244 238;
+  --panel: 237 232 222;
+  --card: 255 252 247;
+  --ink: 28 31 27;
+  --muted: 92 100 89;
+  --rule: 207 201 188;
+  --forest: 24 92 68;
+  --forest-dark: 14 59 43;
+  --gold: 218 163 45;
+  --shadow: 25 30 26;
+}
+
+html.dark {
+  color-scheme: dark;
+  --paper: 12 17 15;
+  --panel: 19 27 23;
+  --card: 25 35 29;
+  --ink: 241 237 225;
+  --muted: 170 177 166;
+  --rule: 57 70 61;
+  --forest: 107 202 162;
+  --forest-dark: 77 164 128;
+  --gold: 236 187 69;
+  --shadow: 0 0 0;
+}
+
 @layer base {
   html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
-  body { @apply bg-paper font-text text-ink antialiased; font-size: 1.125rem; line-height: 1.65; }
+  body { @apply bg-paper font-text text-ink antialiased; font-size: 1.125rem; line-height: 1.65; transition: background-color .25s ease, color .25s ease; }
   h1, h2, h3, h4, button, input, select, textarea, label, nav, dt, th { @apply font-display; }
-  ::selection { background: #D9A21B; color: #111A16; }
-  :focus-visible { outline: 3px solid #D9A21B; outline-offset: 3px; border-radius: 2px; }
+  ::selection { background: rgb(var(--gold)); color: rgb(var(--ink)); }
+  :focus-visible { outline: 3px solid rgb(var(--gold)); outline-offset: 3px; border-radius: 4px; }
+  a, button { -webkit-tap-highlight-color: transparent; }
 }
 
 @layer components {
-  .wrap { @apply mx-auto w-full max-w-[68rem] px-5 sm:px-8; }
-  .btn { @apply inline-flex items-center justify-center gap-2 rounded-md px-5 py-3 font-display text-[.95rem] font-semibold leading-none transition-colors; }
-  .btn-primary { @apply bg-forest text-white hover:bg-forest-dark; }
-  .btn-quiet { @apply border border-ink/25 bg-transparent text-ink hover:border-ink hover:bg-ink/5; }
-  .section-title { @apply font-display text-[clamp(1.85rem,3.6vw,2.75rem)] font-semibold leading-[1.1] tracking-[-.025em]; }
-  .field { @apply w-full rounded-md border border-ink/30 bg-white px-3.5 py-3 font-display text-base text-ink transition-shadow placeholder:text-muted/70 focus:border-forest focus:outline-none focus:ring-2 focus:ring-forest/30; }
+  .wrap { @apply mx-auto w-full max-w-[74rem] px-5 sm:px-8; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 font-display text-[.95rem] font-semibold leading-none transition-all; }
+  .btn-primary { @apply bg-forest text-white shadow-soft hover:-translate-y-0.5 hover:bg-forest-dark; }
+  .btn-quiet { @apply border border-ink/20 bg-transparent text-ink hover:border-ink/50 hover:bg-ink/5; }
+  .section-title { @apply font-display text-[clamp(2rem,4.2vw,3.25rem)] font-semibold leading-[1.04] tracking-[-.04em]; }
+  .field { @apply w-full rounded-2xl border border-ink/20 bg-card px-4 py-3 font-display text-base text-ink transition-shadow placeholder:text-muted/70 focus:border-forest focus:outline-none focus:ring-2 focus:ring-forest/30; }
   .field-error { @apply border-[#B3261E] focus:border-[#B3261E] focus:ring-[#B3261E]/25; }
-  .tag { @apply inline-flex items-center gap-1.5 rounded border border-rule bg-white/60 px-2 py-1 font-display text-[.8rem] leading-none text-ink; }
+  .tag { @apply inline-flex items-center gap-1.5 rounded-full border border-rule bg-card px-3 py-1.5 font-display text-[.78rem] leading-none text-ink; }
+  .eyebrow { @apply font-display text-[.72rem] font-semibold uppercase tracking-[.2em] text-forest; }
+  .surface-card { @apply rounded-[1.65rem] border border-rule bg-card shadow-soft; }
+  .project-image { @apply aspect-[16/10] w-full object-cover transition-transform duration-500; }
+  .project-card:hover .project-image { transform: scale(1.035); }
 }
 
-/* One deliberate moment: the hero settles in on load. Nothing else animates on its own. */
-@keyframes settle { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.site-grid { background-image: linear-gradient(rgb(var(--ink) / .045) 1px, transparent 1px), linear-gradient(90deg, rgb(var(--ink) / .045) 1px, transparent 1px); background-size: 36px 36px; }
+
+@keyframes settle { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 .settle { animation: settle .7s cubic-bezier(.2,.7,.2,1) both; }
 .settle-2 { animation-delay: .12s; }
 .settle-3 { animation-delay: .24s; }
-@keyframes beacon { 0% { box-shadow: 0 0 0 0 rgba(29,90,67,.45); } 100% { box-shadow: 0 0 0 9px rgba(29,90,67,0); } }
+@keyframes beacon { 0% { box-shadow: 0 0 0 0 rgb(var(--forest) / .45); } 100% { box-shadow: 0 0 0 9px rgb(var(--forest) / 0); } }
 .beacon { animation: beacon 2.2s ease-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .settle, .beacon { animation: none; }
+  .project-card:hover .project-image { transform: none; }
 }

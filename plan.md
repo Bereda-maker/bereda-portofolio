@@ -1,50 +1,30 @@
-# Bereda Personal Developer Platform — Implementation Plan
+# Portfolio redesign plan
 
-## Current architecture
+## Goal
+Turn the portfolio into an evidence-led product engineering site that makes the next client conversation obvious. Use only verified products and live/source links: Deborah, Negus Gebeya, TenaSew, and EthioVista. Do not fabricate a GitHub link for EthioVista because its source repository was not included in the connected GitHub account.
 
-The repository is a Next.js 14 App Router application using TypeScript, Tailwind CSS, Framer Motion, Lucide icons, Drizzle ORM, and PostgreSQL. The public homepage is composed from reusable section components. A protected `/admin` area already supports password authentication, project CRUD, and contact-message management. Public projects load from Postgres with a static fallback when the database is unavailable. Contact submissions are validated, rate-limited, and persisted when Postgres is configured.
+## Implementation
 
-## Current working functionality
+- Keep the existing Next.js App Router and component structure.
+- Make `data/content.ts` the authoritative public content model with live URL, source URL, real image, contribution, workflow, architecture, integrations, verification, and next-step notes.
+- Keep public project loading static so old database seed placeholders cannot override verified showcase content.
+- Add a rich dynamic project route at `/projects/:slug-or-id` with case-study sections and evidence links.
+- Add a one-page PDF CV at `public/bereda-wako-cv.pdf` and expose it in the header, hero, About section, and footer.
+- Add a client-side persisted light/dark theme toggle with system preference fallback.
+- Refresh the visual system with CSS variables, an editorial grid, image-led cards, warm paper/forest/gold light mode, and low-glare charcoal/green dark mode.
+- Keep the contact endpoint and transparent mailto fallback, but remove fixed price bands; ask for stage and scope instead.
+- Expand `/journey` into MVP scoping, architecture, integration, deployment, maintenance, and deliverables guidance.
 
-- Responsive public portfolio homepage with animated hero, about, services, projects, and contact sections.
-- Project data loaded from Postgres with static fallback content.
-- Password-protected admin area with session cookies.
-- Admin project create, edit, and delete workflows.
-- Admin contact-message read, unread, and delete workflows.
-- Contact form validation, rate limiting, and persistence.
-- Production build succeeds without a configured database by using safe fallback behavior.
+## Design
 
-## Missing from the specification
+Three options were considered: editorial product journal (0.05), dark dashboard casebook (0.06), and warm brutalist studio (0.04). Chosen: **editorial product journal**.
 
-Books and protected digital delivery, customer accounts, verified payments, mentorship accounting, appointment availability, Google Calendar/Meet integration, video publishing, AI opportunity research, AI content drafting, newsletter consent, media storage, granular roles, audit logs, analytics, and their automated tests are not implemented yet. These require additional schema, storage, payment, email, calendar, and AI provider decisions; no external integration will be represented as connected until credentials and server-side verification are configured.
+The movement is a quiet editorial casebook with large typography, evidence cards, and product imagery. The principles are to make the workflow legible, show proof next to the claim, keep hierarchy calm, and use motion only to orient. Warm paper and forest green signal grounded craft in light mode; charcoal, muted green, and soft gold preserve warmth in dark mode. Long-form narrative sections use asymmetric splits and wide image-led project cards rather than dense dashboard tiles. Gold status dots, rounded image cards, and direct live/source/evidence links are the signature elements.
 
-## Design direction
+The interaction philosophy is simple: every card has a useful action and every external claim has a path to inspect it. The single-settle hero entrance and subtle image scale have reduced-motion fallbacks. Bricolage Grotesque handles headings and controls; Newsreader handles body copy. Brand voice is clear, practical, and honest: “Complete products, real workflows.” and “A good handoff is part of the build.”
 
-**Selected movement:** editorial field notes meets quiet technical confidence.
+## Structure and serving
 
-**Core principles:** personal before promotional; evidence before claims; generous space; motion that explains rather than decorates.
+`app/(site)/page.tsx` composes the homepage and person structured data. `app/(site)/projects/[slug-or-id]/page.tsx` renders case studies. `app/(site)/journey/page.tsx` explains delivery. `components/sections` owns Hero, Work, Capabilities, Proof, About, and Contact. `components/SiteChrome.tsx` and `components/ThemeToggle.tsx` own navigation, CV access, and theme state. `data/content.ts` owns the verified project records. `public/images/projects` owns real assets copied from the products or their live production bundle. `public/bereda-wako-cv.pdf` is the one-page downloadable CV.
 
-**Color philosophy:** forest green and charcoal establish trust and technical depth; warm cream keeps long-form reading comfortable; gold is reserved for actions, status, and moments of emphasis. The palette should feel distinctly personal and grounded, with subtle Ethiopian-inspired warmth rather than decorative cultural motifs.
-
-**Layout paradigm:** asymmetric editorial compositions, tall narrative blocks, and project stories that alternate between text and media instead of a centered marketing grid.
-
-**Signature elements:** numbered field-note labels, a small gold status marker, and project cards that read like build logs.
-
-**Interaction philosophy:** every animation should reveal context, hierarchy, or progress. Avoid motion that delays access to content. Respect `prefers-reduced-motion`.
-
-**Brand essence:** Bereda builds useful digital products, documents the journey, shares practical knowledge, and creates opportunities through technology. Personality: thoughtful, ambitious, generous.
-
-**Brand voice:** direct, reflective, and specific. Example lines: “I build the parts that make ideas real.” and “The stack is the toolkit; curiosity is the operating system.”
-
-## Implementation sequence
-
-1. Foundation: consolidate tokens, metadata, navigation, accessibility, settings, and shared page primitives while preserving the working portfolio/admin flows.
-2. Portfolio and media: add project detail routes, case-study fields, media records, galleries, and video metadata with admin editing.
-3. Publishing: add books, categories, protected previews, payment-provider abstraction, verified webhooks, purchases, and customer access.
-4. Mentorship and appointments: add student profiles, minute-level allowance ledger, pricing, availability, conflict-safe reservations, and calendar integration interfaces.
-5. AI workspace: add candidate profile, traceable opportunity records, matching, editable drafts, provider abstraction, human approval, and daily limits.
-6. Launch hardening: SEO, sitemap, privacy-conscious analytics, automated business-rule tests, security review, and deployment documentation.
-
-## External configuration boundaries
-
-The core portfolio must work without paid AI or payment credentials. Book checkout, protected file storage, email delivery, Google Calendar/Meet, and AI research require explicit environment variables and provider configuration. Until then, implement interfaces, validation, manual review states, and clear setup documentation rather than claiming live integration.
+The site remains a Next.js App Router application and can deploy through the existing Vercel project. The public showcase does not depend on the placeholder project database. The existing contact API remains the first delivery path; mailto is retained as a transparent fallback.

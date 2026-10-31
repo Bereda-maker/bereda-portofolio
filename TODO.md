@@ -1,35 +1,15 @@
-# Bereda platform outcomes
+# Portfolio redesign outcomes
 
-## Foundation and public experience
-
-- [x] Preserve the existing Next.js, TypeScript, Tailwind, Framer Motion, Drizzle/Postgres, admin auth, project CRUD, and contact-message functionality while documenting the architecture and missing platform areas.
-- [x] Establish the editorial field-notes direction, reusable styling additions, distinctive hero positioning, build-log project language, and local-image-only About composition.
-- [x] Add the complete public information architecture for About, Projects, Books, Mentorship, Videos, AI Opportunities, and Contact without presenting unimplemented workflows as live.
-- [ ] Add responsive mobile navigation, active route states, a prominent meeting CTA, semantic landmarks, visible focus states, and reduced-motion behavior.
-- [x] Add canonical metadata, Open Graph metadata, sitemap, robots directives, and reduced-motion/focus safeguards.
-
-## Portfolio and media
-
-- [x] Add project detail routes with truthful project records and demo/source links when configured; schema now includes case-study, media, and video entities.
-- [ ] Extend the admin project editor to manage hero images, screenshots, videos, SEO metadata, publish state, and ordering.
-
-## Books and digital products
-
-- [ ] Add books, categories, previews, protected files, purchases, verified payment transactions, customer library access, and admin publishing/sales workflows.
-- [x] Add provider-independent payment and private-storage interfaces with explicit setup-required states when credentials are absent.
-
-## Mentorship and appointments
-
-- [ ] Add student intake, minute-level per-student free-hour ledger, configurable paid pricing, session history, and student/mentor views.
-- [ ] Add shared availability, blocked times, atomic conflict-safe reservations, appointment types, and calendar synchronization states.
-- [x] Add Google Calendar/Meet and email provider interfaces plus calendar sync-job persistence for retryable reconciliation states.
-
-## AI workspace and content
-
-- [x] Add opportunity/company/contact/application records and deterministic matching boundaries; external discovery, source evidence, daily limits, and human approval workflows remain setup work.
-- [ ] Add editable AI content drafts with version history and explicit publication approval.
-
-## Quality and operations
-
-- [ ] Add automated tests for validation, permissions, pricing, mentorship accounting, reservations, payment verification, and provider failures.
-- [ ] Add environment documentation, health checks, structured logs, privacy-conscious analytics, audit logging, and deployment runbooks.
+- [x] **Light/dark mode:** visible theme control, system preference fallback, persisted choice, and readable text/borders/cards/forms/focus states in both modes.
+- [x] **Attractive, product-led imagery:** real images from Deborah, Negus Gebeya, TenaSew, and EthioVista; no placeholder showcase imagery in project cards; useful alt text.
+- [x] **Verified project index:** Deborah, Negus Gebeya, TenaSew, and EthioVista each show live URL, source URL where present, status, role/contribution, stack, and case-study link. No EthioVista repository link is fabricated.
+- [x] **Deborah flagship case study:** student experience, exam-preparation workflow, question bank/practice, progress loop, auth/AI/payment boundaries, architecture, contribution, and current QA evidence with live/repository/QA links.
+- [x] **Negus Gebeya case study:** buyer/seller workflow, listing/media, trust, messaging, orders/payments, AI/live-selling boundaries, architecture, frontend/backend repositories, and live URL.
+- [x] **TenaSew case study:** content, habits/progress, onboarding, auth/session boundary, bounded AI, architecture, deployment evidence, and pre-launch gaps.
+- [x] **EthioVista case study:** public production overview for destinations, stays, experiences, services, trip planning, multilingual entry points, and AI-in-development status; missing source repository is stated.
+- [x] **One-page CV:** generated and exposed at `/bereda-wako-cv.pdf` from header, hero, About, and footer.
+- [x] **Relevant experience and individual contributions:** About section, card contribution lines, and case-study sections for workflow, architecture, and integrations.
+- [x] **Technical writing and testing evidence:** Proof section links to Deborah release-readiness/QA documents and TenaSew architecture/deployment notes.
+- [x] **Client next step:** “Tell me about your project.” plus discovery, MVP scope, deliverables, estimated-scope conversation, proposal path, and no fixed-price promise.
+- [ ] **Deployment confirmation:** push to the existing GitHub remote and confirm the existing Vercel deployment completes successfully.
+- [ ] **EthioVista source handoff:** add a direct repository link and deeper source-based evidence when the owner supplies the missing repository.

@@ -1,53 +1,29 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { ArrowLeft, ArrowUpRight, Github, LockKeyhole } from 'lucide-react';
 import { notFound } from 'next/navigation';
-import { ArrowUpRight, Github } from 'lucide-react';
 import { PublicPage } from '@/components/PublicPage';
 import { getProjects } from '@/lib/projects';
 import { slugify } from '@/lib/slug';
 import { STACK_ICON, type Project } from '@/data/content';
 import TechIcon from '@/components/ui/TechIcon';
 
-function findProject(projects: Project[], key: string) {
-  const numeric = Number(key);
-  if (Number.isInteger(numeric) && numeric > 0 && numeric <= projects.length) return projects[numeric - 1];
-  return projects.find((p) => slugify(p.title) === key.toLowerCase());
-}
+function findProject(projects: Project[], key: string) { return projects.find((p) => slugify(p.title) === key.toLowerCase()) ?? projects[Number(key) - 1]; }
 const real = (u: string) => u && u !== '#';
 
-export async function generateMetadata({ params }: { params: { 'slug-or-id': string } }): Promise<Metadata> {
-  const project = findProject(await getProjects(), params['slug-or-id']);
-  return project ? { title: project.title, description: project.description } : {};
-}
+export async function generateStaticParams() { return (await getProjects()).map((p) => ({ 'slug-or-id': slugify(p.title) })); }
+export async function generateMetadata({ params }: { params: { 'slug-or-id': string } }): Promise<Metadata> { const project = findProject(await getProjects(), params['slug-or-id']); return project ? { title: project.title, description: project.description } : {}; }
 
 export default async function ProjectDetailPage({ params }: { params: { 'slug-or-id': string } }) {
-  const projects = await getProjects();
-  const project = findProject(projects, params['slug-or-id']);
+  const project = findProject(await getProjects(), params['slug-or-id']);
   if (!project) notFound();
+  const study = project.caseStudy;
+  if (!study) notFound();
   const linkBtn = 'btn w-full justify-between';
-
-  return (
-    <PublicPage title={project.title} intro={project.description}>
-      <section className="wrap pb-24">
-        <div className="grid gap-10 border-t border-rule pt-10 md:grid-cols-[1.4fr_1fr] md:gap-16">
-          <div>
-            <h2 className="font-display text-[1.15rem] font-semibold">Built with</h2>
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {project.stack.map((t) => <li key={t} className="tag !bg-white !text-[.9rem]"><TechIcon k={STACK_ICON[t]} size={16} />{t}</li>)}
-            </ul>
-            <p className="mt-8 font-display text-[.9rem] text-muted">Type: {project.category}</p>
-          </div>
-          <div>
-            <h2 className="font-display text-[1.15rem] font-semibold">Links</h2>
-            <div className="mt-4 flex flex-col gap-3">
-              {real(project.demo) && <a href={project.demo} target="_blank" rel="noopener noreferrer" className={`${linkBtn} btn-primary`}>Live site <ArrowUpRight size={17} aria-hidden="true" /></a>}
-              {real(project.repo) && <a href={project.repo} target="_blank" rel="noopener noreferrer" className={`${linkBtn} btn-quiet`}>Source code <Github size={17} aria-hidden="true" /></a>}
-              {!real(project.demo) && !real(project.repo) && <p className="text-muted">A live site and source code for this project haven&rsquo;t been published yet.</p>}
-            </div>
-            <Link href="/#work" className="mt-8 inline-block font-display text-[.95rem] font-semibold text-forest underline decoration-forest/30 underline-offset-4 hover:decoration-forest">Back to all work</Link>
-          </div>
-        </div>
-      </section>
-    </PublicPage>
-  );
+  return <PublicPage title={project.title} intro={project.description}>
+    <article className="wrap pb-24">
+      <div className="overflow-hidden rounded-[1.8rem] border border-rule bg-card shadow-soft"><img src={project.image} alt={project.alt} className="aspect-[16/7] w-full object-cover" /><div className="grid gap-8 p-6 sm:p-9 md:grid-cols-[1.25fr_.75fr]"><div><p className="eyebrow">{study.eyebrow}</p><p className="mt-4 max-w-[39rem] font-display text-[clamp(1.6rem,3.5vw,2.7rem)] font-semibold leading-tight tracking-[-.04em]">{study.tagline}</p></div><div className="grid grid-cols-2 gap-4 border-t border-rule pt-4 md:border-l md:border-t-0 md:pl-7"><div><p className="font-display text-[.76rem] uppercase tracking-[.15em] text-muted">Status</p><p className="mt-1 font-display font-semibold">{project.status}</p></div><div><p className="font-display text-[.76rem] uppercase tracking-[.15em] text-muted">Category</p><p className="mt-1 font-display font-semibold">{project.category}</p></div></div></div></div>
+      <div className="mt-12 grid gap-10 md:grid-cols-[1.3fr_.7fr] md:gap-16"><div className="space-y-12"><section><p className="eyebrow">Context</p><p className="mt-4 max-w-[45rem] text-[1.2rem] leading-relaxed">{study.context}</p></section><section className="grid gap-8 border-t border-rule pt-8 sm:grid-cols-2"><div><h2 className="font-display text-xl font-semibold">The problem</h2><p className="mt-3 text-muted">{study.problem}</p></div><div><h2 className="font-display text-xl font-semibold">My contribution</h2><p className="mt-3 text-muted">{study.contribution}</p></div></section><section className="border-t border-rule pt-8"><h2 className="font-display text-xl font-semibold">Real workflow</h2><p className="mt-3 max-w-[43rem] text-muted">{study.workflow}</p></section><section className="grid gap-8 border-t border-rule pt-8 sm:grid-cols-2"><div><h2 className="font-display text-xl font-semibold">Architecture</h2><p className="mt-3 text-muted">{study.architecture}</p></div><div><h2 className="font-display text-xl font-semibold">Integrations</h2><p className="mt-3 text-muted">{study.integrations}</p></div></section><section className="border-t border-rule pt-8"><h2 className="font-display text-xl font-semibold">What works in the described product</h2><ul className="mt-4 grid gap-3 sm:grid-cols-2">{study.features.map((f) => <li key={f} className="flex gap-2 text-muted"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-forest" aria-hidden="true" />{f}</li>)}</ul></section><section className="border-t border-rule pt-8"><h2 className="font-display text-xl font-semibold">Verification and boundaries</h2><p className="mt-3 max-w-[44rem] text-muted">{study.verification}</p><p className="mt-5 max-w-[44rem] text-muted"><span className="font-display font-semibold text-ink">Next:</span> {study.next}</p></section></div><aside className="md:sticky md:top-24 md:self-start"><div className="surface-card p-6"><h2 className="font-display text-xl font-semibold">Open the product</h2><div className="mt-5 flex flex-col gap-3">{real(project.demo) && <a href={project.demo} target="_blank" rel="noopener noreferrer" className={`${linkBtn} btn-primary`}>Live site <ArrowUpRight size={17} aria-hidden="true" /></a>}{real(project.repo) ? <a href={project.repo} target="_blank" rel="noopener noreferrer" className={`${linkBtn} btn-quiet`}>Source code <Github size={17} aria-hidden="true" /></a> : <div className="flex items-center gap-2 rounded-full border border-rule px-5 py-3 font-display text-[.9rem] text-muted"><LockKeyhole size={16} aria-hidden="true" />Source not provided</div>}</div><h3 className="mt-8 border-t border-rule pt-6 font-display text-[.9rem] uppercase tracking-[.15em] text-muted">Built with</h3><ul className="mt-3 flex flex-wrap gap-2">{project.stack.map((t) => <li key={t} className="tag"><TechIcon k={STACK_ICON[t]} size={15} />{t}</li>)}</ul><h3 className="mt-8 border-t border-rule pt-6 font-display text-[.9rem] uppercase tracking-[.15em] text-muted">Evidence</h3><div className="mt-3 flex flex-col gap-2">{study.evidence.map((e) => <a key={e.href} href={e.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 font-display text-[.9rem] font-semibold text-forest underline decoration-forest/30 underline-offset-4 hover:decoration-forest">{e.label}<ArrowUpRight size={14} aria-hidden="true" /></a>)}</div></div><Link href="/#work" className="mt-6 inline-flex items-center gap-2 font-display text-[.9rem] font-semibold text-forest"><ArrowLeft size={15} aria-hidden="true" /> Back to all work</Link></aside></div>
+    </article>
+  </PublicPage>;
 }
