@@ -37,7 +37,7 @@ export const SITE = {
   github: 'https://github.com/Bereda-maker',
   linkedin: '',
   cv: '/bereda-wako-cv.pdf',
-  portrait: '/images/about-restored.png',
+  portrait: '/images/about-professional.png',
 };
 
 export const NAV = [
