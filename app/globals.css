@@ -112,6 +112,11 @@ html.dark {
 .tools-tag svg { color: #79dfb0; }
 .walkthrough-video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
 .walkthrough-section { scroll-margin-top: 6rem; }
+.experience-item { position: relative; display: flex; gap: 1rem; }
+.experience-item:not(:last-child)::after { content: ''; position: absolute; left: 1rem; top: 2.35rem; bottom: -2rem; width: 1px; background: linear-gradient(rgb(var(--forest) / .35), rgb(var(--rule) / .4)); }
+.experience-marker { position: relative; z-index: 1; display: flex; height: 2.05rem; width: 2.05rem; flex: 0 0 2.05rem; flex-direction: column; align-items: center; justify-content: center; gap: .1rem; border: 1px solid rgb(var(--forest) / .28); border-radius: 9999px; background: rgb(var(--paper)); color: rgb(var(--forest)); }
+.experience-marker span { font-family: var(--font-display); font-size: .48rem; font-weight: 700; letter-spacing: .05em; line-height: 1; }
+.experience-item .eyebrow { font-size: .62rem; }
 
 @keyframes settle { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 .settle { animation: settle .7s cubic-bezier(.2,.7,.2,1) both; }

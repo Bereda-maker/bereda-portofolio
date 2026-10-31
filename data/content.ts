@@ -63,6 +63,40 @@ export const SERVICES: { name: string; text: string }[] = [
   { name: 'Data and deployment', text: 'Practical schemas, migrations, environments, monitoring, and a handover path that does not depend on me.' },
 ];
 
+export const EXPERIENCE = [
+  {
+    role: 'Web Development Instructor',
+    place: 'Ethio Computer School',
+    type: 'Teaching · Digital skills',
+    text: 'Taught web development through practical, project-led learning at a school that describes itself as Ethiopia’s leading digital skills school. The course focuses on building real projects rather than only studying theory.',
+    links: [
+      { label: 'Course page', href: 'https://www.ethiocomputer.school/courses/web-development' },
+      { label: 'Watch the course VSL', href: 'https://player.vimeo.com/video/1229693804?h=387686400' },
+    ],
+  },
+  {
+    role: 'Marketing Manager',
+    place: 'Gezahegn and Elfinesh Hotel & Resort',
+    type: 'Hospitality · Marketing',
+    text: 'Worked in marketing for one of Ethiopia’s largest hotel and resort operations, building experience in positioning a hospitality brand, communicating value, and connecting an organization with its audience.',
+    links: [],
+  },
+  {
+    role: 'Bachelor of Science in Computer Science',
+    place: 'Hawassa University',
+    type: 'Education · Computer science',
+    text: 'Earned a Computer Science degree from Hawassa University, one of Ethiopia’s leading universities, building the technical foundation behind my product, systems, and software engineering work.',
+    links: [],
+  },
+  {
+    role: 'CEO and Startup Builder',
+    place: 'EthioVista · Deborah School · TenaSew · Negus Gebeya',
+    type: 'Leadership · Ethiopia-rooted startups',
+    text: 'Lead and build Ethiopia-rooted startups across travel, education, wellness, and commerce. Each product starts with a local problem, a clear user workflow, and a practical path from idea to live experience.',
+    links: [],
+  },
+];
+
 export const PROJECTS: Project[] = [
   {
     "title": "Deborah — Education SaaS",

@@ -1,6 +1,8 @@
 import Image from 'next/image';
-import { ArrowUpRight } from 'lucide-react';
-import { SITE } from '@/data/content';
+import { ArrowUpRight, Briefcase, GraduationCap, Laptop, Megaphone } from 'lucide-react';
+import { EXPERIENCE, SITE } from '@/data/content';
+
+const EXPERIENCE_ICONS = [Laptop, Megaphone, GraduationCap, Briefcase];
 
 export default function About() {
   return (
@@ -22,6 +24,7 @@ export default function About() {
             <div className="border-t border-rule pt-3"><p className="font-display text-2xl font-semibold text-ink">E2E</p><p className="mt-1 text-sm text-muted">from schema to interface</p></div>
             <div className="border-t border-rule pt-3"><p className="font-display text-2xl font-semibold text-ink">QA</p><p className="mt-1 text-sm text-muted">evidence linked per case study</p></div>
           </div>
+          <div className="about-experience mt-12 border-t border-rule pt-8"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="eyebrow">Experience</p><h3 className="mt-2 font-display text-2xl font-semibold tracking-[-.03em]">The work behind the products.</h3></div><span className="font-display text-[.72rem] font-semibold uppercase tracking-[.16em] text-muted">Selected path</span></div><div className="mt-7 space-y-7">{EXPERIENCE.map(({ role, place, type, text, links }, i) => { const Icon = EXPERIENCE_ICONS[i]; return <article key={role} className="experience-item"><div className="experience-marker"><Icon size={17} aria-hidden="true" /><span>0{i + 1}</span></div><div className="min-w-0 flex-1"><p className="eyebrow">{type}</p><h4 className="mt-1 font-display text-[1.12rem] font-semibold leading-tight">{role}</h4><p className="mt-1 font-display text-[.9rem] font-semibold text-forest">{place}</p><p className="mt-3 text-[.98rem] text-muted">{text}</p>{links.length > 0 && <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">{links.map((link) => <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 font-display text-[.82rem] font-semibold text-forest underline decoration-forest/30 underline-offset-4 hover:decoration-forest">{link.label}<ArrowUpRight size={13} aria-hidden="true" /></a>)}</div>}</div></article> })}</div></div>
           <a href={SITE.cv} download className="btn btn-quiet mt-9">Download the one-page CV <ArrowUpRight size={16} aria-hidden="true" /></a>
         </div>
       </div>
