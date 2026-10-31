@@ -28,7 +28,9 @@ export default function Hero() {
           <div className="settle settle-3 hero-stage relative">
             <div className="hero-stage-grid" aria-hidden="true" />
             <div className="hero-stage-orbit" aria-hidden="true" />
+            <div className="hero-stage-rule" aria-hidden="true" />
             <div className="hero-stage-label">Bereda Wako / 2026</div>
+            <div className="hero-stage-stat"><strong>1.82m</strong><span>full-stack / end to end</span></div>
             <Image src="/images/hero-laptop.png" alt={`Portrait of ${SITE.name} holding a laptop`} fill priority sizes="(max-width: 1024px) 100vw, 55vw" className="hero-stage-image" />
           </div>
         </div>
