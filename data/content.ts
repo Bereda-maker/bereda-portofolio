@@ -97,6 +97,30 @@ export const EXPERIENCE = [
   },
 ];
 
+export const EXTRACURRICULAR = [
+  {
+    title: 'Theological studies',
+    label: 'Study · Faith · Discipline',
+    image: '/images/extracurricular-theology.png',
+    alt: 'Open Bible, theology books, study notes, and a gold medal on a warm wooden desk',
+    text: 'Gold medalist in Diploma Practical Theology across all of Ethiopia from Holistic Bible College.',
+  },
+  {
+    title: 'Music',
+    label: 'Vocal · Piano · Guitar',
+    image: '/images/extracurricular-music.png',
+    alt: 'Microphone, acoustic guitar, piano, and headphones in a warm music studio',
+    text: 'I make space for music through vocal performance, piano, and guitar — a creative counterweight to technical work.',
+  },
+  {
+    title: 'Reading',
+    label: 'Curiosity · Reflection · Growth',
+    image: '/images/extracurricular-reading.png',
+    alt: 'Open book, notebook, pencil, and reading lamp on a quiet wooden table',
+    text: 'Reading keeps the questions open: a steady habit for learning, reflection, and seeing problems from a wider angle.',
+  },
+];
+
 export const PROJECTS: Project[] = [
   {
     "title": "Deborah — Education SaaS",

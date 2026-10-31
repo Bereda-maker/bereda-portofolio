@@ -3,6 +3,7 @@ import Work from '@/components/sections/Work';
 import Capabilities from '@/components/sections/Capabilities';
 import Proof from '@/components/sections/Proof';
 import About from '@/components/sections/About';
+import Extracurricular from '@/components/sections/Extracurricular';
 import Contact from '@/components/sections/Contact';
 import { SiteFooter, SiteHeader } from '@/components/SiteChrome';
 import { SITE } from '@/data/content';
@@ -21,5 +22,5 @@ export default async function Page() {
     email: SITE.email,
     sameAs: [SITE.github, SITE.linkedin].filter(Boolean),
   };
-  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /><SiteHeader /><main><Hero /><Work projects={projects} /><Capabilities /><Proof /><About /><Contact /></main><SiteFooter /></>;
+  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /><SiteHeader /><main><Hero /><Work projects={projects} /><Capabilities /><Proof /><About /><Extracurricular /><Contact /></main><SiteFooter /></>;
 }
