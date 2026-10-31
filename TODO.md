@@ -11,6 +11,6 @@
 - [x] **Relevant experience and individual contributions:** About section, card contribution lines, and case-study sections for workflow, architecture, and integrations.
 - [x] **Technical writing and testing evidence:** Proof section links to Deborah release-readiness/QA documents and TenaSew architecture/deployment notes.
 - [x] **Client next step:** “Tell me about your project.” plus discovery, MVP scope, deliverables, estimated-scope conversation, proposal path, and no fixed-price promise.
-- [x] **Homepage hero refresh:** preserve the existing navbar; customize the hero with a dark green editorial panel, personal headline, regenerated transparent portrait, gold/mint accents, responsive CTAs, no selected-build card, no outer border/margin space, and verified proof-oriented metrics instead of copying the reference image literally.
+- [x] **Homepage hero refresh:** preserve the existing navbar; customize the hero with a dark green editorial panel, personal headline, regenerated transparent laptop portrait using the supplied face, content-driven responsive image sizing, gold/mint accents, responsive CTAs, no selected-build card, no outer border/margin space, and verified proof-oriented metrics instead of copying the reference image literally.
 - [ ] **Deployment confirmation:** push to the existing GitHub remote and confirm the existing Vercel deployment completes successfully.
 - [ ] **EthioVista source handoff:** add a direct repository link and deeper source-based evidence when the owner supplies the missing repository.
