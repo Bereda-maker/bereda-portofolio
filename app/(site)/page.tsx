@@ -1,22 +1,37 @@
 import Hero from '@/components/sections/Hero';
-import Marquee from '@/components/sections/Marquee';
+import Work from '@/components/sections/Work';
+import Capabilities from '@/components/sections/Capabilities';
 import About from '@/components/sections/About';
-import Services from '@/components/sections/Services';
-import Projects from '@/components/sections/Projects';
 import Contact from '@/components/sections/Contact';
-import ScrollProgress from '@/components/ScrollProgress';
+import { SiteFooter, SiteHeader } from '@/components/SiteChrome';
+import { SITE } from '@/data/content';
 import { getProjects } from '@/lib/projects';
 
-// Re-render this page at most once every 60 seconds, picking up any project
-// edits made from the admin dashboard without needing a full redeploy.
+// Re-render at most once every 60 seconds so edits made in /admin show up without a redeploy.
 export const revalidate = 60;
 
 export default async function Page() {
   const projects = await getProjects();
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: SITE.name,
+    jobTitle: SITE.role,
+    url: 'https://bereda-dev.vercel.app',
+    sameAs: [SITE.github, SITE.linkedin].filter(Boolean),
+  };
   return (
-    <main style={{ overflowX: 'clip', background: '#0C0C0C' }}>
-      <ScrollProgress />
-      <Hero /><Marquee /><About /><Services /><Projects projects={projects} /><Contact />
-    </main>
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <SiteHeader />
+      <main>
+        <Hero />
+        <Work projects={projects} />
+        <Capabilities />
+        <About />
+        <Contact />
+      </main>
+      <SiteFooter />
+    </>
   );
 }

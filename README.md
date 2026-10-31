@@ -4,6 +4,17 @@ A single-admin portfolio site: a public site backed by Postgres, plus a
 password-protected `/admin` dashboard for editing projects and reading
 contact messages — one repo, one Next.js app, deployed on Railway.
 
+## Personalising the public site
+
+The homepage copy lives in `components/sections/*.tsx` and `data/content.ts`. Before sharing the site widely:
+
+- Replace `public/images/hero.png` (set in `SITE.portrait`) with a real, natural photo of yourself.
+- Set `SITE.linkedin` in `data/content.ts`; the LinkedIn links stay hidden while it is empty.
+- Add real `demo` and `repo` URLs to each project (`"#"` means "not published yet" and the link is hidden). Keep `PROJECTS` plain JSON, because `scripts/seed.mjs` parses it.
+- Edit `TECH_GROUPS` so the tool lists match how you actually work.
+- Set `NEXT_PUBLIC_SITE_URL` on your host so canonical, sitemap and social-preview URLs use your real domain.
+- The `/admin` area keeps its own dark theme in `app/admin/admin.css`.
+
 ## Local setup
 
 ```bash
