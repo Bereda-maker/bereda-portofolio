@@ -28,7 +28,7 @@ export default function About() {
             <div className="border-t border-rule pt-3"><p className="font-display text-2xl font-semibold text-ink">E2E</p><p className="mt-1 text-sm text-muted">from schema to interface</p></div>
             <div className="border-t border-rule pt-3"><p className="font-display text-2xl font-semibold text-ink">QA</p><p className="mt-1 text-sm text-muted">evidence linked per case study</p></div>
           </div>
-          <a href={SITE.cv} download className="btn btn-quiet mt-9">Download the one-page CV <ArrowUpRight size={16} aria-hidden="true" /></a>
+          <a href={SITE.cv} download className="btn btn-quiet mt-9">Download my CV <ArrowUpRight size={16} aria-hidden="true" /></a>
         </div>
       </div>
     </section>
