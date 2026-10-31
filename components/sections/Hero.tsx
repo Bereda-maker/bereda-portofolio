@@ -8,7 +8,7 @@ export default function Hero() {
       <div className="hero-panel relative isolate overflow-hidden">
         <div className="hero-panel-grid" aria-hidden="true" />
         <div className="hero-panel-glow" aria-hidden="true" />
-        <div className="wrap relative z-10 grid items-center gap-7 px-5 py-10 sm:gap-10 sm:px-8 sm:py-14 lg:grid-cols-[.9fr_1.1fr] lg:gap-0 lg:py-10">
+        <div className="wrap relative z-10 grid items-center gap-7 px-5 py-10 sm:gap-10 sm:px-8 sm:py-14 lg:items-start lg:grid-cols-[.9fr_1.1fr] lg:gap-0 lg:py-8">
           <div className="hero-copy relative z-10 max-w-[39rem] lg:pb-6">
             <div className="settle flex flex-wrap items-center gap-3">
               <p className="hero-kicker"><span className="beacon" aria-hidden="true" />Full-stack product engineer</p>
