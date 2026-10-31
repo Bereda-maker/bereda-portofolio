@@ -1,26 +1,45 @@
 import Image from 'next/image';
-import { ArrowDownRight, ArrowUpRight, Mail } from 'lucide-react';
+import { ArrowUpRight, Github, Mail } from 'lucide-react';
 import { SITE } from '@/data/content';
 
 export default function Hero() {
   return (
-    <section id="top" className="overflow-hidden border-b border-rule">
-      <div className="wrap grid min-h-[calc(100vh-5.5rem)] items-center gap-10 py-10 sm:py-14 lg:grid-cols-[.92fr_1.08fr] lg:gap-14 lg:py-16">
-        <div className="relative z-10 max-w-[42rem]">
-          <p className="settle eyebrow flex items-center gap-2.5"><span className="beacon h-2.5 w-2.5 rounded-full bg-forest" aria-hidden="true" />Full-stack product engineer</p>
-          <h1 className="settle settle-2 mt-5 max-w-[10ch] font-display text-[clamp(3.6rem,8vw,7.7rem)] font-semibold leading-[.86] tracking-[-.075em]">I build useful digital products<span className="text-gold">.</span></h1>
-          <p className="settle settle-3 mt-6 max-w-[25rem] text-[clamp(1.05rem,1.8vw,1.3rem)] leading-snug text-muted">From the first workflow to a live, maintainable release.</p>
-          <div className="settle settle-3 mt-8 flex flex-wrap gap-3">
-            <a href="#work" className="btn btn-primary">View my work <ArrowDownRight size={16} aria-hidden="true" /></a>
-            <a href="#contact" className="btn btn-quiet">Let&rsquo;s talk <ArrowUpRight size={16} aria-hidden="true" /></a>
+    <section id="top" className="hero-shell overflow-hidden border-b border-rule">
+      <div className="wrap py-5 sm:py-8 lg:py-10">
+        <div className="hero-panel relative isolate overflow-hidden rounded-[2.25rem] border border-white/10 shadow-2xl shadow-black/20">
+          <div className="hero-panel-grid" aria-hidden="true" />
+          <div className="hero-panel-glow" aria-hidden="true" />
+          <div className="relative z-10 grid items-end gap-10 px-6 pb-7 pt-9 sm:px-10 sm:pb-9 sm:pt-12 lg:grid-cols-[.9fr_1.1fr] lg:gap-5 lg:px-14 lg:pt-14">
+            <div className="hero-copy relative z-10 max-w-[39rem]">
+              <div className="settle flex flex-wrap items-center gap-3">
+                <p className="hero-kicker"><span className="beacon" aria-hidden="true" />Full-stack product engineer</p>
+                <span className="hero-location">Ethiopia · available for thoughtful builds</span>
+              </div>
+              <h1 className="settle settle-2 hero-title mt-6">Hi, I&rsquo;m <span>Bereda Wako</span><strong>.</strong></h1>
+              <p className="settle settle-3 hero-lede mt-6">I turn hard workflows into useful web products&mdash;from the first interaction to a live, maintainable release.</p>
+              <div className="settle settle-3 mt-8 flex flex-wrap gap-3">
+                <a href="#work" className="btn hero-btn-primary">View selected work <ArrowUpRight size={16} aria-hidden="true" /></a>
+                <a href="#contact" className="btn hero-btn-quiet">Start a conversation <ArrowUpRight size={16} aria-hidden="true" /></a>
+              </div>
+              <div className="settle settle-3 mt-7 flex flex-wrap items-center gap-x-5 gap-y-3 text-[.86rem] text-white/65">
+                <a href={`mailto:${SITE.email}`} className="inline-flex items-center gap-2 transition hover:text-white"><Mail size={15} aria-hidden="true" />{SITE.email}</a>
+                <a href={SITE.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 transition hover:text-white"><Github size={15} aria-hidden="true" />GitHub</a>
+              </div>
+            </div>
+            <div className="settle settle-3 hero-stage relative min-h-[27rem] overflow-hidden rounded-[1.75rem] sm:min-h-[34rem] lg:min-h-[36rem]">
+              <div className="hero-stage-grid" aria-hidden="true" />
+              <div className="hero-stage-orbit" aria-hidden="true" />
+              <div className="hero-stage-label">Bereda Wako / 2026</div>
+              <Image src={SITE.portrait} alt={`Portrait of ${SITE.name}`} fill priority sizes="(max-width: 1024px) 100vw, 55vw" className="hero-stage-image" />
+              <div className="hero-stage-note"><span className="hero-stage-note-dot" aria-hidden="true" /><div><p>Selected build</p><strong>Deborah / Education SaaS</strong></div><ArrowUpRight size={17} aria-hidden="true" /></div>
+            </div>
           </div>
-          <a href={`mailto:${SITE.email}`} className="mt-7 inline-flex items-center gap-2 font-display text-[.88rem] font-medium text-muted transition hover:text-ink"><Mail size={15} aria-hidden="true" />{SITE.email}</a>
-        </div>
-        <div className="settle settle-3 hero-portrait-stage relative min-h-[28rem] overflow-hidden rounded-[2.5rem] sm:min-h-[35rem] lg:min-h-[min(45rem,calc(100vh-9rem))]">
-          <div className="hero-portrait-orb" aria-hidden="true" />
-          <div className="absolute left-6 top-6 z-10 rounded-full border border-white/20 bg-black/20 px-3.5 py-2 font-display text-[.68rem] font-semibold uppercase tracking-[.18em] text-white backdrop-blur-md">Bereda Wako / 2026</div>
-          <Image src={SITE.portrait} alt={`Portrait of ${SITE.name}`} fill priority sizes="(max-width: 1024px) 100vw, 55vw" className="hero-portrait object-contain object-bottom" />
-          <div className="absolute bottom-5 left-5 right-5 z-10 flex items-end justify-between gap-4 rounded-[1.4rem] border border-white/15 bg-black/25 p-4 text-white backdrop-blur-md sm:p-5"><div><p className="font-display text-[.68rem] uppercase tracking-[.18em] text-white/60">Selected build</p><p className="mt-1 font-display text-lg font-semibold">Deborah / Education SaaS</p></div><span className="h-2.5 w-2.5 rounded-full bg-gold shadow-[0_0_0_6px_rgba(226,177,62,.18)]" aria-label="Live product" /></div>
+          <div className="hero-metrics relative z-10 grid gap-5 border-t border-white/15 px-6 py-5 sm:grid-cols-3 sm:px-10 lg:grid-cols-[.8fr_.8fr_.8fr_1.65fr] lg:gap-0 lg:px-14">
+            <div className="hero-metric"><strong>04</strong><span>products in the showcase</span></div>
+            <div className="hero-metric"><strong>E2E</strong><span>schema to interface</span></div>
+            <div className="hero-metric"><strong>QA</strong><span>evidence linked per project</span></div>
+            <div className="hero-capabilities"><p>What I can own</p><div><span>Product UI</span><span>Typed APIs</span><span>Data + deploy</span></div></div>
+          </div>
         </div>
       </div>
     </section>

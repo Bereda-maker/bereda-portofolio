@@ -12,6 +12,7 @@ Turn the portfolio into an evidence-led product engineering site that makes the 
 - Add a one-page PDF CV at `public/bereda-wako-cv.pdf` and expose it in the header, hero, About section, and footer.
 - Add a client-side persisted light/dark theme toggle with system preference fallback.
 - Refresh the visual system with CSS variables, an editorial grid, image-led cards, warm paper/forest/gold light mode, and low-glare charcoal/green dark mode.
+- Refresh only the homepage hero toward the supplied reference direction: preserve the existing navbar, use a dark green editorial panel with gold/mint accents, a personalized headline, the existing portrait, and verified proof-oriented metrics rather than copying the reference literally.
 - Keep the contact endpoint and transparent mailto fallback, but remove fixed price bands; ask for stage and scope instead.
 - Expand `/journey` into MVP scoping, architecture, integration, deployment, maintenance, and deliverables guidance.
 
@@ -22,6 +23,7 @@ Three options were considered: editorial product journal (0.05), dark dashboard 
 The movement is a quiet editorial casebook with large typography, evidence cards, and product imagery. The principles are to make the workflow legible, show proof next to the claim, keep hierarchy calm, and use motion only to orient. Warm paper and forest green signal grounded craft in light mode; charcoal, muted green, and soft gold preserve warmth in dark mode. Long-form narrative sections use asymmetric splits and wide image-led project cards rather than dense dashboard tiles. Gold status dots, rounded image cards, and direct live/source/evidence links are the signature elements.
 
 The interaction philosophy is simple: every card has a useful action and every external claim has a path to inspect it. The single-settle hero entrance and subtle image scale have reduced-motion fallbacks. Bricolage Grotesque handles headings and controls; Newsreader handles body copy. Brand voice is clear, practical, and honest: “Complete products, real workflows.” and “A good handoff is part of the build.”
+The homepage hero now acts as a compact proof surface: “Hi, I’m Bereda Wako” introduces the person, the portrait stage names the Deborah flagship build, and the bottom rail uses only verified portfolio signals (04 showcased products, end-to-end ownership, and linked QA evidence). The existing navbar remains unchanged.
 
 ## Structure and serving
 
