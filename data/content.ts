@@ -41,9 +41,10 @@ export const SITE = {
 };
 
 export const NAV = [
+  { label: 'Home', href: '/#top' },
   { label: 'Work', href: '/#work' },
-  { label: 'How I work', href: '/journey' },
-  { label: 'About', href: '/#about' },
+  { label: 'Experience', href: '/#experience' },
+  { label: 'Extracurricular', href: '/#extracurricular' },
   { label: 'Contact', href: '/#contact' },
 ];
 
