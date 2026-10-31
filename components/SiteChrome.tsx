@@ -12,7 +12,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 bg-paper/80 py-3 backdrop-blur-xl">
       <div className="wrap">
-        <nav aria-label="Primary" className="relative flex flex-wrap items-center justify-between gap-3 rounded-full border border-rule bg-card/90 px-3 py-2 shadow-soft sm:px-4">
+        <nav aria-label="Primary" className={`relative flex flex-wrap items-center justify-between gap-3 px-3 py-2 sm:px-4 ${menuOpen ? 'rounded-3xl border border-transparent bg-transparent shadow-none' : 'rounded-full border border-rule bg-card/90 shadow-soft'}`}>
           <Link href="/" className="group flex min-w-0 items-center px-2 font-display text-[1rem] font-semibold tracking-tight">
             <span className="truncate">{SITE.name}</span>
           </Link>
@@ -27,11 +27,11 @@ export function SiteHeader() {
             </button>
             <a href={`mailto:${SITE.email}`} className="btn btn-primary !hidden !gap-1.5 !px-3.5 !py-2.5 !text-[.82rem] sm:!inline-flex"><Mail size={14} aria-hidden="true" /> <span className="hidden md:inline">Email me</span><ArrowUpRight size={14} className="md:hidden" aria-hidden="true" /></a>
           </div>
-          <div id="mobile-navigation" className={`${menuOpen ? 'flex' : 'hidden'} w-full basis-full flex-col border-t border-rule/70 pt-2 sm:hidden`}>
+          <div id="mobile-navigation" className={`${menuOpen ? 'flex' : 'hidden'} w-full basis-full flex-col pt-2 sm:hidden`}>
             <ul className="flex flex-col gap-1 font-display text-[.95rem]">
               {NAV.map((item) => <li key={item.href}><Link href={item.href} onClick={() => setMenuOpen(false)} className="block rounded-2xl px-4 py-3 text-muted transition hover:bg-panel hover:text-ink">{item.label}</Link></li>)}
               <li><a href={SITE.cv} download onClick={() => setMenuOpen(false)} className="block rounded-2xl px-4 py-3 font-semibold text-ink transition hover:bg-panel">Download CV</a></li>
-              <li><a href={`mailto:${SITE.email}`} onClick={() => setMenuOpen(false)} className="block rounded-2xl bg-forest px-4 py-3 font-semibold text-white transition hover:bg-forest-dark">Email me</a></li>
+              <li><a href={`mailto:${SITE.email}`} onClick={() => setMenuOpen(false)} className="block rounded-2xl px-4 py-3 font-semibold text-forest transition hover:bg-panel">Email me</a></li>
             </ul>
           </div>
         </nav>
