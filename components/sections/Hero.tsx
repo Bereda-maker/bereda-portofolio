@@ -1,35 +1,27 @@
-import { ArrowDownRight, Download, Github, Mail } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowDownRight, ArrowUpRight, Mail } from 'lucide-react';
 import { SITE } from '@/data/content';
 
 export default function Hero() {
   return (
-    <section id="top" className="site-grid overflow-hidden border-b border-rule">
-      <div className="wrap grid min-h-[calc(100vh-4.5rem)] items-center gap-12 py-16 lg:grid-cols-[1.15fr_.85fr] lg:gap-20 lg:py-24">
-        <div>
-          <p className="settle eyebrow flex items-center gap-2.5"><span className="beacon h-2.5 w-2.5 rounded-full bg-forest" aria-hidden="true" />Available for new product work</p>
-          <h1 className="settle settle-2 mt-6 max-w-[13ch] font-display text-[clamp(3.4rem,7.8vw,7.4rem)] font-semibold leading-[.9] tracking-[-.07em]">I build the parts that make ideas real<span className="text-gold">.</span></h1>
-          <p className="settle settle-3 mt-8 max-w-[39rem] text-[clamp(1.15rem,2vw,1.5rem)] leading-relaxed text-muted">I&rsquo;m {SITE.name}, a full-stack product engineer in {SITE.location}. I scope the smallest useful release, choose a practical architecture, and carry the work from the first workflow to a deployed product.</p>
-          <div className="settle settle-3 mt-9 flex flex-wrap gap-3">
-            <a href="#work" className="btn btn-primary">See complete products <ArrowDownRight size={17} aria-hidden="true" /></a>
-            <a href={SITE.cv} download className="btn btn-quiet"><Download size={16} aria-hidden="true" /> Download CV</a>
+    <section id="top" className="overflow-hidden border-b border-rule">
+      <div className="wrap grid min-h-[calc(100vh-5.5rem)] items-center gap-10 py-10 sm:py-14 lg:grid-cols-[.92fr_1.08fr] lg:gap-14 lg:py-16">
+        <div className="relative z-10 max-w-[42rem]">
+          <p className="settle eyebrow flex items-center gap-2.5"><span className="beacon h-2.5 w-2.5 rounded-full bg-forest" aria-hidden="true" />Full-stack product engineer</p>
+          <h1 className="settle settle-2 mt-5 max-w-[10ch] font-display text-[clamp(3.6rem,8vw,7.7rem)] font-semibold leading-[.86] tracking-[-.075em]">I build useful digital products<span className="text-gold">.</span></h1>
+          <p className="settle settle-3 mt-6 max-w-[25rem] text-[clamp(1.05rem,1.8vw,1.3rem)] leading-snug text-muted">From the first workflow to a live, maintainable release.</p>
+          <div className="settle settle-3 mt-8 flex flex-wrap gap-3">
+            <a href="#work" className="btn btn-primary">View my work <ArrowDownRight size={16} aria-hidden="true" /></a>
+            <a href="#contact" className="btn btn-quiet">Let&rsquo;s talk <ArrowUpRight size={16} aria-hidden="true" /></a>
           </div>
-          <div className="mt-10 flex flex-wrap gap-x-5 gap-y-2 font-display text-[.9rem] text-muted">
-            <a href={`mailto:${SITE.email}`} className="inline-flex items-center gap-2 transition hover:text-ink"><Mail size={15} aria-hidden="true" />{SITE.email}</a>
-            <a href={SITE.github} className="inline-flex items-center gap-2 transition hover:text-ink" rel="noopener noreferrer"><Github size={15} aria-hidden="true" />GitHub / Bereda-maker</a>
-          </div>
+          <a href={`mailto:${SITE.email}`} className="mt-7 inline-flex items-center gap-2 font-display text-[.88rem] font-medium text-muted transition hover:text-ink"><Mail size={15} aria-hidden="true" />{SITE.email}</a>
         </div>
-        <aside aria-label="Product proof" className="settle settle-3 surface-card relative overflow-hidden p-6 sm:p-8">
-          <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-gold/15 blur-2xl" aria-hidden="true" />
-          <p className="eyebrow">A product-minded stack</p>
-          <p className="mt-4 max-w-[20rem] font-display text-[1.65rem] font-semibold leading-tight tracking-[-.035em]">Useful flows first. Technology in service of the outcome.</p>
-          <dl className="mt-8 divide-y divide-rule font-display text-[.95rem]">
-            <div className="flex justify-between gap-6 py-3"><dt className="text-muted">Flagship product</dt><dd className="font-semibold">Deborah</dd></div>
-            <div className="flex justify-between gap-6 py-3"><dt className="text-muted">Ships with</dt><dd className="text-right font-semibold">TypeScript + React</dd></div>
-            <div className="flex justify-between gap-6 py-3"><dt className="text-muted">Data layer</dt><dd className="font-semibold">Postgres / MongoDB</dd></div>
-            <div className="flex justify-between gap-6 py-3"><dt className="text-muted">Response time</dt><dd className="font-semibold">Within 24 hours</dd></div>
-          </dl>
-          <p className="mt-6 text-[.95rem] text-muted">Read the build notes, open the live products, and start with the workflow you want to improve.</p>
-        </aside>
+        <div className="settle settle-3 hero-portrait-stage relative min-h-[28rem] overflow-hidden rounded-[2.5rem] sm:min-h-[35rem] lg:min-h-[min(45rem,calc(100vh-9rem))]">
+          <div className="hero-portrait-orb" aria-hidden="true" />
+          <div className="absolute left-6 top-6 z-10 rounded-full border border-white/20 bg-black/20 px-3.5 py-2 font-display text-[.68rem] font-semibold uppercase tracking-[.18em] text-white backdrop-blur-md">Bereda Wako / 2026</div>
+          <Image src={SITE.portrait} alt={`Portrait of ${SITE.name}`} fill priority sizes="(max-width: 1024px) 100vw, 55vw" className="hero-portrait object-contain object-bottom" />
+          <div className="absolute bottom-5 left-5 right-5 z-10 flex items-end justify-between gap-4 rounded-[1.4rem] border border-white/15 bg-black/25 p-4 text-white backdrop-blur-md sm:p-5"><div><p className="font-display text-[.68rem] uppercase tracking-[.18em] text-white/60">Selected build</p><p className="mt-1 font-display text-lg font-semibold">Deborah / Education SaaS</p></div><span className="h-2.5 w-2.5 rounded-full bg-gold shadow-[0_0_0_6px_rgba(226,177,62,.18)]" aria-label="Live product" /></div>
+        </div>
       </div>
     </section>
   );
