@@ -70,7 +70,7 @@ html.dark {
 .hero-btn-primary:hover { background: #ffd263; }
 .hero-btn-quiet { border: 1px solid rgb(255 255 255 / .34); color: white; }
 .hero-btn-quiet:hover { border-color: rgb(255 255 255 / .7); background: rgb(255 255 255 / .08); }
-.hero-stage { isolation: isolate; aspect-ratio: 3 / 4; min-height: clamp(26rem, 58vw, 46rem); max-height: 46rem; align-self: stretch; }
+.hero-stage { isolation: isolate; aspect-ratio: 4 / 5; min-height: clamp(24rem, 48vw, 38rem); max-height: 38rem; align-self: stretch; }
 .hero-stage::before { content: ''; position: absolute; inset: 8% 12% 4% 11%; z-index: -1; border-radius: 48% 52% 38% 62% / 42% 38% 62% 58%; background: linear-gradient(145deg, rgb(104 218 166 / .78), #1f7251 52%, #0f3325); transform: rotate(-7deg); box-shadow: 0 1.5rem 4rem rgb(0 0 0 / .18); }
 .hero-stage-grid { background-size: 30px 30px; mask-image: linear-gradient(135deg, rgba(0,0,0,.85), transparent 62%); }
 .hero-stage-orbit { position: absolute; right: -8rem; top: -8rem; height: 25rem; width: 25rem; border: 1px solid rgb(240 189 72 / .4); border-radius: 9999px; box-shadow: 0 0 0 2.5rem rgb(240 189 72 / .035), 0 0 0 5rem rgb(240 189 72 / .025); }
@@ -102,7 +102,7 @@ html.dark {
   .hero-metric + .hero-metric, .hero-capabilities { padding-left: 1.75rem; }
 }
 @media (min-width: 640px) and (max-width: 1023px) {
-  .hero-stage { width: min(100%, 34rem); margin-inline: auto; }
+  .hero-stage { width: min(100%, 32rem); margin-inline: auto; }
   .hero-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .hero-capabilities { grid-column: 1 / -1; }
 }
