@@ -27,11 +27,11 @@ export function SiteHeader() {
             </button>
             <a href={`mailto:${SITE.email}`} className="btn btn-primary !hidden !gap-1.5 !px-3.5 !py-2.5 !text-[.82rem] sm:!inline-flex"><Mail size={14} aria-hidden="true" /> <span className="hidden md:inline">Email me</span><ArrowUpRight size={14} className="md:hidden" aria-hidden="true" /></a>
           </div>
-          <div id="mobile-navigation" className={`${menuOpen ? 'flex' : 'hidden'} w-full basis-full flex-col border-t border-rule/70 pt-2 sm:hidden`}>
+          <div id="mobile-navigation" className={`${menuOpen ? 'flex' : 'hidden'} mt-2 w-full basis-full flex-col rounded-3xl bg-forest p-2 shadow-soft sm:hidden`}>
             <ul className="flex flex-col gap-1 font-display text-[.95rem]">
-              {NAV.map((item) => <li key={item.href}><Link href={item.href} onClick={() => setMenuOpen(false)} className="block rounded-2xl px-4 py-3 text-muted transition hover:bg-panel hover:text-ink">{item.label}</Link></li>)}
-              <li><a href={SITE.cv} download onClick={() => setMenuOpen(false)} className="block rounded-2xl px-4 py-3 font-semibold text-ink transition hover:bg-panel">Download CV</a></li>
-              <li><a href={`mailto:${SITE.email}`} onClick={() => setMenuOpen(false)} className="block rounded-2xl bg-forest px-4 py-3 font-semibold text-white transition hover:bg-forest-dark">Email me</a></li>
+              {NAV.map((item) => <li key={item.href}><Link href={item.href} onClick={() => setMenuOpen(false)} className="block rounded-2xl px-4 py-3 text-white/80 transition hover:bg-white/10 hover:text-white">{item.label}</Link></li>)}
+              <li><a href={SITE.cv} download onClick={() => setMenuOpen(false)} className="block rounded-2xl px-4 py-3 font-semibold text-white transition hover:bg-white/10">Download CV</a></li>
+              <li><a href={`mailto:${SITE.email}`} onClick={() => setMenuOpen(false)} className="block rounded-2xl bg-gold px-4 py-3 font-semibold text-ink transition hover:bg-[#ffd263]">Email me</a></li>
             </ul>
           </div>
         </nav>
