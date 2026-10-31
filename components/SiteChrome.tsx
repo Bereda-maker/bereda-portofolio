@@ -31,7 +31,7 @@ export function SiteHeader() {
             <ul className="flex flex-col gap-1 font-display text-[.95rem]">
               {NAV.map((item) => <li key={item.href}><Link href={item.href} onClick={() => setMenuOpen(false)} className="block rounded-2xl px-4 py-3 text-muted transition hover:bg-panel hover:text-ink">{item.label}</Link></li>)}
               <li><a href={SITE.cv} download onClick={() => setMenuOpen(false)} className="block rounded-2xl px-4 py-3 font-semibold text-ink transition hover:bg-panel">Download CV</a></li>
-              <li><a href={`mailto:${SITE.email}`} onClick={() => setMenuOpen(false)} className="block rounded-2xl px-4 py-3 font-semibold text-forest transition hover:bg-panel">Email me</a></li>
+              <li><a href={`mailto:${SITE.email}`} onClick={() => setMenuOpen(false)} className="block rounded-2xl bg-gold px-4 py-3 font-semibold text-ink transition hover:bg-[#ffd263]">Email me</a></li>
             </ul>
           </div>
         </nav>
