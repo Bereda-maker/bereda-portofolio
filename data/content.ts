@@ -71,7 +71,7 @@ export const PROJECTS: Project[] = [
     "stack": ["Next.js", "TypeScript", "Bun", "Hono", "PostgreSQL", "Drizzle ORM"],
     "demo": "https://web-cdry.vercel.app",
     "repo": "https://github.com/Bereda-maker/dibo",
-    "image": "/images/projects/deborah-cover.jpg",
+    "image": "/images/projects/deborah-live-hero.webp",
     "walkthrough": "/video/walkthroughs/deborah.mp4",
     "alt": "Deborah study goal screen and exam result card",
     "status": "Live product",
