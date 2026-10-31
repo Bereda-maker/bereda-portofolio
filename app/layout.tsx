@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: { title: TITLE, description: DESCRIPTION, type: 'website', siteName: 'Bereda Wako' },
   twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION },
 };
-export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', themeColor: '#0c110f' };
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', themeColor: '#001858' };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return <html lang="en" suppressHydrationWarning><body><script dangerouslySetInnerHTML={{ __html: "try{var t=localStorage.getItem('bereda-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark')}catch(e){}" }} />{children}</body></html>;
