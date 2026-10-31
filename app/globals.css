@@ -62,7 +62,7 @@ html.dark {
 .hero-kicker { display: inline-flex; align-items: center; gap: .65rem; border: 1px solid rgb(132 229 183 / .26); border-radius: 9999px; background: rgb(103 215 164 / .1); padding: .55rem .85rem; color: rgb(186 241 213); font-family: var(--font-display); font-size: .7rem; font-weight: 700; letter-spacing: .16em; line-height: 1; text-transform: uppercase; }
 .hero-kicker .beacon { height: .55rem; width: .55rem; border-radius: 9999px; background: #75deb0; }
 .hero-location { color: rgb(255 255 255 / .56); font-family: var(--font-display); font-size: .76rem; letter-spacing: .02em; }
-.hero-title { max-width: 9.5ch; color: white; font-family: var(--font-display); font-size: clamp(3.5rem, 7.8vw, 7.6rem); font-weight: 600; letter-spacing: -.075em; line-height: .88; }
+.hero-title { max-width: 9.5ch; color: white; font-family: var(--font-display); font-size: clamp(3.25rem, 7.5vw, 7.25rem); font-weight: 600; letter-spacing: -.075em; line-height: .9; }
 .hero-title span { color: #79dfb0; }
 .hero-title strong { color: #f0bd48; font-weight: inherit; }
 .hero-lede { max-width: 31rem; color: rgb(255 255 255 / .72); font-size: clamp(1.05rem, 1.8vw, 1.32rem); line-height: 1.35; }
@@ -70,11 +70,11 @@ html.dark {
 .hero-btn-primary:hover { background: #ffd263; }
 .hero-btn-quiet { border: 1px solid rgb(255 255 255 / .34); color: white; }
 .hero-btn-quiet:hover { border-color: rgb(255 255 255 / .7); background: rgb(255 255 255 / .08); }
-.hero-stage { background: linear-gradient(145deg, rgb(22 74 55 / .8), rgb(3 20 15 / .74)); isolation: isolate; }
+.hero-stage { isolation: isolate; }
 .hero-stage::before { content: ''; position: absolute; inset: 10% 11% 6% 10%; z-index: -1; border-radius: 48% 52% 38% 62% / 42% 38% 62% 58%; background: linear-gradient(145deg, rgb(104 218 166 / .78), #1f7251 52%, #0f3325); transform: rotate(-7deg); }
 .hero-stage-grid { background-size: 30px 30px; mask-image: linear-gradient(135deg, rgba(0,0,0,.85), transparent 62%); }
 .hero-stage-orbit { position: absolute; right: -8rem; top: -8rem; height: 25rem; width: 25rem; border: 1px solid rgb(240 189 72 / .4); border-radius: 9999px; box-shadow: 0 0 0 2.5rem rgb(240 189 72 / .035), 0 0 0 5rem rgb(240 189 72 / .025); }
-.hero-stage-label { position: absolute; left: 1.25rem; top: 1.25rem; z-index: 2; border: 1px solid rgb(255 255 255 / .18); border-radius: 9999px; background: rgb(0 0 0 / .16); padding: .55rem .8rem; color: rgb(255 255 255 / .78); backdrop-filter: blur(12px); font-family: var(--font-display); font-size: .65rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+.hero-stage-label { position: absolute; left: 1rem; top: 1rem; z-index: 2; color: rgb(255 255 255 / .55); font-family: var(--font-display); font-size: .65rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
 .hero-stage-image { z-index: 1; object-fit: contain; object-position: center bottom; filter: drop-shadow(0 24px 20px rgb(0 0 0 / .38)); }
 .hero-stage-note { position: absolute; bottom: 1.25rem; left: 1.25rem; right: 1.25rem; z-index: 2; display: flex; align-items: center; gap: .75rem; border: 1px solid rgb(255 255 255 / .16); border-radius: 1.1rem; background: rgb(0 0 0 / .24); padding: .9rem 1rem; color: white; backdrop-filter: blur(14px); }
 .hero-stage-note > div { min-width: 0; flex: 1; }
@@ -103,7 +103,7 @@ html.dark {
   .project-card:hover .project-image { transform: none; }
 }
 @media (min-width: 1024px) {
-  .hero-metric + .hero-metric, .hero-capabilities { border-left: 1px solid rgb(255 255 255 / .14); padding-left: 1.5rem; }
+  .hero-metric + .hero-metric, .hero-capabilities { padding-left: 1.75rem; }
 }
 @media (max-width: 639px) {
   .hero-location { flex-basis: 100%; }
