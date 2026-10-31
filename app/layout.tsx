@@ -3,7 +3,7 @@ import '@fontsource-variable/bricolage-grotesque';
 import '@fontsource-variable/newsreader';
 import './globals.css';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bereda-dev.vercel.app';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bereda-portofolio.onrender.com';
 const TITLE = 'Bereda Wako — Full-stack product engineer';
 const DESCRIPTION = 'Bereda Wako builds complete web products with TypeScript, React, practical architectures, and reliable handoffs.';
 
@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
   openGraph: { title: TITLE, description: DESCRIPTION, type: 'website', siteName: 'Bereda Wako' },
   twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION },
+  icons: { icon: '/favicon.svg' },
 };
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', themeColor: '#001858' };
 

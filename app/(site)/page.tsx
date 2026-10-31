@@ -18,7 +18,7 @@ export default async function Page() {
     '@type': 'Person',
     name: SITE.name,
     jobTitle: SITE.role,
-    url: 'https://bereda-dev.vercel.app',
+    url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bereda-portofolio.onrender.com',
     email: SITE.email,
     sameAs: [SITE.github, SITE.linkedin].filter(Boolean),
   };
