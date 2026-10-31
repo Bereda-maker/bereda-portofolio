@@ -98,6 +98,8 @@ html.dark {
 .hero-bottom-seam { height: 1.25rem; background: linear-gradient(180deg, rgb(2 14 10 / .22), rgb(var(--paper) / .7) 70%, rgb(var(--paper))); }
 .work-section { position: relative; }
 .work-section::before { content: ''; display: block; width: 4.5rem; height: .25rem; margin: 0 auto; border-radius: 9999px; background: linear-gradient(90deg, rgb(var(--gold)), rgb(var(--forest))); transform: translateY(-.1rem); }
+.walkthrough-video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.walkthrough-section { scroll-margin-top: 6rem; }
 
 @keyframes settle { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 .settle { animation: settle .7s cubic-bezier(.2,.7,.2,1) both; }

@@ -29,7 +29,7 @@ export default function Work({ projects }: { projects: Project[] }) {
               <div className="mt-auto flex flex-wrap gap-x-5 gap-y-3 border-t border-rule pt-6 sm:mt-8">
                 <Link href={`/projects/${slugify(p.title)}`} className={linkCls}>Read case study <ArrowUpRight size={15} aria-hidden="true" /></Link>
                 {real(p.demo) && <a href={p.demo} className={linkCls} target="_blank" rel="noopener noreferrer">Live site <ArrowUpRight size={15} aria-hidden="true" /></a>}
-                {p.walkthrough && <a href={p.walkthrough} className={linkCls} target="_blank" rel="noopener noreferrer"><Play size={15} fill="currentColor" aria-hidden="true" />Video walkthrough</a>}
+                {p.walkthrough && <Link href={`/projects/${slugify(p.title)}#walkthrough`} className={linkCls}><Play size={15} fill="currentColor" aria-hidden="true" />Video walkthrough</Link>}
                 {real(p.repo) ? <a href={p.repo} className={linkCls} target="_blank" rel="noopener noreferrer"><Github size={15} aria-hidden="true" />Repository</a> : <span className="inline-flex items-center gap-1.5 font-display text-[.88rem] text-muted"><LockKeyhole size={14} aria-hidden="true" />Source not provided</span>}
               </div>
             </div>
