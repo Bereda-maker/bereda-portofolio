@@ -1,36 +1,57 @@
-export const SITE = { name: 'Bereda', role: 'Product-minded full stack engineer', email: 'hello@bereda.dev', github: 'https://github.com/Bereda-maker', linkedin: '#' };
-export const NAV = [{ label: 'About', href: '#about' }, { label: 'Services', href: '#services' }, { label: 'Projects', href: '#projects' }, { label: 'Contact', href: '#contact' }];
-export const ROLES = ['Product engineer', 'TypeScript · Python · Go', 'Systems that feel simple', 'Idea to production'];
-export const HERO_CHIPS = [
-  { t: 'Next.js', s: { left: '9%', top: '42%' } }, { t: 'TypeScript', s: { right: '9%', top: '38%', animationDelay: '-2s' } },
-  { t: 'Go', s: { left: '17%', top: '64%', animationDelay: '-1s' } }, { t: 'PostgreSQL', s: { right: '15%', top: '60%', animationDelay: '-3s' } },
-];
+export const SITE = {
+  name: 'Bereda Wako',
+  role: 'Full-stack developer',
+  location: 'Ethiopia',
+  email: 'hello@bereda.dev',
+  github: 'https://github.com/Bereda-maker',
+  linkedin: '', // add your LinkedIn URL here; the link stays hidden while this is empty
+  portrait: '/images/hero.png', // swap for a real, natural photo of you (see README note)
+};
+export const NAV = [{ label: 'Work', href: '/#work' }, { label: 'About', href: '/#about' }, { label: 'Contact', href: '/#contact' }];
 export const TECH: [string, string][] = [["TypeScript", "typescript"], ["Next.js", "nextdotjs"], ["React", "react"], ["Python", "python"], ["FastAPI", "fastapi"], ["PHP", "php"], ["Laravel", "laravel"], ["Go", "go"], ["Java", "openjdk"], ["Spring Boot", "springboot"], ["C#", "dotnet"], ["ASP.NET Core", "dotnet"], ["PostgreSQL", "postgresql"], ["MySQL", "mysql"], ["MongoDB", "mongodb"], ["Redis", "redis"], ["Hono", "hono"], ["Bun", "bun"], ["SQLite", "sqlite"], ["Drizzle ORM", "drizzle"], ["Docker", "docker"]];
+// Edit these two lists so they match how you actually work day to day.
+export const TECH_GROUPS: { label: string; items: string[] }[] = [
+  { label: 'Most of my work', items: ['TypeScript', 'React', 'Next.js', 'PostgreSQL', 'Drizzle ORM'] },
+  { label: 'Also used', items: ['Python', 'FastAPI', 'Go', 'PHP', 'Laravel', 'Java', 'Spring Boot', 'C#', 'ASP.NET Core', 'MySQL', 'MongoDB', 'Redis', 'Docker'] },
+];
 export const SERVICES: { name: string; text: string }[] = [
  {
-  "name": "Frontend Development",
-  "text": "Interfaces with a point of view: fast, accessible and shaped around the way people actually use the product."
+  "name": "Web interfaces",
+  "text": "Responsive, accessible front ends built with React and Next.js."
  },
  {
-  "name": "Backend & APIs",
-  "text": "The dependable layer underneath: clear contracts, useful errors and services that stay understandable as they grow."
+  "name": "Backends and APIs",
+  "text": "APIs with clear contracts and error messages that say what went wrong."
  },
  {
-  "name": "Databases & Search",
-  "text": "Data models that make the next feature easier, from PostgreSQL and MongoDB to search, caching and vector retrieval."
+  "name": "Databases",
+  "text": "Schemas and queries in PostgreSQL, MySQL or MongoDB, designed so the next feature is easy to add."
  },
  {
-  "name": "Real-Time & Background Jobs",
-  "text": "The invisible machinery that makes a product feel alive: live updates, queues, workers and resilient background workflows."
+  "name": "Real-time and background work",
+  "text": "Live updates, queues and scheduled jobs that keep running when nobody is watching."
  },
  {
-  "name": "AI & SaaS Products",
-  "text": "Useful AI and SaaS features — grounded in real data, shipped with guardrails, and connected to the rest of the product."
+  "name": "AI features",
+  "text": "Question answering over your own documents, grounded in your data."
  }
 ];
 export type Project = { title: string; category: string; description: string; stack: string[]; demo: string; repo: string };
-// Replace "#" with real live-demo and repository URLs.
+// Replace "#" with real live-demo and repository URLs. Keep this array plain JSON: scripts/seed.mjs parses it.
 export const PROJECTS: Project[] = [
+ {
+  "title": "This portfolio",
+  "category": "Portfolio",
+  "description": "The site you are on: a public portfolio with a private admin area for editing projects and reading contact messages.",
+  "stack": [
+   "TypeScript",
+   "Next.js",
+   "PostgreSQL",
+   "Drizzle ORM"
+  ],
+  "demo": "https://bereda-dev.vercel.app",
+  "repo": "https://github.com/Bereda-maker/bereda-portofolio"
+ },
  {
   "title": "Personal Finance Tracker",
   "category": "Project",

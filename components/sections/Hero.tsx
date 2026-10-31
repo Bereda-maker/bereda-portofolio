@@ -1,46 +1,42 @@
-'use client';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import FadeIn from '@/components/ui/FadeIn';
-import ContactButton from '@/components/ui/ContactButton';
-import { NAV, ROLES, SITE } from '@/data/content';
+import { Github, Linkedin } from 'lucide-react';
+import { SITE } from '@/data/content';
 
 export default function Hero() {
-  const [i, setI] = useState(0);
-  const [show, setShow] = useState(true);
-  useEffect(() => {
-    const t = setInterval(() => { setShow(false); setTimeout(() => { setI((n) => (n + 1) % ROLES.length); setShow(true); }, 260); }, 2600);
-    return () => clearInterval(t);
-  }, []);
-
   return (
-    <section id="top" className="reference-hero relative min-h-screen overflow-hidden">
-      <div className="reference-orb reference-orb-one" /><div className="reference-orb reference-orb-two" />
-      <FadeIn y={-16} className="relative z-30">
-        <nav className="reference-nav mx-auto mt-4 flex max-w-6xl items-center justify-between gap-4 px-5 py-3 sm:px-7">
-          <a href="#top" className="reference-brand"><span className="reference-brand-mark">B</span><span>{SITE.name}</span></a>
-          <div className="hidden items-center gap-6 text-xs uppercase tracking-[.16em] text-white/70 md:flex">
-            {NAV.map((n) => <a key={n.label} href={n.href} className="reference-nav-link">{n.label}</a>)}
+    <section id="top" className="wrap pb-20 pt-14 sm:pt-20 md:pb-28">
+      <div className="grid gap-12 md:grid-cols-[1.4fr_1fr] md:items-start md:gap-16">
+        <div>
+          <p className="settle flex items-center gap-2.5 font-display text-[.95rem] font-medium text-forest">
+            <span className="beacon h-2.5 w-2.5 rounded-full bg-forest" aria-hidden="true" />
+            Available for new projects
+          </p>
+          <h1 className="settle settle-2 mt-5 font-display text-[clamp(2.3rem,4.7vw,3.5rem)] font-semibold leading-[1.02] tracking-[-.035em]">
+            I build web applications, from the database to the interface.
+          </h1>
+          <p className="settle settle-3 mt-7 max-w-[34rem] text-[1.2rem] leading-relaxed text-muted">
+            I&rsquo;m {SITE.name}, a full-stack developer in {SITE.location}. I work mostly in TypeScript, React and PostgreSQL, and I take a project from the first sketch to a deployed product.
+          </p>
+          <div className="settle settle-3 mt-9 flex flex-wrap gap-3">
+            <a href={`mailto:${SITE.email}`} className="btn btn-primary">Email me</a>
+            <a href="#work" className="btn btn-quiet">See my work</a>
           </div>
-          <a href="#contact" className="reference-nav-cta">Let&apos;s talk <span>↗</span></a>
-        </nav>
-      </FadeIn>
-
-      <div className="reference-hero-grid relative z-10 mx-auto max-w-6xl px-5 pb-16 pt-20 sm:px-8 md:px-10 md:pt-28">
-        <div className="reference-hero-copy">
-          <FadeIn delay={0.1} y={24}><p className="reference-eyebrow">PRODUCT ENGINEER · ETHIOPIA</p></FadeIn>
-          <FadeIn delay={0.16} y={28}><h1 className="reference-display">I build the<br /><span>parts</span> that make<br />ideas real<span className="reference-dot">.</span></h1></FadeIn>
-          <FadeIn delay={0.25} y={20}><div className="reference-role" style={{ opacity: show ? 1 : 0 }}>{ROLES[i]}</div></FadeIn>
-          <FadeIn delay={0.32} y={20}><p className="reference-lede">From the first sketch to the last deploy, I turn complicated product ideas into software that feels obvious to use.</p></FadeIn>
-          <FadeIn delay={0.4} y={18} className="flex flex-wrap items-center gap-4"><a href="#projects" className="reference-primary-cta">Explore my work <span>↓</span></a><ContactButton className="reference-secondary-cta" /></FadeIn>
-          <FadeIn delay={0.48} y={16}><div className="reference-social-proof"><span className="reference-live-dot" /> Available for thoughtful product work <span className="reference-divider" /> TypeScript · React · APIs</div></FadeIn>
         </div>
-        <FadeIn delay={0.35} y={30} className="reference-hero-visual">
-          <div className="reference-portrait-halo" /><div className="reference-code-chip reference-code-chip-one">&lt;/&gt;</div><div className="reference-code-chip reference-code-chip-two">{`{ }`}</div>
-          <Image src="/images/hero.png" alt="Bereda Wako" width={1100} height={859} priority className="reference-portrait" />
-        </FadeIn>
+
+        <aside aria-label="Quick facts" className="settle settle-3 rounded-lg border border-rule bg-panel p-6 sm:p-7">
+          <dl className="divide-y divide-rule font-display text-[.95rem]">
+            <div className="flex justify-between gap-6 pb-3.5"><dt className="text-muted">Based in</dt><dd className="font-medium">{SITE.location}</dd></div>
+            <div className="flex justify-between gap-6 py-3.5"><dt className="text-muted">Replies</dt><dd className="font-medium">Within 24 hours</dd></div>
+            <div className="flex justify-between gap-6 py-3.5"><dt className="shrink-0 text-muted">Mostly uses</dt><dd className="text-right font-medium">TypeScript, React, PostgreSQL</dd></div>
+            <div className="flex justify-between gap-6 pt-3.5">
+              <dt className="text-muted">Elsewhere</dt>
+              <dd className="flex gap-4 font-medium">
+                <a href={SITE.github} className="inline-flex items-center gap-1.5 underline decoration-ink/30 underline-offset-4 hover:decoration-ink" rel="noopener noreferrer"><Github size={16} aria-hidden="true" />GitHub</a>
+                {SITE.linkedin && <a href={SITE.linkedin} className="inline-flex items-center gap-1.5 underline decoration-ink/30 underline-offset-4 hover:decoration-ink" rel="noopener noreferrer"><Linkedin size={16} aria-hidden="true" />LinkedIn</a>}
+              </dd>
+            </div>
+          </dl>
+        </aside>
       </div>
-      <a href="#about" className="reference-scroll-cue">SCROLL TO EXPLORE <span>↓</span></a>
     </section>
   );
 }
