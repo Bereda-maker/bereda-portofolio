@@ -54,6 +54,19 @@ html.dark {
   .project-card:hover .project-image { transform: scale(1.035); }
 }
 
+.project-media { min-height: 15rem; }
+.project-media .project-image { display: block; }
+.project-walkthrough { position: absolute; inset: auto 1rem 1rem; z-index: 2; width: calc(100% - 2rem); max-height: 3.25rem; border: 1px solid rgb(255 255 255 / .24); border-radius: .85rem; background: rgb(4 15 11 / .78); box-shadow: 0 .8rem 2rem rgb(0 0 0 / .22); opacity: .96; transition: max-height .35s ease, background-color .25s ease; }
+.project-walkthrough:hover, .project-walkthrough:focus-visible { max-height: 12rem; background: rgb(4 15 11 / .9); }
+.project-media-label { position: absolute; left: 1rem; top: 1rem; z-index: 3; display: inline-flex; align-items: center; gap: .35rem; border: 1px solid rgb(255 255 255 / .22); border-radius: 9999px; background: rgb(4 15 11 / .56); padding: .45rem .65rem; color: white; font-family: var(--font-display); font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; backdrop-filter: blur(10px); }
+.project-media-label:hover { background: rgb(4 15 11 / .82); }
+.project-video-badge { position: absolute; right: 1rem; top: 1rem; z-index: 3; display: inline-flex; align-items: center; gap: .35rem; border-radius: 9999px; background: #efb941; padding: .45rem .65rem; color: #071712; font-family: var(--font-display); font-size: .68rem; font-weight: 700; letter-spacing: .04em; }
+@media (max-width: 639px) {
+  .project-media { min-height: 13rem; }
+  .project-video-badge { right: .7rem; top: .7rem; font-size: .62rem; }
+  .project-media-label { left: .7rem; top: .7rem; font-size: .6rem; }
+}
+
 .site-grid { background-image: linear-gradient(rgb(var(--ink) / .045) 1px, transparent 1px), linear-gradient(90deg, rgb(var(--ink) / .045) 1px, transparent 1px); background-size: 36px 36px; }
 .hero-panel { background: linear-gradient(118deg, #071712 0%, #0d2b20 56%, #174431 100%); border-top: 1px solid rgb(121 223 176 / .18); }
 .hero-top-seam { position: absolute; inset: 0 0 auto; z-index: 1; height: 4px; background: linear-gradient(90deg, transparent 0%, rgb(239 185 65 / .55) 32%, rgb(121 223 176 / .7) 68%, transparent 100%); opacity: .8; pointer-events: none; }

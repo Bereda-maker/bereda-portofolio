@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowUpRight, Github, LockKeyhole } from 'lucide-react';
+import { ArrowUpRight, Github, LockKeyhole, Play } from 'lucide-react';
 import { STACK_ICON, SITE, type Project } from '@/data/content';
 import TechIcon from '@/components/ui/TechIcon';
 import { slugify } from '@/lib/slug';
@@ -17,9 +17,14 @@ export default function Work({ projects }: { projects: Project[] }) {
         </div>
         <div className="mt-12 grid gap-7 lg:grid-cols-2">
           {projects.map((p, i) => <article key={p.title} className={`project-card group overflow-hidden rounded-[1.65rem] border border-rule bg-card shadow-soft ${i === 0 ? 'lg:col-span-2 lg:grid lg:grid-cols-[1.1fr_.9fr]' : ''}`}>
-            <Link href={`/projects/${slugify(p.title)}`} className="block overflow-hidden bg-panel" aria-label={`Read the ${p.title} case study`}>
+            <div className={`project-media group/media relative overflow-hidden bg-panel ${i === 0 ? 'lg:min-h-[24rem]' : ''}`}>
               <img src={p.image} alt={p.alt} className={`project-image ${i === 0 ? 'lg:aspect-auto lg:h-full lg:min-h-[24rem]' : ''}`} />
-            </Link>
+              {p.walkthrough && <video className="project-walkthrough" controls preload="metadata" poster={p.image} aria-label={`${p.title} video walkthrough`}>
+                <source src={p.walkthrough} type="video/mp4" />
+              </video>}
+              <Link href={`/projects/${slugify(p.title)}`} className="project-media-label" aria-label={`Read the ${p.title} case study`}><span>{p.category}</span><ArrowUpRight size={15} aria-hidden="true" /></Link>
+              {p.walkthrough && <span className="project-video-badge"><Play size={13} fill="currentColor" aria-hidden="true" /> Video walkthrough</span>}
+            </div>
             <div className="flex flex-col p-6 sm:p-8">
               <div className="flex items-start justify-between gap-5"><div><p className="eyebrow">{p.category}</p><h3 className="mt-3 font-display text-[clamp(1.65rem,3vw,2.35rem)] font-semibold leading-tight tracking-[-.04em]"><Link href={`/projects/${slugify(p.title)}`} className="hover:text-forest">{p.title}</Link></h3></div><span className="shrink-0 rounded-full border border-forest/25 bg-forest/10 px-3 py-1 font-display text-[.72rem] font-semibold uppercase tracking-[.12em] text-forest">{p.status}</span></div>
               <p className="mt-4 max-w-[37rem] text-[1.08rem] leading-relaxed text-muted">{p.description}</p>

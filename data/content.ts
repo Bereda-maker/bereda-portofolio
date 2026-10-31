@@ -21,6 +21,7 @@ export type Project = {
   demo: string;
   repo: string;
   image: string;
+  walkthrough?: string;
   alt: string;
   status: string;
   role: string;
@@ -71,6 +72,7 @@ export const PROJECTS: Project[] = [
     "demo": "https://web-cdry.vercel.app",
     "repo": "https://github.com/Bereda-maker/dibo",
     "image": "/images/projects/deborah-cover.jpg",
+    "walkthrough": "/video/walkthroughs/deborah.mp4",
     "alt": "Deborah study goal screen and exam result card",
     "status": "Live product",
     "role": "Product architecture, web experience, API workflows, auth, learning logic, QA documentation",
@@ -102,6 +104,7 @@ export const PROJECTS: Project[] = [
     "demo": "https://negus-kappa.vercel.app",
     "repo": "https://github.com/Bereda-maker/negus-gebeya-frontend",
     "image": "/images/projects/negus-cover.jpg",
+    "walkthrough": "/video/walkthroughs/negus-gebeya.mp4",
     "alt": "Negus Gebeya marketplace category imagery and product brand mark",
     "status": "Live deployment",
     "role": "Full product build across frontend and backend; marketplace, auth, payments, real-time, and admin surfaces",
@@ -133,6 +136,7 @@ export const PROJECTS: Project[] = [
     "demo": "https://tenasew.vercel.app",
     "repo": "https://github.com/Bereda-maker/TenaSew",
     "image": "/images/projects/tenasew-cover.jpg",
+    "walkthrough": "/video/walkthroughs/tenasew.mp4",
     "alt": "TenaSew wellness hero image and habit progress visual",
     "status": "Live product",
     "role": "Product experience, content model, auth/session boundary, personalized flows, and deployment documentation",
@@ -164,6 +168,7 @@ export const PROJECTS: Project[] = [
     "demo": "https://ethio-vista.com",
     "repo": "",
     "image": "/images/projects/ethiovista-cover.jpg",
+    "walkthrough": "/video/walkthroughs/ethiovista.mp4",
     "alt": "EthioVista destination imagery from the live travel site",
     "status": "Live site",
     "role": "Product and web experience; source repository was not provided in the connected GitHub account",
