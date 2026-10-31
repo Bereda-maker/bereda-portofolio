@@ -21,7 +21,7 @@ export default async function AdminProjectsPage() {
   return (
     <div className="flex flex-col gap-6">
       {dbError && (
-        <div className="rounded-2xl border border-[#ff5c7a]/40 text-[#ff5c7a] px-5 py-4 text-sm">
+        <div className="rounded-2xl border border-[#ff829b]/40 text-[#ff829b] px-5 py-4 text-sm">
           Could not reach the database. Check that <code>DATABASE_URL</code> is set correctly and migrations have been applied.
         </div>
       )}

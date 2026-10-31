@@ -88,7 +88,7 @@ export default function MessagesList({ initialMessages }: { initialMessages: Mes
         </button>
       </div>
 
-      {err && <div className="text-sm" style={{ color: '#ff5c7a' }}>{err}</div>}
+      {err && <div className="text-sm" style={{ color: '#ff829b' }}>{err}</div>}
 
       <div className="flex flex-col gap-3">
         {rows.map((m) => {
@@ -96,8 +96,8 @@ export default function MessagesList({ initialMessages }: { initialMessages: Mes
           return (
             <div
               key={m.id}
-              className="rounded-2xl border border-[#D7E2EA]/15 overflow-hidden"
-              style={{ borderLeft: m.read ? undefined : '3px solid #B600A8' }}
+              className="rounded-2xl border border-[#dbe7ff]/15 overflow-hidden"
+              style={{ borderLeft: m.read ? undefined : '3px solid #7da3ff' }}
             >
               <button type="button" onClick={() => setOpenId(open ? null : m.id)} className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left">
                 <div className="min-w-0">

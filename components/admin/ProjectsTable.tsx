@@ -48,7 +48,7 @@ export default function ProjectsTable({ initialProjects }: { initialProjects: Pr
         )}
       </div>
 
-      {err && <div className="text-sm" style={{ color: '#ff5c7a' }}>{err}</div>}
+      {err && <div className="text-sm" style={{ color: '#ff829b' }}>{err}</div>}
 
       {editing === 'new' && <ProjectForm onSaved={onSaved} onCancel={() => setEditing(null)} />}
       {editing && editing !== 'new' && <ProjectForm project={editing} onSaved={onSaved} onCancel={() => setEditing(null)} />}
@@ -56,7 +56,7 @@ export default function ProjectsTable({ initialProjects }: { initialProjects: Pr
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left uppercase tracking-widest text-xs opacity-50 border-b border-[#D7E2EA]/15">
+            <tr className="text-left uppercase tracking-widest text-xs opacity-50 border-b border-[#dbe7ff]/15">
               <th className="py-3 pr-4">Title</th>
               <th className="py-3 pr-4">Category</th>
               <th className="py-3 pr-4">Stack</th>
@@ -66,7 +66,7 @@ export default function ProjectsTable({ initialProjects }: { initialProjects: Pr
           </thead>
           <tbody>
             {rows.map((p) => (
-              <tr key={p.id} className="border-b border-[#D7E2EA]/10">
+              <tr key={p.id} className="border-b border-[#dbe7ff]/10">
                 <td className="py-3 pr-4 font-medium">{p.title}</td>
                 <td className="py-3 pr-4 opacity-70">{p.category}</td>
                 <td className="py-3 pr-4 opacity-70">{p.stack.join(', ')}</td>

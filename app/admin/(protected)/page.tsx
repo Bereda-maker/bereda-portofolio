@@ -33,9 +33,10 @@ async function getDashboardData() {
 
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-[28px] border border-[#D7E2EA]/15 p-6 sm:p-8">
-      <div className="text-4xl sm:text-5xl font-black">{value}</div>
-      <div className="uppercase tracking-widest text-sm opacity-60 mt-2">{label}</div>
+    <div className="admin-card admin-stat">
+      <div className="admin-stat-label">{label}</div>
+      <div className="admin-stat-value">{value}</div>
+      <span className="admin-stat-accent" aria-hidden="true" />
     </div>
   );
 }
@@ -44,51 +45,44 @@ export default async function AdminDashboard() {
   const { projectCount, messageCount, unreadCount, recent, dbError } = await getDashboardData();
 
   return (
-    <div className="flex flex-col gap-10">
-      <h1 className="text-3xl sm:text-4xl font-black uppercase">Dashboard</h1>
+    <div className="admin-page">
+      <header className="admin-page-header">
+        <div><p className="admin-eyebrow">Overview / Today</p><h1 className="admin-title">Dashboard</h1><p className="admin-description">A clear view of your portfolio activity, incoming conversations, and the work currently published on the site.</p></div>
+        <div className="admin-actions"><Link href="/admin/projects" className="admin-button">Manage projects</Link><Link href="/admin/messages" className="admin-button-secondary">Open inbox</Link></div>
+      </header>
 
       {dbError && (
-        <div className="rounded-2xl border border-[#ff5c7a]/40 text-[#ff5c7a] px-5 py-4 text-sm">
+        <div className="admin-error">
           Could not reach the database. Check that <code>DATABASE_URL</code> is set correctly and migrations have been applied.
         </div>
       )}
 
-      <div className="grid sm:grid-cols-3 gap-5">
+      <div className="admin-stat-grid">
         <StatCard label="Projects" value={projectCount} />
         <StatCard label="Messages" value={messageCount} />
         <StatCard label="Unread" value={unreadCount} />
       </div>
 
-      <div className="flex flex-wrap gap-3">
-        <Link href="/admin/projects" className="cbtn rounded-full text-white font-medium uppercase tracking-widest px-8 py-3 text-sm">Manage Projects</Link>
-        <Link href="/admin/messages" className="rounded-full border-2 border-[#D7E2EA] font-medium uppercase tracking-widest px-8 py-3 text-sm hover:bg-[#D7E2EA]/10 transition">
-          {unreadCount > 0 ? `View ${unreadCount} Unread Message${unreadCount === 1 ? '' : 's'}` : 'View Messages'}
-        </Link>
-      </div>
-
-      <div>
-        <h2 className="uppercase tracking-widest text-sm opacity-60 mb-4">Recent Messages</h2>
+      <section>
+        <div className="admin-section-heading"><span>Recent messages</span><Link href="/admin/messages" className="text-[.68rem] text-[#7da3ff] hover:underline">View all ↗</Link></div>
         {recent.length === 0 ? (
-          <p className="opacity-50 text-sm">No messages yet.</p>
+          <div className="admin-card px-5 py-8 text-sm text-[#aebedd]">No messages yet.</div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="admin-list">
             {recent.map((m) => (
               <Link
                 key={m.id}
                 href="/admin/messages"
-                className="block rounded-2xl border border-[#D7E2EA]/15 px-5 py-4 hover:border-[#D7E2EA]/40 transition"
-                style={{ borderLeft: m.read ? undefined : '3px solid #B600A8' }}
+                className={`admin-list-item${m.read ? '' : ' unread'}`}
               >
-                <div className="flex justify-between gap-4 text-sm">
-                  <span className="font-medium">{m.name} · <span className="opacity-60">{m.email}</span></span>
-                  <span className="opacity-50 whitespace-nowrap">{new Date(m.createdAt).toLocaleDateString()}</span>
+                <div className="flex justify-between gap-4 text-sm"><span className="font-semibold">{m.name} <span className="text-[#aebedd]">· {m.email}</span></span><span className="whitespace-nowrap text-[#aebedd]">{new Date(m.createdAt).toLocaleDateString()}</span>
                 </div>
-                <p className="opacity-70 text-sm mt-1 line-clamp-1">{m.message}</p>
+                <p className="mt-1 line-clamp-1 text-sm text-[#aebedd]">{m.message}</p>
               </Link>
             ))}
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

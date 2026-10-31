@@ -66,7 +66,7 @@ export default function ProjectForm({ project, onSaved, onCancel }: Props) {
   };
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-4 rounded-[28px] border border-[#D7E2EA]/15 p-6 sm:p-8">
+    <form onSubmit={submit} className="flex flex-col gap-4 rounded-[28px] border border-[#dbe7ff]/15 p-6 sm:p-8">
       <div className="grid sm:grid-cols-2 gap-4">
         <input className="fld" placeholder="Title" value={f.title} onChange={set('title')} />
         <input className="fld" placeholder="Category (e.g. Project, Team, Client)" value={f.category} onChange={set('category')} />
@@ -77,7 +77,7 @@ export default function ProjectForm({ project, onSaved, onCancel }: Props) {
         <input className="fld" placeholder="Live demo URL (or #)" value={f.demo} onChange={set('demo')} />
         <input className="fld" placeholder="Repo URL (or #)" value={f.repo} onChange={set('repo')} />
       </div>
-      {err && <div className="text-sm" style={{ color: '#ff5c7a' }}>{err}</div>}
+      {err && <div className="text-sm" style={{ color: '#ff829b' }}>{err}</div>}
       <div className="flex gap-3">
         <button type="submit" disabled={saving} className="cbtn rounded-full text-white font-medium uppercase tracking-widest px-8 py-3 text-sm disabled:opacity-60">
           {saving ? 'Saving…' : isEdit ? 'Save Changes' : 'Create Project'}

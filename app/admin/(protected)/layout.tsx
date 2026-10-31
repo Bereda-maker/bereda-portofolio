@@ -20,26 +20,28 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!(await isAdminRequest())) redirect('/admin/login');
 
   return (
-    <div className="min-h-screen" style={{ background: '#0C0C0C', color: '#D7E2EA' }}>
-      <header className="flex flex-wrap items-center justify-between gap-4 px-5 sm:px-8 md:px-10 py-5 border-b border-[#D7E2EA]/10">
-        <div className="flex items-center gap-8 sm:gap-10">
-          <span className="font-black uppercase tracking-wide text-lg">Bereda <span className="opacity-50 font-light">/ Admin</span></span>
-          <nav className="flex max-w-full flex-wrap gap-x-5 gap-y-2 uppercase text-xs tracking-widest">
-            {NAV.map((n) => (
-              <Link key={n.href} href={n.href} className="hover:opacity-70 transition-opacity duration-200">
-                {n.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link href="/" target="_blank" className="text-sm uppercase tracking-widest opacity-70 hover:opacity-100 transition-opacity">
-            View site ↗
-          </Link>
+    <div className="admin-shell">
+      <aside className="admin-sidebar">
+        <Link href="/admin" className="admin-brand">
+          <span className="admin-brand-mark">B</span>
+          <span className="admin-brand-copy"><strong>Bereda</strong><span>Control center</span></span>
+        </Link>
+        <nav className="admin-nav" aria-label="Admin navigation">
+          <span className="admin-nav-label">Workspace</span>
+          {NAV.map((n) => <Link key={n.href} href={n.href}>{n.label}</Link>)}
+        </nav>
+        <div className="admin-sidebar-footer">
+          <Link href="/" target="_blank">View public site ↗</Link>
           <LogoutButton />
         </div>
-      </header>
-      <main className="px-5 sm:px-8 md:px-10 py-10 max-w-6xl mx-auto">{children}</main>
+      </aside>
+      <div className="admin-main">
+        <header className="admin-topbar">
+          <span className="admin-topbar-meta">Private workspace / Bereda portfolio</span>
+          <div className="flex items-center gap-3"><Link href="/" target="_blank" className="admin-button-secondary !px-4 !py-2 !text-[.65rem]">View site ↗</Link><LogoutButton /></div>
+        </header>
+        <main className="admin-content">{children}</main>
+      </div>
     </div>
   );
 }

@@ -37,8 +37,9 @@ export default function LoginForm() {
   };
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-4 w-full max-w-sm">
+    <form onSubmit={submit} className="admin-login-form">
       <input
+        name="password"
         type="password"
         autoComplete="current-password"
         autoFocus
@@ -47,8 +48,8 @@ export default function LoginForm() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <div className="text-sm min-h-[1.25rem]" style={{ color: '#ff5c7a' }}>{err}</div>
-      <button type="submit" disabled={loading} className="cbtn rounded-full text-white font-medium uppercase tracking-widest px-10 py-3.5 disabled:opacity-60">
+      <div className="min-h-[1.25rem] text-sm text-[#ff829b]">{err}</div>
+      <button type="submit" disabled={loading} className="cbtn w-full !py-3.5 disabled:opacity-60">
         {loading ? 'Signing in…' : 'Sign In'}
       </button>
     </form>
