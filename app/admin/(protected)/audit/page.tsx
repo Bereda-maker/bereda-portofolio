@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 export default function AdminAuditPage() {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="admin-page">
       <AdminPageHeader eyebrow="Operations / Accountability" title="Audit & activity" description="A privacy-conscious record of administrative changes, provider events, and reconciliation attempts." />
       <SetupRequired title="Audit logging is not configured">
         The current backend has no audit-event table, structured event sink, retention policy, or actor metadata. No activity timeline is shown until those pieces are implemented.

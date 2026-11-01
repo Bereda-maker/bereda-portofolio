@@ -1,9 +1,15 @@
 import Link from 'next/link';
+import { ArrowUpRight, Inbox, Wrench, type LucideIcon } from 'lucide-react';
 
-export function AdminPageHeader({ eyebrow, title, description }: { eyebrow: string; title: string; description: string }) {
+export function AdminPageHeader({ eyebrow, title, description, actions }: { eyebrow?: string; title: string; description?: string; actions?: React.ReactNode }) {
   return (
     <header className="admin-page-header">
-      <div><p className="admin-eyebrow">{eyebrow}</p><h1 className="admin-title">{title}</h1><p className="admin-description">{description}</p></div>
+      <div>
+        {eyebrow && <p className="admin-eyebrow">{eyebrow}</p>}
+        <h1 className="admin-title">{title}</h1>
+        {description && <p className="admin-description">{description}</p>}
+      </div>
+      {actions && <div className="admin-actions">{actions}</div>}
     </header>
   );
 }
@@ -11,21 +17,24 @@ export function AdminPageHeader({ eyebrow, title, description }: { eyebrow: stri
 export function SetupRequired({ title = 'Setup required', children }: { title?: string; children: React.ReactNode }) {
   return (
     <section className="admin-notice">
-      <div className="flex items-start gap-4">
-        <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[#f0bd48]" aria-hidden="true" />
-        <div>
-          <h2 className="font-bold text-lg">{title}</h2>
-          <div className="mt-2 text-sm opacity-70 leading-relaxed">{children}</div>
-        </div>
+      <span className="admin-notice-icon" aria-hidden="true"><Wrench size={16} /></span>
+      <div>
+        <h2>{title}</h2>
+        <div className="admin-notice-body">{children}</div>
       </div>
     </section>
   );
 }
 
-export function EmptyAdminState({ children }: { children: React.ReactNode }) {
-  return <div className="admin-card border-dashed px-5 py-8 text-sm text-[#aebedd]">{children}</div>;
+export function EmptyAdminState({ children, icon: Icon = Inbox }: { children: React.ReactNode; icon?: LucideIcon }) {
+  return (
+    <div className="admin-empty">
+      <span className="admin-empty-icon" aria-hidden="true"><Icon size={18} /></span>
+      <p>{children}</p>
+    </div>
+  );
 }
 
 export function AdminLink({ href, children }: { href: string; children: React.ReactNode }) {
-  return <Link href={href} className="admin-button-secondary">{children}</Link>;
+  return <Link href={href} className="admin-button-secondary">{children}<ArrowUpRight size={14} aria-hidden="true" /></Link>;
 }
