@@ -60,6 +60,11 @@ npm run dev                  # http://localhost:3000
 - `/admin/messages` — newest-first list of contact form submissions.
   Unread messages have a magenta left border; click a row to expand it;
   mark read/unread, delete, or mark everything read at once.
+- `/admin/opportunities` — approval-first AI Opportunity & Outreach Agent.
+  Save your candidate profile, paste a public opportunity or recruiting URL,
+  review source evidence, inspect fit scores and gaps, approve or reject a
+  match, and generate a personalized draft. The app never submits an
+  application or sends outreach automatically.
 - Session: a signed, `httpOnly` cookie (`portfolio_admin`, iron-session,
   7-day expiry). `middleware.ts` redirects any signed-out visit to
   `/admin/*` (except `/admin/login` itself) to the login page — it does not
@@ -147,3 +152,21 @@ CC0).
 The Drizzle schema also includes books/categories, videos, mentorship profiles/sessions/usage, appointments and availability, opportunities/companies/applications, newsletter subscribers, audit logs, site settings, and media assets. The additive migration in `drizzle/` does not recreate the existing `projects` or `messages` tables.
 
 Typed domain helpers live under `lib/services/` for mentorship pricing/usage ledger entries, appointment conflict validation, and opportunity match scoring. Payment, storage, email, calendar, and AI provider abstractions intentionally return `setup_required` until the corresponding provider and credentials are configured; no credentials or sample records are included.
+
+### AI Opportunity & Outreach Agent configuration
+
+Apply the generated migration with `npm run db:migrate`, then configure an
+OpenAI-compatible provider in the deployment environment:
+
+```bash
+AI_PROVIDER=openai
+AI_API_KEY=your-server-side-key
+AI_BASE_URL=https://api.openai.com/v1
+AI_MODEL=gpt-4o-mini
+```
+
+Anthropic is also supported with `AI_PROVIDER=anthropic` and the corresponding
+key/model. Research fetches only the public URL supplied by the admin, stores
+the source URL and excerpt as evidence, scores the opportunity against the
+saved profile, and keeps every match and outreach draft in `pending`/`draft`
+state until a human approves it. Provider keys are never sent to the browser.
