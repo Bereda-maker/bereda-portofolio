@@ -1,13 +1,15 @@
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowUpRight, CornerDownLeft, Plus, Search, type LucideIcon } from 'lucide-react';
+import { ArrowUpRight, CornerDownLeft, Plus, Search, type LucideIcon, Monitor, Moon, Sun } from 'lucide-react';
+import { useAdminTheme } from './AdminTheme';
 import { ALL_NAV_ITEMS } from './nav';
 
 type Command = { id: string; label: string; hint: string; keywords: string; icon: LucideIcon; run: () => void };
 
 export default function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
   const router = useRouter();
+  const { setPref } = useAdminTheme();
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -16,8 +18,11 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
   const commands = useMemo<Command[]>(() => [
     { id: 'new-project', label: 'New project', hint: 'Action', keywords: 'add create portfolio', icon: Plus, run: () => router.push('/admin/projects?new=1') },
     ...ALL_NAV_ITEMS.map((item) => ({ id: item.href, label: item.label, hint: 'Go to', keywords: item.keywords ?? '', icon: item.icon, run: () => router.push(item.href) })),
+    { id: 'theme-light', label: 'Switch to light theme', hint: 'Theme', keywords: 'appearance mode day bright', icon: Sun, run: () => setPref('light') },
+    { id: 'theme-dark', label: 'Switch to dark theme', hint: 'Theme', keywords: 'appearance mode night', icon: Moon, run: () => setPref('dark') },
+    { id: 'theme-system', label: 'Match system theme', hint: 'Theme', keywords: 'appearance mode auto os', icon: Monitor, run: () => setPref('system') },
     { id: 'public-site', label: 'View public site', hint: 'Opens in new tab', keywords: 'website portfolio live', icon: ArrowUpRight, run: () => window.open('/', '_blank', 'noopener') },
-  ], [router]);
+  ], [router, setPref]);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
