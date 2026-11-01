@@ -18,8 +18,9 @@ export default function LogoutButton() {
   };
 
   return (
-    <button type="button" onClick={logout} disabled={loading} className="chip inline-flex items-center gap-2 disabled:opacity-60">
-      <LogOut size={14} /> {loading ? 'Signing out…' : 'Logout'}
+    <button type="button" onClick={logout} disabled={loading} className="admin-nav-link admin-signout">
+      <LogOut size={17} aria-hidden="true" />
+      <span>{loading ? 'Signing out…' : 'Sign out'}</span>
     </button>
   );
 }

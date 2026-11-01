@@ -1,4 +1,6 @@
 import { desc } from 'drizzle-orm';
+import { AlertTriangle } from 'lucide-react';
+import { AdminPageHeader } from '@/components/admin/AdminSetupState';
 import MessagesList from '@/components/admin/MessagesList';
 import type { MessageRow } from '@/lib/schema';
 
@@ -20,10 +22,12 @@ async function loadMessages(): Promise<{ rows: MessageRow[]; dbError: boolean }>
 export default async function AdminMessagesPage() {
   const { rows, dbError } = await loadMessages();
   return (
-    <div className="flex flex-col gap-6">
+    <div className="admin-page">
+      <AdminPageHeader eyebrow="People & scheduling" title="Messages" description="Everything sent through your contact form, newest first. Opening a message marks it as read." />
       {dbError && (
-        <div className="rounded-2xl border border-[#ff829b]/40 text-[#ff829b] px-5 py-4 text-sm">
-          Could not reach the database. Check that <code>DATABASE_URL</code> is set correctly and migrations have been applied.
+        <div className="admin-error" role="alert">
+          <AlertTriangle size={16} aria-hidden="true" />
+          <span>Could not reach the database. Check that <code>DATABASE_URL</code> is set correctly and migrations have been applied.</span>
         </div>
       )}
       <MessagesList initialMessages={rows} />
