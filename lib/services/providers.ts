@@ -10,5 +10,5 @@ function unconfigured(provider: string, requiredEnvironmentVariables: string[]):
 export const paymentProvider: PaymentProvider = { async createCheckout() { return unconfigured('payment', ['PAYMENT_PROVIDER', 'PAYMENT_SECRET_KEY']); } };
 export const storageProvider: StorageProvider = { async createUpload() { return unconfigured('storage', ['STORAGE_PROVIDER', 'STORAGE_BUCKET', 'STORAGE_ACCESS_KEY']); } };
 export const emailProvider: EmailProvider = { async send() { return unconfigured('email', ['EMAIL_PROVIDER', 'EMAIL_API_KEY', 'EMAIL_FROM']); } };
-export const calendarProvider: CalendarProvider = { async createEvent() { return unconfigured('calendar', ['CALENDAR_PROVIDER', 'CALENDAR_API_KEY', 'CALENDAR_ID']); } };
+export const calendarProvider: CalendarProvider = { async createEvent() { return unconfigured('calendar', ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_REDIRECT_URI', 'GOOGLE_CALENDAR_ID']); } };
 export const aiProvider: AiProvider = { async complete() { return unconfigured('ai', ['AI_PROVIDER', 'AI_API_KEY']); } };

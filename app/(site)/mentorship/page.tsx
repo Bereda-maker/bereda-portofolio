@@ -8,8 +8,8 @@ export default function Page() {
   return (
     <PublicPage title="Mentorship" intro="Focused one-to-one conversations, not a course.">
       <Note>
-        <p>There is no booking calendar or paid programme yet. If you have a specific technical or career question and would like to talk it through, send me a note and I’ll tell you whether I can help.</p>
-        <Link href="/#contact" className="btn btn-primary mt-6">Get in touch</Link>
+        <p>Choose a focused conversation and request a time that works for both of us. Availability is checked against the connected calendar before a booking is confirmed.</p>
+        <Link href="/book" className="btn btn-primary mt-6">Book a conversation</Link>
       </Note>
     </PublicPage>
   );

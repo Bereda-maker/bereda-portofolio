@@ -33,6 +33,10 @@ npm run dev                  # http://localhost:3000
 | `DATABASE_URL` | Postgres connection string. |
 | `SESSION_SECRET` | Random string, 32+ characters, used to encrypt the admin session cookie. Generate with `openssl rand -base64 32`. |
 | `ADMIN_PASSWORD_HASH` | bcrypt hash of your admin password — never the plain password. Generate with: `node -e "console.log(require('bcryptjs').hashSync('your-password', 12))"` |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID for the calendar connection. |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret; server-only. |
+| `GOOGLE_REDIRECT_URI` | Exact callback URL, such as `https://bereda-dev.vercel.app/api/calendar/google/callback`. |
+| `GOOGLE_CALENDAR_ID` | Calendar to use for bookings, normally `primary`. |
 
 ## What's in the database vs. the code
 
@@ -63,6 +67,20 @@ npm run dev                  # http://localhost:3000
 - Every admin mutation (login, logout, and all `POST`/`PATCH`/`DELETE`
   calls under `/api/admin/*`) checks the session **and** that the request's
   `Origin` matches the site's own host, as a CSRF guard.
+
+### Client appointment scheduler
+
+- `/admin/appointments` connects Google Calendar, configures meeting types and
+  weekly availability, and lists upcoming reservations.
+- `/book` is the public booking page. Visitors choose a meeting type, date,
+  available slot, name, email, and notes.
+- Availability is checked server-side against weekly windows, existing
+  appointments, blocked times, and Google Calendar free/busy data.
+- A confirmed booking creates a Google Calendar event, sends the visitor an
+  invitation through Google Calendar, and requests a Google Meet link.
+- Register the exact `GOOGLE_REDIRECT_URI` under **Authorized redirect URIs**
+  in Google Cloud Console. The integration uses the private Calendar scope
+  `https://www.googleapis.com/auth/calendar` and keeps refresh tokens server-side.
 
 ## Contact form
 
