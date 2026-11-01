@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ArrowUpRight, Menu, Search, X } from 'lucide-react';
 import CommandPalette from './CommandPalette';
+import ThemeToggle from './AdminTheme';
 import LogoutButton from './LogoutButton';
 import { ALL_NAV_ITEMS, NAV_GROUPS, isActive } from './nav';
 
@@ -76,6 +77,7 @@ export default function AdminShell({ unread, children }: { unread: number; child
             </nav>
           </div>
           <div className="admin-topbar-right">
+            <ThemeToggle />
             <button type="button" className="admin-search-trigger" onClick={() => setPalette(true)} aria-label="Search pages and actions">
               <Search size={15} aria-hidden="true" />
               <span>Search or jump to…</span>
