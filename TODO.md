@@ -10,8 +10,14 @@
 - [x] **One-page CV:** generated and exposed at `/bereda-wako-cv.pdf` from header, hero, About, and footer.
 - [x] **Relevant experience and individual contributions:** About section, card contribution lines, and case-study sections for workflow, architecture, and integrations.
 - [x] **Technical writing and testing evidence:** Proof section links to Deborah release-readiness/QA documents and TenaSew architecture/deployment notes.
-- [ ] **Books catalog and admin:** Admin can create, update, and delete book records with title, author, category, description, optional cover and external book URL, and draft/published status; public `/books` shows published books only and has clear empty/error states; admin mutations require the existing session and same-origin protections; no in-app payment or private-file delivery is presented as configured without an implemented provider.
+- [x] **Books catalog and admin:** Admin can create, update, and delete book records with title, author, category, description, optional cover and external book URL, and draft/published status; public `/books` shows published books only and has clear empty/error states; admin mutations require the existing session and same-origin protections; no in-app payment or private-file delivery is presented as configured without an implemented provider. Deployed and smoke-tested on Render and Vercel; no real titles were supplied or seeded.
 - [x] **Client next step:** “Tell me about your project.” plus discovery, MVP scope, deliverables, estimated-scope conversation, proposal path, and no fixed-price promise.
 - [x] **Homepage hero refresh:** preserve the existing navbar; customize the hero with a dark green editorial panel, personal headline, regenerated transparent laptop portrait using the supplied face, content-driven responsive image sizing, gold/mint accents, responsive CTAs, no selected-build card, no outer border/margin space, and verified proof-oriented metrics instead of copying the reference image literally.
-- [ ] **Deployment confirmation:** push to the existing GitHub remote and confirm the existing Vercel deployment completes successfully.
+- [x] **Deployment confirmation:** pushed commit `49b1e43588641fc00c3a758cfb7df8f2010bf62c` to the existing GitHub remote; Render deployment is live and both public Books routes serve the new catalog.
 - [ ] **EthioVista source handoff:** add a direct repository link and deeper source-based evidence when the owner supplies the missing repository.
+
+## Latest Books release verification
+- Commit `49b1e43588641fc00c3a758cfb7df8f2010bf62c` is live on Render (`dep-dbjps6bncjis73dsntl0`) and the Vercel Books route serves the same new catalog.
+- `/books` returns HTTP 200 with the expected empty-catalog state on both hosts; the database-backed route reports no connection/migration error.
+- `GET /api/admin/books` returns HTTP 401 without a session on both hosts, confirming the admin endpoint is not public.
+- No actual book records were added; the owner can add real titles from `/admin/books`.
