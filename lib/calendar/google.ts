@@ -76,6 +76,12 @@ export async function getGoogleBusy(calendarId: string, refreshToken: string, st
   return data.calendars?.[calendarId]?.busy ?? [];
 }
 
+export async function listGoogleEvents(calendarId: string, refreshToken: string, startsAt: Date, endsAt: Date) {
+  const params = new URLSearchParams({ timeMin: startsAt.toISOString(), timeMax: endsAt.toISOString(), singleEvents: 'true', orderBy: 'startTime', maxResults: '50' });
+  const data = await googleFetch(`/calendars/${encodeURIComponent(calendarId)}/events?${params.toString()}`, refreshToken) as { items?: Array<{ id: string; summary?: string; description?: string; htmlLink?: string; start?: { dateTime?: string; date?: string }; end?: { dateTime?: string; date?: string }; status?: string }> };
+  return (data.items || []).filter((event) => event.status !== 'cancelled').map((event) => ({ id: event.id, summary: event.summary || 'Untitled event', description: event.description || null, htmlLink: event.htmlLink || null, startsAt: event.start?.dateTime || event.start?.date || null, endsAt: event.end?.dateTime || event.end?.date || null }));
+}
+
 export async function createGoogleEvent(input: { refreshToken: string; calendarId: string; title: string; startsAt: Date; endsAt: Date; timezone: string; attendeeEmail: string; attendeeName: string; notes?: string }) {
   const data = await googleFetch(`/calendars/${encodeURIComponent(input.calendarId)}/events?conferenceDataVersion=1&sendUpdates=all`, input.refreshToken, { method: 'POST', body: JSON.stringify({ summary: input.title, description: input.notes || undefined, start: { dateTime: input.startsAt.toISOString(), timeZone: input.timezone }, end: { dateTime: input.endsAt.toISOString(), timeZone: input.timezone }, attendees: [{ email: input.attendeeEmail, displayName: input.attendeeName }], conferenceData: { createRequest: { requestId: `bereda-${Date.now()}-${Math.random().toString(36).slice(2)}`, conferenceSolutionKey: { type: 'hangoutsMeet' } } } }) }) as { id: string; htmlLink?: string; hangoutLink?: string; conferenceData?: { entryPoints?: Array<{ entryPointType?: string; uri?: string }> } };
   return { eventId: data.id, eventUrl: data.htmlLink, meetingUrl: data.hangoutLink || data.conferenceData?.entryPoints?.find((entry) => entry.entryPointType === 'video')?.uri };
