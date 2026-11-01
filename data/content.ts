@@ -45,6 +45,7 @@ export const NAV = [
   { label: 'Work', href: '/#work' },
   { label: 'Experience', href: '/#experience' },
   { label: 'Extracurricular', href: '/#extracurricular' },
+  { label: 'Books', href: '/books' },
   { label: 'Contact', href: '/#contact' },
 ];
 

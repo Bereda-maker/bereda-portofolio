@@ -1,4 +1,7 @@
-import { AdminPageHeader, SetupRequired } from '@/components/admin/AdminSetupState';
+import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
+import { AdminPageHeader } from '@/components/admin/AdminSetupState';
+import BooksWorkspace from '@/components/admin/BooksWorkspace';
 
 export const metadata = { title: 'Books -- Admin' };
 export const dynamic = 'force-dynamic';
@@ -6,10 +9,13 @@ export const dynamic = 'force-dynamic';
 export default function AdminBooksPage() {
   return (
     <div className="admin-page">
-      <AdminPageHeader eyebrow="Publishing / Books" title="Books" description="Prepare books and digital products for publishing without implying that delivery or sales are live." />
-      <SetupRequired title="Book publishing is not configured">
-        The current database has no book, category, preview, protected-file, purchase, or verified-payment tables. Add those backend contracts and private storage before creating or selling a book here.
-      </SetupRequired>
+      <AdminPageHeader
+        eyebrow="Publishing / Books"
+        title="Books"
+        description="Manage book details and choose which titles appear in the public catalog."
+        actions={<Link href="/books" target="_blank" rel="noreferrer" className="admin-button-secondary">View public catalog <ArrowUpRight size={14} aria-hidden="true" /></Link>}
+      />
+      <BooksWorkspace />
     </div>
   );
 }

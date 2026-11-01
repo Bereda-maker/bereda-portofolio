@@ -318,6 +318,12 @@ textarea.fld { resize: vertical; line-height: 1.5; }
 .admin-skeleton { border-radius: var(--r-card); background: linear-gradient(90deg, color-mix(in srgb, var(--admin-blue) 6%, transparent), color-mix(in srgb, var(--admin-blue) 13%, transparent), color-mix(in srgb, var(--admin-blue) 6%, transparent)); background-size: 200% 100%; animation: admin-shimmer 1.4s ease-in-out infinite; }
 @keyframes admin-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 
+.admin-check-row { display: flex; align-items: center; gap: .7rem; border: 1px solid var(--admin-border); border-radius: var(--r-card); padding: .8rem .9rem; cursor: pointer; }
+.admin-check-row input { width: 1rem; height: 1rem; accent-color: var(--admin-blue); }
+.admin-check-row span { display: flex; flex-direction: column; gap: .15rem; }
+.admin-check-row strong { font-size: .9rem; font-weight: 600; }
+.admin-check-row small { color: var(--admin-muted); font-size: .82rem; }
+
 .admin-status-list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
 .admin-status-row { display: flex; align-items: center; gap: .9rem; padding: .95rem 0; }
 .admin-status-row + .admin-status-row { border-top: 1px solid var(--admin-border); }

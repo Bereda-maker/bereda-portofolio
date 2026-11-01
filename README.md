@@ -57,6 +57,13 @@ npm run dev                  # http://localhost:3000
 - `/admin` — project/message counts, unread count, 5 most recent messages.
 - `/admin/projects` — table of all projects; add, edit, delete. Stack tags
   are entered as a comma-separated list in the form and stored as an array.
+- `/admin/books` — create, edit, and delete book catalog records with author,
+  category, description, optional public cover/book-page URLs, and draft or
+  published status. Published records appear on `/books`; drafts stay private.
+  This catalog does not provide checkout, payment verification, file uploads,
+  or protected digital downloads. The `books` and `categories` tables are in
+  the existing Drizzle schema; apply pending migrations with `npm run db:migrate`
+  if the admin API reports that those tables are missing.
 - `/admin/messages` — newest-first list of contact form submissions.
   Unread messages have a magenta left border; click a row to expand it;
   mark read/unread, delete, or mark everything read at once.
