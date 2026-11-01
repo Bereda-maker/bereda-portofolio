@@ -6,6 +6,18 @@ export type EmailProvider = { send(input: { to: string; subject: string; text: s
 export type CalendarProvider = { createEvent(input: { title: string; startsAt: Date; endsAt: Date; attendeeEmail: string }): Promise<ProviderResult<{ eventId: string }>> };
 export type AiProvider = { complete(input: { prompt: string; system?: string; json?: boolean }): Promise<ProviderResult<{ text: string }>> };
 
+async function providerError(response: Response, provider: string) {
+  const raw = await response.text().catch(() => '');
+  let detail = '';
+  try {
+    const body = JSON.parse(raw) as { error?: { message?: string } | string; message?: string };
+    detail = typeof body.error === 'string' ? body.error : body.error?.message ?? body.message ?? '';
+  } catch {
+    detail = raw.replace(/\s+/g, ' ').slice(0, 300);
+  }
+  return new Error(`${provider} request failed (${response.status})${detail ? `: ${detail.slice(0, 300)}` : ''}`);
+}
+
 function unconfigured(provider: string, requiredEnvironmentVariables: string[]): SetupRequired {
   return { status: 'setup_required', provider, requiredEnvironmentVariables, message: `${provider} is not configured. Add the required integration credentials before calling this provider.` };
 }
@@ -30,7 +42,7 @@ export const aiProvider: AiProvider = {
           method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
           body: JSON.stringify({ model, max_tokens: 1800, system, messages: [{ role: 'user', content: prompt }] }),
         });
-        if (!response.ok) throw new Error(`AI provider returned ${response.status}`);
+        if (!response.ok) throw await providerError(response, provider);
         const data = await response.json() as { content?: Array<{ text?: string }> };
         return { status: 'ok', data: { text: data.content?.map((part) => part.text ?? '').join('') ?? '' } };
       }
@@ -39,12 +51,12 @@ export const aiProvider: AiProvider = {
         method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
         body: JSON.stringify({ model, temperature: 0.2, response_format: json ? { type: 'json_object' } : undefined, messages: [{ role: 'system', content: system ?? 'You are a careful career research assistant.' }, { role: 'user', content: prompt }] }),
       });
-      if (!response.ok) throw new Error(`AI provider returned ${response.status}`);
+      if (!response.ok) throw await providerError(response, provider);
       const data = await response.json() as { choices?: Array<{ message?: { content?: string } }> };
       return { status: 'ok', data: { text: data.choices?.[0]?.message?.content ?? '' } };
     } catch (error) {
       console.error('[aiProvider] completion failed:', error instanceof Error ? error.message : error);
-      return { status: 'setup_required', provider, requiredEnvironmentVariables: ['AI_API_KEY'], message: 'The configured AI provider could not complete the request. Check the provider, model, base URL, and API key.' };
+      return { status: 'setup_required', provider, requiredEnvironmentVariables: ['AI_API_KEY'], message: error instanceof Error ? error.message : 'The configured AI provider could not complete the request.' };
     }
   },
 };
