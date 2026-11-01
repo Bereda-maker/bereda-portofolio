@@ -1,4 +1,4 @@
-import { BookOpen, Briefcase, CalendarDays, FolderKanban, GraduationCap, LayoutDashboard, Mail, ScrollText, Settings, Video, type LucideIcon } from 'lucide-react';
+import { BookOpen, Briefcase, CalendarDays, FileText, FolderKanban, GraduationCap, LayoutDashboard, Mail, ScrollText, Settings, Video, type LucideIcon } from 'lucide-react';
 
 export type NavItem = { href: string; label: string; icon: LucideIcon; exact?: boolean; badge?: 'unread'; keywords?: string };
 export type NavGroup = { label: string; items: NavItem[] };
@@ -10,7 +10,8 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: '/admin/projects', label: 'Projects', icon: FolderKanban, keywords: 'portfolio work case studies' },
       { href: '/admin/books', label: 'Books', icon: BookOpen, keywords: 'publishing products' },
-      { href: '/admin/videos', label: 'Videos & content', icon: Video, keywords: 'media drafts' },
+      { href: '/admin/videos', label: 'Videos', icon: Video, keywords: 'media publishing' },
+      { href: '/admin/content', label: 'Content', icon: FileText, keywords: 'articles writing drafts' },
     ],
   },
   {

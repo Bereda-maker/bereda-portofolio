@@ -49,6 +49,7 @@ export function SiteFooter() {
           <li><a href={SITE.github} className="hover:text-ink" rel="noopener noreferrer">GitHub</a></li>
           <li><a href={SITE.cv} download className="hover:text-ink">Download CV</a></li>
           <li><Link href="/journey" className="hover:text-ink">How I work</Link></li>
+          <li><Link href="/content" className="hover:text-ink">Writing</Link></li>
           <li><a href="#top" className="hover:text-ink">Back to top</a></li>
         </ul>
       </div>

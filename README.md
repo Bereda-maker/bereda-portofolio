@@ -64,6 +64,13 @@ npm run dev                  # http://localhost:3000
   or protected digital downloads. The `books` and `categories` tables are in
   the existing Drizzle schema; apply pending migrations with `npm run db:migrate`
   if the admin API reports that those tables are missing.
+- `/admin/videos` — manage video records using HTTPS YouTube, Vimeo, or direct
+  MP4/WebM sources. `/videos` embeds published records only. Uploads and media
+  storage are not configured.
+- `/admin/content` — create, edit, and delete written entries with title, slug,
+  category, summary, body, and draft/published status. Entries use namespaced
+  JSON values in the existing `site_settings` table; `/content` and
+  `/content/:slug` show only published content.
 - `/admin/messages` — newest-first list of contact form submissions.
   Unread messages have a magenta left border; click a row to expand it;
   mark read/unread, delete, or mark everything read at once.

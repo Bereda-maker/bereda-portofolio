@@ -46,6 +46,7 @@ export const NAV = [
   { label: 'Experience', href: '/#experience' },
   { label: 'Extracurricular', href: '/#extracurricular' },
   { label: 'Books', href: '/books' },
+  { label: 'Media', href: '/videos' },
   { label: 'Contact', href: '/#contact' },
 ];
 
