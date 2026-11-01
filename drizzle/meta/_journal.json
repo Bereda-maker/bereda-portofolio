@@ -15,6 +15,13 @@
       "when": 1793091143858,
       "tag": "0001_legal_nehzno",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793522830845,
+      "tag": "0002_messy_ben_urich",
+      "breakpoints": true
     }
   ]
 }

@@ -15,6 +15,7 @@ function StatusRow({ label, configured, detail }: { label: string; configured: b
 export default function AdminSettingsPage() {
   const databaseConfigured = Boolean(process.env.DATABASE_URL);
   const sessionConfigured = Boolean(process.env.SESSION_SECRET && process.env.SESSION_SECRET.length >= 32);
+  const aiConfigured = Boolean(process.env.AI_API_KEY);
 
   return (
     <div className="flex flex-col gap-8">
@@ -24,7 +25,7 @@ export default function AdminSettingsPage() {
         <StatusRow label="Admin session" configured={sessionConfigured} detail={sessionConfigured ? 'SESSION_SECRET meets the minimum length.' : 'SESSION_SECRET is missing or too short.'} />
         <StatusRow label="Payments & protected files" configured={false} detail="No payment provider or private file-storage contract is configured." />
         <StatusRow label="Email & calendar" configured={false} detail="No email delivery or Google Calendar/Meet reconciliation is configured." />
-        <StatusRow label="AI research" configured={false} detail="No opportunity-research provider or approval workflow is configured." />
+        <StatusRow label="AI research" configured={aiConfigured} detail={aiConfigured ? `Provider credentials are present (${process.env.AI_PROVIDER ?? 'openai'}). Research remains approval-first.` : 'Add AI_PROVIDER and AI_API_KEY to enable source analysis and personalized drafts.'} />
       </section>
       <SetupRequired title="Configuration changes happen outside this page">
         Add provider credentials and backend migrations through the deployment environment, then implement server-side verification and retryable reconciliation before showing a connected status. This page is read-only by design.
