@@ -3,6 +3,7 @@ import { asc, desc, gte } from 'drizzle-orm';
 import { z } from 'zod';
 import { isAdminRequest } from '@/lib/auth';
 import { getGoogleConnection } from '@/lib/calendar/google';
+import { writeAuditEvent } from '@/lib/services/audit-log';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -28,6 +29,10 @@ export async function PATCH(request: NextRequest) {
   const { appointments } = await import('@/lib/schema');
   const parsed = AppointmentUpdate.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: 'Invalid appointment update.' }, { status: 400 });
+  const { eq } = await import('drizzle-orm');
+  const previous = (await db.select({ status: appointments.status }).from(appointments).where(eq(appointments.id, parsed.data.id)).limit(1))[0];
+  if (!previous) return NextResponse.json({ error: 'Appointment not found.' }, { status: 404 });
   await db.update(appointments).set({ status: parsed.data.status, updatedAt: new Date() }).where((await import('drizzle-orm')).eq(appointments.id, parsed.data.id));
+  await writeAuditEvent({ action: 'appointment_status_updated', entityType: 'appointment', entityId: parsed.data.id, before: { status: previous.status }, after: { status: parsed.data.status }, requestId: request.headers.get('x-request-id') });
   return NextResponse.json({ ok: true });
 }

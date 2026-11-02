@@ -4,6 +4,7 @@ import { and, asc, desc, eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { isAdminRequest } from '@/lib/auth';
 import { isSameOrigin } from '@/lib/same-origin';
+import { writeAuditEvent } from '@/lib/services/audit-log';
 import { buildUsageLedgerEntry, calculateMentorshipPrice } from '@/lib/services/mentorship';
 import { mentorshipProfiles, mentorshipSessions, mentorshipUsageLedger } from '@/lib/schema';
 
@@ -99,6 +100,7 @@ export async function POST(request: NextRequest) {
         ? await db.update(mentorshipProfiles).set(values).where(eq(mentorshipProfiles.id, input.id)).returning()
         : await db.insert(mentorshipProfiles).values(values).returning();
       if (!rows[0]) throw new RouteError(404, 'Mentor profile not found.');
+      await writeAuditEvent({ action: input.id ? 'mentor_profile_updated' : 'mentor_profile_created', entityType: 'mentorship_profile', entityId: rows[0].id, after: { name: rows[0].name, specialties: rows[0].specialties, timezone: rows[0].timezone, defaultRateCentsPerMinute: rows[0].defaultRateCentsPerMinute, isActive: rows[0].isActive }, requestId: request.headers.get('x-request-id') });
       return NextResponse.json({ profile: rows[0] });
     }
 
@@ -118,6 +120,7 @@ export async function POST(request: NextRequest) {
         externalReference: input.externalReference || null,
         notes: input.notes || null,
       }).returning();
+      await writeAuditEvent({ action: 'mentorship_session_scheduled', entityType: 'mentorship_session', entityId: session.id, after: { profileId: session.profileId, status: session.status, startsAt: session.startsAt.toISOString(), plannedMinutes: session.plannedMinutes, rateCentsPerMinute: session.rateCentsPerMinute }, requestId: request.headers.get('x-request-id') });
       return NextResponse.json({ session }, { status: 201 });
     }
 
@@ -139,6 +142,7 @@ export async function POST(request: NextRequest) {
           metadata: { kind: 'free_minute_grant', note: input.note || '' },
         });
       });
+      await writeAuditEvent({ action: 'mentorship_allowance_granted', entityType: 'mentorship_usage_ledger', after: { profileId: profile.id, minutes: entry.minutes, entryType: entry.entryType }, requestId: request.headers.get('x-request-id') });
       return NextResponse.json({ ok: true }, { status: 201 });
     }
 
@@ -174,12 +178,14 @@ export async function POST(request: NextRequest) {
         }
         return { session: updated, freeMinutesApplied, billableMinutes, amountCents };
       });
+      await writeAuditEvent({ action: 'mentorship_session_completed', entityType: 'mentorship_session', entityId: result.session.id, after: { status: result.session.status, actualMinutes: result.session.actualMinutes, freeMinutesApplied: result.freeMinutesApplied, billableMinutes: result.billableMinutes, amountCents: result.amountCents }, requestId: request.headers.get('x-request-id') });
       return NextResponse.json(result);
     }
 
     if (input.action === 'cancel_session') {
       const [session] = await db.update(mentorshipSessions).set({ status: 'cancelled', updatedAt: new Date() }).where(and(eq(mentorshipSessions.id, input.sessionId), eq(mentorshipSessions.status, 'scheduled'))).returning();
       if (!session) throw new RouteError(409, 'Only scheduled sessions can be cancelled. Refresh the list and try again.');
+      await writeAuditEvent({ action: 'mentorship_session_cancelled', entityType: 'mentorship_session', entityId: session.id, after: { status: session.status }, requestId: request.headers.get('x-request-id') });
       return NextResponse.json({ session });
     }
 
