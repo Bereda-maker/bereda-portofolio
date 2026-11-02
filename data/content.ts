@@ -44,7 +44,7 @@ export type NavigationItem = { label: string; href?: string; items?: { label: st
 
 export const NAV: NavigationItem[] = [
   { label: 'Home', href: '/#top' },
-  { label: 'Work', items: [
+  { label: 'Works', items: [
     { label: 'All work', href: '/#work' },
     { label: 'Flagship product · Deborah', href: '/projects/deborah-education-saas' },
     { label: 'Commercial · Negus Gebeya', href: '/projects/negus-gebeya-marketplace' },
