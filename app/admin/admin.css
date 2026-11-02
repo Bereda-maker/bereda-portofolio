@@ -529,3 +529,8 @@ textarea.fld { resize: vertical; line-height: 1.5; }
   .calendar-task-chip { min-height: 2.65rem; }
   .calendar-legend { gap: .6rem; }
 }
+.calendar-plan-banner { display: flex; align-items: center; gap: .65rem; margin: .9rem 0 1rem; border: 1px solid color-mix(in srgb, var(--admin-gold) 35%, var(--admin-border)); border-radius: .7rem; background: color-mix(in srgb, var(--admin-gold) 10%, var(--admin-surface)); padding: .7rem .85rem; color: var(--admin-muted); font-size: .78rem; }
+.calendar-plan-kicker { color: var(--admin-gold-text); font-size: .66rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.calendar-plan-banner strong { color: var(--admin-ink); font-size: .9rem; }
+.calendar-plan-banner span:last-child { margin-left: auto; color: var(--admin-muted); text-align: right; }
+@media (max-width: 700px) { .calendar-plan-banner { align-items: flex-start; flex-wrap: wrap; gap: .35rem .55rem; } .calendar-plan-banner span:last-child { width: 100%; margin-left: 0; text-align: left; } }
