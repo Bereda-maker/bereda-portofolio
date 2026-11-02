@@ -22,6 +22,20 @@
       "when": 1793522830845,
       "tag": "0002_messy_ben_urich",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793560000000,
+      "tag": "0003_stable_calendar_connection",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793560100000,
+      "tag": "0004_calendar_planning",
+      "breakpoints": true
     }
   ]
 }
