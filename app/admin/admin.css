@@ -541,4 +541,14 @@ textarea.fld { resize: vertical; line-height: 1.5; }
 .planner-modal .admin-section-heading span { font-size: 1.15rem; }
 .planner-modal .admin-section-heading small { color: var(--admin-muted); font-size: .78rem; }
 .planner-modal-kicker { margin: 0; color: var(--admin-blue); font-size: .68rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.planner-modal { border-color: var(--admin-border-strong); }
+.planner-form { display: grid; gap: 1rem; }
+.planner-field { display: grid; gap: .4rem; min-width: 0; color: var(--admin-muted); font-size: .76rem; font-weight: 650; }
+.planner-field > span { color: var(--admin-muted); }
+.planner-field em { color: var(--admin-faint); font-size: .7rem; font-style: normal; font-weight: 400; }
+.planner-form-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; }
+.planner-field .fld { width: 100%; }
+.planner-modal-actions { display: flex; justify-content: flex-end; gap: .6rem; border-top: 1px solid var(--admin-border); padding-top: 1rem; }
+.planner-modal-actions .admin-button { min-width: 8.5rem; }
 @media (max-width: 700px) { .planner-modal-backdrop { align-items: end; padding: .65rem; } .planner-modal { max-height: 88vh; padding: 1rem; border-radius: 1rem 1rem .7rem .7rem; } }
+@media (max-width: 700px) { .planner-form-row { grid-template-columns: 1fr; gap: 1rem; } .planner-modal-actions { position: sticky; bottom: -1rem; margin: 0 -1rem -1rem; background: var(--admin-surface); padding: 1rem; } .planner-modal-actions button { flex: 1; } }
