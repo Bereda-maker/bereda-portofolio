@@ -10,6 +10,13 @@ type BookPreview = {
   coverUrl: string | null;
 };
 
+type VideoPreview = {
+  title: string;
+  description: string | null;
+  provider: string;
+  externalId: string | null;
+};
+
 async function getBookPreviews(): Promise<{ books: BookPreview[]; unavailable: boolean }> {
   try {
     const { db } = await import('@/lib/db');
@@ -41,8 +48,52 @@ async function getBookPreviews(): Promise<{ books: BookPreview[]; unavailable: b
   }
 }
 
+async function getVideoPreviews(): Promise<{ videos: VideoPreview[]; unavailable: boolean }> {
+  try {
+    const { db } = await import('@/lib/db');
+    const { videos } = await import('@/lib/schema');
+    const rows = await db.select({
+      title: videos.title,
+      description: videos.description,
+      provider: videos.provider,
+      externalId: videos.externalId,
+    }).from(videos)
+      .where(eq(videos.isPublished, true))
+      .orderBy(desc(videos.publishedAt))
+      .limit(3);
+    return { videos: rows, unavailable: false };
+  } catch (error) {
+    console.error('[homepage/media]', error instanceof Error ? error.message : error);
+    return { videos: [], unavailable: true };
+  }
+}
+
+function isDirectVideoUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' && !url.username && !url.password && /\.(mp4|webm)$/i.test(url.pathname);
+  } catch {
+    return false;
+  }
+}
+
+function VideoPreviewPlayer({ video }: { video: VideoPreview }) {
+  if (!video.externalId) return <div className="flex aspect-video items-center justify-center rounded-xl bg-black/20 text-sm text-white/60">Video source unavailable</div>;
+  if (video.provider === 'youtube' && /^[A-Za-z0-9_-]{11}$/.test(video.externalId)) {
+    return <iframe className="aspect-video w-full rounded-xl bg-black/30" src={`https://www.youtube-nocookie.com/embed/${encodeURIComponent(video.externalId)}`} title={`Video: ${video.title}`} loading="lazy" referrerPolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />;
+  }
+  if (video.provider === 'vimeo' && /^\d+$/.test(video.externalId)) {
+    return <iframe className="aspect-video w-full rounded-xl bg-black/30" src={`https://player.vimeo.com/video/${encodeURIComponent(video.externalId)}`} title={`Video: ${video.title}`} loading="lazy" referrerPolicy="strict-origin-when-cross-origin" allow="fullscreen; picture-in-picture" allowFullScreen />;
+  }
+  if (video.provider === 'external' && isDirectVideoUrl(video.externalId)) {
+    return <video className="aspect-video w-full rounded-xl bg-black/30" src={video.externalId} controls preload="none" aria-label={`Video: ${video.title}`} />;
+  }
+  return <div className="flex aspect-video items-center justify-center rounded-xl bg-black/20 text-sm text-white/60">Video source unavailable</div>;
+}
+
 export default async function Explore() {
   const { books, unavailable } = await getBookPreviews();
+  const { videos, unavailable: videosUnavailable } = await getVideoPreviews();
 
   return (
     <>
@@ -105,6 +156,21 @@ export default async function Explore() {
               </div>
             </div>
           </div>
+          {videosUnavailable ? (
+            <p className="mt-10 text-sm text-white/55" role="status">The video previews are temporarily unavailable. Open the media library for the full collection.</p>
+          ) : videos.length > 0 ? (
+            <div className="media-preview-grid mt-12" aria-label="Featured videos">
+              {videos.map((video) => (
+                <article key={`${video.provider}-${video.externalId}-${video.title}`} className="media-preview-card">
+                  <VideoPreviewPlayer video={video} />
+                  <h3 className="mt-4 font-display text-lg font-semibold tracking-tight">{video.title}</h3>
+                  {video.description && <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-white/60">{video.description}</p>}
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-10 text-sm text-white/55">Published video walkthroughs will appear here when they are ready to share.</p>
+          )}
         </div>
       </section>
 
