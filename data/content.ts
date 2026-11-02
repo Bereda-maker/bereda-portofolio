@@ -88,34 +88,68 @@ export const SERVICES: { name: string; text: string }[] = [
 
 export const EXPERIENCE = [
   {
+    slug: 'web-development-instructor',
     role: 'Web Development Instructor',
     place: 'Ethio Computer School',
     type: 'Teaching · Digital skills',
+    image: '/images/experience/teaching.webp',
+    imageAlt: 'Editorial illustration of an instructor and learners building a web page together.',
     text: 'Taught web development through practical, project-led learning at a school that describes itself as Ethiopia’s leading digital skills school. The course focuses on building real projects rather than only studying theory.',
+    details: [
+      'Delivered web-development instruction through practical, project-led learning.',
+      'The published course is titled “Learn Web Development Through Real Projects.”',
+    ],
     links: [
       { label: 'Course page', href: 'https://www.ethiocomputer.school/courses/web-development' },
       { label: 'Watch the course VSL', href: 'https://player.vimeo.com/video/1229693804?h=387686400' },
     ],
   },
   {
+    slug: 'marketing-manager-gezahegn-and-elfinesh',
     role: 'Marketing Manager',
     place: 'Gezahegn and Elfinesh Hotel & Resort',
     type: 'Hospitality · Marketing',
+    image: '/images/experience/hospitality.webp',
+    imageAlt: 'Editorial illustration of a hotel welcome space and visual campaign cards.',
     text: 'Worked in marketing for one of Ethiopia’s largest hotel and resort operations, building experience in positioning a hospitality brand, communicating value, and connecting an organization with its audience.',
+    details: [
+      'Worked on brand positioning and customer communication in hospitality.',
+      'Built experience connecting the hotel and resort’s offering with its audience.',
+    ],
     links: [],
   },
   {
+    slug: 'hawassa-university-computer-science',
     role: 'Bachelor of Science in Computer Science',
     place: 'Hawassa University',
     type: 'Education · Computer science',
+    image: '/images/experience/computer-science.webp',
+    imageAlt: 'Editorial illustration of an open computer-science book, laptop, and campus architecture.',
     text: 'Earned a Computer Science degree from Hawassa University, one of Ethiopia’s leading universities, building the technical foundation behind my product, systems, and software engineering work.',
+    details: [
+      'Earned a Bachelor of Science in Computer Science at Hawassa University.',
+      'This education forms the technical foundation for product, systems, and software engineering work.',
+    ],
     links: [],
   },
   {
+    slug: 'founder-startup-builder',
     role: 'CEO and Startup Builder',
     place: 'EthioVista · Deborah School · TenaSew · Negus Gebeya',
     type: 'Leadership · Ethiopia-rooted startups',
+    image: '/images/experience/startup-builder.webp',
+    imageAlt: 'Editorial illustration of connected product panels for travel, education, wellness, and commerce.',
     text: 'Lead and build Ethiopia-rooted startups across travel, education, wellness, and commerce. Each product starts with a local problem, a clear user workflow, and a practical path from idea to live experience.',
+    details: [
+      'Lead and build products across travel, education, wellness, and commerce.',
+      'Shape each venture from a local problem and user workflow through architecture, launch, and iteration.',
+    ],
+    relatedProjectSlugs: [
+      'ethiovista-ethiopia-travel-platform',
+      'deborah-education-saas',
+      'tenasew-wellness-platform',
+      'negus-gebeya-marketplace',
+    ],
     links: [],
   },
 ];
