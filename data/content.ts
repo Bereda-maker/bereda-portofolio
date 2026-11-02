@@ -40,14 +40,34 @@ export const SITE = {
   portrait: '/images/about-professional.png',
 };
 
-export const NAV = [
+export type NavigationItem = { label: string; href?: string; items?: { label: string; href: string }[] };
+
+export const NAV: NavigationItem[] = [
   { label: 'Home', href: '/#top' },
-  { label: 'Work', href: '/#work' },
-  { label: 'Experience', href: '/#experience' },
+  { label: 'Work', items: [
+    { label: 'All work', href: '/#work' },
+    { label: 'Flagship product · Deborah', href: '/projects/deborah-education-saas' },
+    { label: 'Commercial · Negus Gebeya', href: '/projects/negus-gebeya-marketplace' },
+    { label: 'Health & wellness · TenaSew', href: '/projects/tenasew-wellness-platform' },
+    { label: 'Travel · EthioVista', href: '/projects/ethiovista-ethiopia-travel-platform' },
+    { label: 'Portfolio · fifth completed work', href: '/projects/bereda-wako-portfolio-platform' },
+  ] },
+  { label: 'About', href: '/#about' },
+  { label: 'Experience', items: [
+    { label: 'Experience overview', href: '/#experience' },
+    { label: 'Teaching', href: '/#experience-teaching' },
+    { label: 'Marketing & hospitality', href: '/#experience-marketing' },
+    { label: 'Education', href: '/#experience-education' },
+    { label: 'Startup leadership', href: '/#experience-startup' },
+  ] },
   { label: 'Extracurricular', href: '/#extracurricular' },
   { label: 'Books', href: '/books' },
-  { label: 'Media', href: '/videos' },
+  { label: 'Media', items: [
+    { label: 'Writing', href: '/content' },
+    { label: 'Video', href: '/videos' },
+  ] },
   { label: 'Contact', href: '/#contact' },
+  { label: 'Appointment', href: '/book' },
 ];
 
 export const TECH: [string, string][] = [
@@ -251,6 +271,36 @@ export const PROJECTS: Project[] = [
       ],
       "features": ["Destination and heritage discovery", "Destination reels across Ethiopian regions", "Stays, transport, guides, and welcome services", "Trip-planning path with practical service categories", "Multilingual assistant entry point", "AI status clearly marked as in development"],
       "next": "The next useful handoff is the source repository or deployment workspace so the architecture, testing, and maintenance story can be documented at the same level as the other case studies."
+    }
+  },
+  {
+    "title": "Bereda Wako — Portfolio Platform",
+    "category": "Personal portfolio",
+    "description": "A full-stack portfolio that presents verified product case studies alongside a custom admin workspace for content, appointments, mentorship records, AI-assisted opportunity discovery, and audit activity.",
+    "stack": ["Next.js", "TypeScript", "PostgreSQL", "Drizzle ORM"],
+    "demo": "https://bereda-dev.vercel.app",
+    "repo": "https://github.com/Bereda-maker/bereda-portofolio",
+    "image": "/images/hero-laptop.png",
+    "alt": "Bereda Wako portrait with a laptop, used as the portfolio platform project image",
+    "status": "Completed",
+    "role": "Product design and end-to-end implementation of the public portfolio, case-study system, admin dashboard, and deployment workflows",
+    "featured": true,
+    "caseStudy": {
+      "eyebrow": "05 / portfolio platform",
+      "tagline": "A portfolio that demonstrates the product work behind the profile.",
+      "context": "This portfolio combines a public-facing product-engineering profile with five detailed case studies and an authenticated operational workspace.",
+      "problem": "A portfolio needs to do more than list technologies. It should make the product context, workflows, implementation boundaries, and evidence easy to explore while giving its owner practical tools to maintain the site.",
+      "contribution": "I designed and implemented the public experience, responsive navigation, project case studies, content surfaces, admin workflows, and production deployment. The same project includes this fifth case study as a record of the portfolio platform itself.",
+      "workflow": "Visitors move from the home page into work categories, open an individual case study, inspect product evidence, and continue to writing, books, video, contact, or appointment booking. The admin area manages site content and selected operational workflows behind authentication.",
+      "architecture": "The project uses the Next.js App Router and TypeScript for the web experience and route handlers, with Drizzle ORM and PostgreSQL-backed records for the supported administrative workflows. Public case-study content is maintained as verified typed project records.",
+      "integrations": "The site includes Vercel deployment, email contact, appointment and Google Calendar integration surfaces, an AI provider-backed opportunity discovery flow, and linked external project repositories and evidence.",
+      "verification": "The repository production build passes. Deployed changes are tracked through GitHub commits and Vercel deployment checks. Integrations are described at the scope implemented; this page does not imply that external services are configured beyond their visible status.",
+      "evidence": [
+        { "label": "Live portfolio", "href": "https://bereda-dev.vercel.app" },
+        { "label": "Source repository", "href": "https://github.com/Bereda-maker/bereda-portofolio" }
+      ],
+      "features": ["Responsive portfolio with grouped dropdown navigation", "Five project case studies with evidence and live links", "Authenticated content and project administration", "Appointment, mentorship, and audit activity workspaces", "Profile-matched AI opportunity discovery across approved feeds", "Production deployments connected to GitHub and Vercel"],
+      "next": "The next improvement is to keep the project evidence, external integration status, and operational audit coverage current as the portfolio and its admin tools evolve."
     }
   },
 ];

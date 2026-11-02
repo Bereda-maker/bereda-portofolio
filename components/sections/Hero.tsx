@@ -35,7 +35,7 @@ export default function Hero() {
           </div>
         </div>
         <div className="hero-metrics relative z-10 grid gap-5 px-5 pb-7 pt-5 sm:grid-cols-3 sm:px-8 sm:pb-9 sm:pt-6 lg:grid-cols-[.8fr_.8fr_.8fr_1.65fr] lg:gap-0 lg:px-[max(2rem,calc((100vw-68rem)/2))]">
-          <div className="hero-metric"><strong>04</strong><span>products in the showcase</span></div>
+          <div className="hero-metric"><strong>05</strong><span>completed works in the portfolio</span></div>
           <div className="hero-metric"><strong>E2E</strong><span>schema to interface</span></div>
           <div className="hero-metric"><strong>QA</strong><span>evidence linked per project</span></div>
           <div className="hero-capabilities"><p>What I can own</p><div><span>Product UI</span><span>Typed APIs</span><span>Data + deploy</span></div></div>
