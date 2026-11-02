@@ -56,7 +56,7 @@ export default async function Explore() {
             </div>
             <div className="max-w-[38rem]">
               <p className="text-[1.15rem] text-muted">A growing shelf of books and reading material that informs how I think, build, and keep learning.</p>
-              <Link href="/books" className="explore-link mt-7">Browse the shelf <ArrowUpRight size={15} aria-hidden="true" /></Link>
+              <Link href="/books" className="explore-link mt-7">View All Books <ArrowUpRight size={15} aria-hidden="true" /></Link>
             </div>
           </div>
 
