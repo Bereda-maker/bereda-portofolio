@@ -9,7 +9,7 @@ import { discoverOpportunityRecommendations, researchOpportunity, saveMatch } fr
 export const runtime = 'nodejs';
 const OpportunityInput = z.object({ title: z.string().trim().min(1).max(200), description: z.string().trim().min(1).max(5000), company: z.string().trim().max(200).optional(), location: z.string().trim().max(160).optional(), workMode: z.string().trim().max(80).optional(), employmentType: z.string().trim().max(80).optional(), requiredSkills: z.array(z.string().trim().min(1)).max(50), minYearsExperience: z.number().int().min(0).max(80).nullable().optional(), sourceUrl: z.string().trim().url().optional().or(z.literal('')), });
 const ResearchInput = z.object({ sourceUrl: z.string().trim().url(), notes: z.string().trim().max(2000).optional(), profileId: z.number().int().positive().optional() });
-const DiscoveryInput = z.object({ action: z.literal('discover'), profileId: z.number().int().positive(), categories: z.array(z.enum(['remote', 'freelance', 'cofounder'])).min(1).max(3) });
+const DiscoveryInput = z.object({ action: z.literal('discover'), profileId: z.number().int().positive(), categories: z.array(z.enum(['remote', 'freelance', 'internship', 'cofounder'])).min(1).max(4) });
 
 async function admin(req?: NextRequest) {
   const session = await getSession();
