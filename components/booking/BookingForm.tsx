@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 type Type = { id: number; name: string; description: string | null; durationMinutes: number };
 type Slot = { startsAt: string; endsAt: string; label: string };
 type Audience = { label: string; agendas: string[]; meetingFormats: string[] };
+const MEETING_LENGTHS = [{ minutes: 30, label: '30 min' }, { minutes: 60, label: '1 hr' }, { minutes: 90, label: '1:30' }, { minutes: 120, label: '2 hr' }];
 
 const AUDIENCES: Audience[] = [
   { label: 'Employers & Recruiters', agendas: ['Full-time employment', 'Part-time employment', 'Remote jobs', 'Contract employment', 'Junior developer positions', 'Software engineering internships'], meetingFormats: ['Job Interview', 'Technical Interview', 'Initial Screening Call', 'Hiring Manager Interview', 'Portfolio Review', 'Career Discussion', 'Recruiter Introduction Call', 'Salary and Offer Discussion', 'Contract Employment Discussion', 'Internship Interview'] },
@@ -23,6 +24,7 @@ export default function BookingForm() {
   const timezone = useMemo(() => Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC', []);
   const [types, setTypes] = useState<Type[]>([]);
   const [typeId, setTypeId] = useState('');
+  const [meetingLength, setMeetingLength] = useState('30');
   const [audience, setAudience] = useState('');
   const [agenda, setAgenda] = useState('');
   const [meetingFormat, setMeetingFormat] = useState('');
@@ -37,9 +39,14 @@ export default function BookingForm() {
   useEffect(() => {
     fetch('/api/appointments/types').then((res) => res.json()).then((data) => {
       setTypes(data.types || []);
-      if (data.types?.[0]) setTypeId(String(data.types[0].id));
     }).catch(() => setMessage('Meeting types are temporarily unavailable.'));
   }, []);
+
+  useEffect(() => {
+    const matchingType = types.find((type) => type.durationMinutes === Number(meetingLength));
+    setTypeId(matchingType ? String(matchingType.id) : '');
+    setSlot(null);
+  }, [meetingLength, types]);
 
   useEffect(() => {
     if (!date || !typeId) return;
@@ -107,7 +114,9 @@ export default function BookingForm() {
     </div>}
     <div>
       <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Meeting length</label>
-      <select className="fld" value={typeId} onChange={(event) => setTypeId(event.target.value)}><option value="">Choose a meeting length</option>{types.map((type) => <option key={type.id} value={type.id}>{type.name} · {type.durationMinutes} min</option>)}</select>
+      <select className="fld" required value={meetingLength} onChange={(event) => setMeetingLength(event.target.value)}>
+        {MEETING_LENGTHS.map((length) => <option key={length.minutes} value={length.minutes} disabled={!types.some((type) => type.durationMinutes === length.minutes)}>{length.label}{types.some((type) => type.durationMinutes === length.minutes) ? '' : ' — unavailable'}</option>)}
+      </select>
       {selectedType?.description && <p className="mt-2 text-sm text-[#aebedd]">{selectedType.description}</p>}
     </div>
     <div><label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Date</label><input className="fld" type="date" min={today} value={date} onChange={(event) => setDate(event.target.value)} /></div>
