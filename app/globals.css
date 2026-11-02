@@ -144,6 +144,21 @@ main > section.border-t::before { content: ''; position: absolute; right: 5%; to
 .explore-link:hover { text-decoration-color: currentColor; }
 .explore-secondary-link { color: rgb(var(--muted)); text-decoration: underline; text-decoration-color: rgb(var(--rule)); text-underline-offset: .3rem; }
 .explore-secondary-link:hover { color: rgb(var(--ink)); text-decoration-color: currentColor; }
+.explore-section--books { background: linear-gradient(180deg, rgb(var(--panel) / .52), rgb(var(--paper))); }
+.explore-section--media { position: relative; isolation: isolate; background: linear-gradient(125deg, #000c2d 0%, #001858 58%, #0a2f85 100%); }
+.explore-section--media::after { content: ''; position: absolute; right: 8%; top: -8rem; height: 22rem; width: 22rem; border: 1px solid rgb(240 189 72 / .25); border-radius: 9999px; box-shadow: 0 0 0 2rem rgb(240 189 72 / .035), 0 0 0 4rem rgb(240 189 72 / .02); pointer-events: none; }
+.explore-section--media > .wrap { position: relative; z-index: 1; }
+.explore-eyebrow { color: #f0bd48; font-family: var(--font-display); font-size: .72rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+.explore-icon--dark { border-color: rgb(125 163 255 / .28); background: rgb(125 163 255 / .12); color: #9db8ff; }
+.explore-link--dark { color: #f0bd48; text-decoration-color: rgb(240 189 72 / .35); }
+.explore-secondary-link--dark { color: rgb(255 255 255 / .65); text-decoration-color: rgb(255 255 255 / .25); }
+.explore-secondary-link--dark:hover { color: white; text-decoration-color: white; }
+.explore-section--appointment { background: rgb(var(--paper)); }
+.appointment-panel { position: relative; overflow: hidden; border: 1px solid rgb(var(--rule)); border-radius: 2rem; background: linear-gradient(115deg, rgb(var(--panel) / .85), rgb(var(--card))); padding: 1.5rem; box-shadow: 0 1rem 2.8rem rgb(var(--shadow) / .08); }
+.appointment-panel::after { content: ''; position: absolute; right: -5rem; bottom: -7rem; height: 17rem; width: 17rem; border: 1px solid rgb(var(--gold) / .3); border-radius: 9999px; box-shadow: 0 0 0 2rem rgb(var(--gold) / .06), 0 0 0 4rem rgb(var(--gold) / .035); pointer-events: none; }
+.appointment-panel > .grid { position: relative; z-index: 1; }
+.explore-icon--appointment { border-color: rgb(var(--gold) / .4); background: rgb(var(--gold) / .14); color: rgb(var(--forest)); }
+@media (min-width: 640px) { .appointment-panel { padding: 2.5rem; } }
 @media (min-width: 768px) { .explore-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .explore-card { padding: 1.6rem; } }
 
 @keyframes settle { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
