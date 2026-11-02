@@ -14,7 +14,8 @@ type Upcoming = { id: number; attendeeName: string; startsAt: Date; status: stri
 const DAYS = 14;
 
 async function getCore() {
-  try {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
     const { db } = await import('@/lib/db');
     const { projects, messages } = await import('@/lib/schema');
     const since = new Date(Date.now() - DAYS * 24 * 60 * 60 * 1000);
@@ -39,7 +40,7 @@ async function getCore() {
       if (bucket) bucket.count += 1;
     }
 
-    return {
+      return {
       ok: true as const,
       projectCount: projectCount?.count ?? 0,
       messageCount: messageCount?.count ?? 0,
@@ -48,10 +49,12 @@ async function getCore() {
       recentProjects: recentProjects as RecentProject[],
       buckets,
     };
-  } catch (err) {
-    console.error('[admin/dashboard] Failed to load dashboard data:', err instanceof Error ? err.message : err);
-    return { ok: false as const, projectCount: 0, messageCount: 0, unreadCount: 0, recent: [] as RecentMessage[], recentProjects: [] as RecentProject[], buckets: [] as { key: string; label: string; count: number }[] };
+    } catch (err) {
+      console.error(`[admin/dashboard] Database read failed (attempt ${attempt + 1}/2):`, err instanceof Error ? err.message : err);
+      if (attempt === 0) await new Promise((resolve) => setTimeout(resolve, 150));
+    }
   }
+  return { ok: false as const, projectCount: 0, messageCount: 0, unreadCount: 0, recent: [] as RecentMessage[], recentProjects: [] as RecentProject[], buckets: [] as { key: string; label: string; count: number }[] };
 }
 
 // Scheduling tables arrive via a separate migration, so failures here must not

@@ -15,7 +15,17 @@ function createClient() {
   if (!url) {
     throw new Error('DATABASE_URL is not set. Copy .env.example to .env.local and fill it in.');
   }
-  const client = postgres(url, { prepare: false });
+  // Keep the pool deliberately small for serverless deployments. The previous
+  // default pool could open many connections across concurrent cold starts,
+  // exhausting a small hosted Postgres instance and making refreshes appear
+  // intermittently disconnected.
+  const client = postgres(url, {
+    prepare: false,
+    max: 1,
+    connect_timeout: 10,
+    idle_timeout: 20,
+    max_lifetime: 300,
+  });
   return drizzle(client, { schema });
 }
 
