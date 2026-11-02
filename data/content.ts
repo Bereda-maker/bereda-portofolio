@@ -22,6 +22,8 @@ export type Project = {
   repo: string;
   image: string;
   walkthrough?: string;
+  imageFit?: 'cover' | 'contain';
+  walkthroughPlaceholder?: boolean;
   alt: string;
   status: string;
   role: string;
@@ -50,7 +52,7 @@ export const NAV: NavigationItem[] = [
     { label: 'Commercial · Negus Gebeya', href: '/projects/negus-gebeya-marketplace' },
     { label: 'Health & wellness · TenaSew', href: '/projects/tenasew-wellness-platform' },
     { label: 'Travel · EthioVista', href: '/projects/ethiovista-ethiopia-travel-platform' },
-    { label: 'Portfolio · fifth completed work', href: '/projects/bereda-wako-portfolio-platform' },
+    { label: 'Portfolio platform', href: '/projects/bereda-wako-portfolio-platform' },
   ] },
   { label: 'About', href: '/#about' },
   { label: 'Experience', items: [
@@ -281,6 +283,8 @@ export const PROJECTS: Project[] = [
     "demo": "https://bereda-dev.vercel.app",
     "repo": "https://github.com/Bereda-maker/bereda-portofolio",
     "image": "/images/hero-laptop.png",
+    "imageFit": "contain",
+    "walkthroughPlaceholder": true,
     "alt": "Bereda Wako portrait with a laptop, used as the portfolio platform project image",
     "status": "Completed",
     "role": "Product design and end-to-end implementation of the public portfolio, case-study system, admin dashboard, and deployment workflows",
