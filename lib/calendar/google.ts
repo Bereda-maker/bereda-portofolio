@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { decryptSecret, encryptSecret } from './security';
 
 const GOOGLE_AUTH = 'https://accounts.google.com/o/oauth2/v2/auth';
@@ -46,7 +46,7 @@ export async function saveGoogleConnection(refreshToken: string, accountLabel = 
   const { db } = await import('@/lib/db');
   const { calendarConnections } = await import('@/lib/schema');
   const calendarId = process.env.GOOGLE_CALENDAR_ID || process.env.CALENDAR_ID || 'primary';
-  const existing = await db.select().from(calendarConnections).where(eq(calendarConnections.provider, 'google')).limit(1);
+  const existing = await db.select().from(calendarConnections).where(eq(calendarConnections.provider, 'google')).orderBy(desc(calendarConnections.updatedAt), desc(calendarConnections.id)).limit(1);
   if (existing[0]) {
     await db.update(calendarConnections).set({ accountLabel, encryptedRefreshToken: encryptSecret(refreshToken), calendarId, status: 'connected', lastError: null, updatedAt: new Date() }).where(eq(calendarConnections.id, existing[0].id));
     return existing[0].id;
@@ -58,7 +58,7 @@ export async function saveGoogleConnection(refreshToken: string, accountLabel = 
 export async function getGoogleConnection() {
   const { db } = await import('@/lib/db');
   const { calendarConnections } = await import('@/lib/schema');
-  const rows = await db.select().from(calendarConnections).where(and(eq(calendarConnections.provider, 'google'), eq(calendarConnections.status, 'connected'))).limit(1);
+  const rows = await db.select().from(calendarConnections).where(and(eq(calendarConnections.provider, 'google'), eq(calendarConnections.status, 'connected'))).orderBy(desc(calendarConnections.updatedAt), desc(calendarConnections.id)).limit(1);
   const connection = rows[0];
   if (!connection?.encryptedRefreshToken) return null;
   return { ...connection, refreshToken: decryptSecret(connection.encryptedRefreshToken) };
@@ -67,8 +67,7 @@ export async function getGoogleConnection() {
 export async function disconnectGoogle() {
   const { db } = await import('@/lib/db');
   const { calendarConnections } = await import('@/lib/schema');
-  const rows = await db.select({ id: calendarConnections.id }).from(calendarConnections).where(eq(calendarConnections.provider, 'google')).limit(1);
-  if (rows[0]) await db.update(calendarConnections).set({ status: 'disconnected', encryptedRefreshToken: null, updatedAt: new Date() }).where(eq(calendarConnections.id, rows[0].id));
+  await db.update(calendarConnections).set({ status: 'disconnected', encryptedRefreshToken: null, lastError: null, updatedAt: new Date() }).where(eq(calendarConnections.provider, 'google'));
 }
 
 export async function getGoogleBusy(calendarId: string, refreshToken: string, startsAt: Date, endsAt: Date) {
