@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { asc, desc, eq } from 'drizzle-orm';
 import { ArrowRight, ArrowUpRight, BookOpen, CalendarDays, PlaySquare } from 'lucide-react';
+import BookingForm from '@/components/booking/BookingForm';
 
 type BookPreview = {
   id: number;
@@ -187,6 +188,9 @@ export default async function Explore() {
                 <p className="max-w-[38rem] text-[1.15rem] text-muted">Choose a conversation purpose, find an available time, and bring a real product question to the table.</p>
                 <Link href="/book" className="btn btn-primary mt-7">Book a conversation <ArrowUpRight size={16} aria-hidden="true" /></Link>
               </div>
+            </div>
+            <div className="homepage-booking mt-12">
+              <BookingForm />
             </div>
           </div>
         </div>
