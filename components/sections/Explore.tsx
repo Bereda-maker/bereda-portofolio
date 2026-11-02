@@ -100,7 +100,7 @@ export default async function Explore() {
             <div>
               <p className="text-[1.15rem] text-white/65">Walkthroughs, demonstrations, and written notes about useful products, systems, and teams.</p>
               <div className="mt-7 flex flex-wrap gap-x-6 gap-y-3">
-                <Link href="/videos" className="explore-link explore-link--dark">Explore videos <ArrowUpRight size={15} aria-hidden="true" /></Link>
+                <Link href="/media" className="explore-link explore-link--dark">Open media library <ArrowUpRight size={15} aria-hidden="true" /></Link>
                 <Link href="/content" className="explore-secondary-link explore-secondary-link--dark">Read the writing <ArrowRight size={15} aria-hidden="true" /></Link>
               </div>
             </div>
