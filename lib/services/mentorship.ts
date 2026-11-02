@@ -1,6 +1,6 @@
 export type MentorshipPricingInput = { minutes: number; rateCentsPerMinute: number };
 export type MentorshipPricing = { minutes: number; rateCentsPerMinute: number; amountCents: number };
-export type UsageLedgerEntry = MentorshipPricing & { entryType: 'charge' | 'credit' | 'adjustment'; idempotencyKey: string; sessionId?: number; menteeEmail: string };
+export type UsageLedgerEntry = MentorshipPricing & { entryType: 'charge' | 'credit' | 'adjustment' | 'free_usage'; idempotencyKey: string; sessionId?: number; menteeEmail: string };
 
 export function calculateMentorshipPrice(input: MentorshipPricingInput): MentorshipPricing {
   if (!Number.isInteger(input.minutes) || input.minutes <= 0) throw new Error('Mentorship minutes must be a positive integer.');
