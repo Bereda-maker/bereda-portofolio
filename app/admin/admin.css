@@ -477,3 +477,23 @@ textarea.fld { resize: vertical; line-height: 1.5; }
 .legend-dot { display: inline-block; height: .45rem; width: .45rem; border-radius: 999px; background: var(--admin-blue); }
 .legend-dot.reservation { background: var(--admin-gold); }
 @media (max-width: 700px) { .calendar-shell { padding: .7rem; } .calendar-toolbar { align-items: flex-start; } .calendar-controls { width: 100%; } .calendar-view-switcher { margin-left: auto; } .calendar-cell { min-height: 6rem; padding: .35rem; } .calendar-week .calendar-cell { min-height: 14rem; } .calendar-event { border-left: 0; padding: .3rem; } .calendar-event span { display: none; } .calendar-event strong { font-size: .6rem; } }
+.legend-dot.planning { background: var(--admin-ok); }
+.calendar-time-grid { display: grid; grid-template-columns: 4.7rem repeat(7, minmax(7rem, 1fr)); overflow: auto; max-height: 42rem; border-top: 1px solid var(--admin-border); border-left: 1px solid var(--admin-border); border-radius: .9rem; }
+.calendar-time-head { position: sticky; top: 0; z-index: 2; display: flex; min-height: 3.4rem; flex-direction: column; justify-content: center; gap: .1rem; border-right: 1px solid var(--admin-border); border-bottom: 1px solid var(--admin-border); background: var(--admin-surface-raised); padding: .4rem; color: var(--admin-muted); font-size: .68rem; text-align: center; }
+.calendar-time-head strong { color: var(--admin-ink); font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; }
+.calendar-time-head.today { box-shadow: inset 0 3px 0 var(--admin-gold); }
+.calendar-time-row { display: contents; }
+.calendar-time-label { border-right: 1px solid var(--admin-border); border-bottom: 1px solid var(--admin-border); background: var(--admin-inset); padding: .65rem .45rem; color: var(--admin-muted); font-size: .62rem; text-align: right; white-space: nowrap; }
+.calendar-time-slot { position: relative; min-height: 3.1rem; border: 0; border-right: 1px solid var(--admin-border); border-bottom: 1px solid var(--admin-border); background: var(--admin-inset); padding: .2rem; text-align: left; transition: background .15s; }
+.calendar-time-slot:hover { background: color-mix(in srgb, var(--admin-blue) 9%, transparent); }
+.calendar-task-chip { position: relative; z-index: 1; display: grid; gap: .08rem; width: 100%; min-height: 2.5rem; border-left: 3px solid var(--admin-ok); border-radius: .35rem; background: color-mix(in srgb, var(--admin-ok) 14%, transparent); padding: .28rem .35rem; color: var(--admin-ink); text-align: left; }
+.calendar-task-chip strong { overflow: hidden; padding-right: .8rem; text-overflow: ellipsis; white-space: nowrap; font-size: .67rem; }
+.calendar-task-chip small { color: var(--admin-muted); font-size: .58rem; text-transform: capitalize; }
+.calendar-task-chip i { position: absolute; top: .1rem; right: .25rem; color: var(--admin-muted); font-size: .8rem; font-style: normal; opacity: 0; }
+.calendar-task-chip:hover i { opacity: 1; }
+.calendar-task-chip.priority-high { border-left-color: var(--admin-gold); background: color-mix(in srgb, var(--admin-gold) 15%, transparent); }
+.calendar-task-chip.status-done { opacity: .58; text-decoration: line-through; }
+.planning-progress { display: flex; align-items: baseline; gap: .5rem; color: var(--admin-blue); }
+.planning-progress strong { font-size: 1.35rem; }
+.planning-progress span { color: var(--admin-muted); font-size: .72rem; }
+@media (max-width: 700px) { .calendar-time-grid { grid-template-columns: 4rem repeat(7, minmax(6rem, 1fr)); } .calendar-time-slot { min-height: 2.8rem; } .planning-progress { width: 100%; } }
