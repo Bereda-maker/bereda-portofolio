@@ -6,6 +6,7 @@ type Type = { id: number; name: string; description: string | null; durationMinu
 type Slot = { startsAt: string; endsAt: string; label: string };
 type Audience = { label: string; agendas: string[]; meetingFormats: string[] };
 const MEETING_LENGTHS = [{ minutes: 30, label: '30 min' }, { minutes: 60, label: '1 hr' }, { minutes: 90, label: '1:30' }, { minutes: 120, label: '2 hr' }];
+const MEETING_WAYS = ['Google Meet', 'Zoom', 'Microsoft Teams', 'WhatsApp video call', 'I am flexible — use the available link'];
 
 const AUDIENCES: Audience[] = [
   { label: 'Employers & Recruiters', agendas: ['Full-time employment', 'Part-time employment', 'Remote jobs', 'Contract employment', 'Junior developer positions', 'Software engineering internships'], meetingFormats: ['Job Interview', 'Technical Interview', 'Initial Screening Call', 'Hiring Manager Interview', 'Portfolio Review', 'Career Discussion', 'Recruiter Introduction Call', 'Salary and Offer Discussion', 'Contract Employment Discussion', 'Internship Interview'] },
@@ -28,6 +29,7 @@ export default function BookingForm() {
   const [audience, setAudience] = useState('');
   const [agenda, setAgenda] = useState('');
   const [meetingFormat, setMeetingFormat] = useState('');
+  const [meetingWay, setMeetingWay] = useState('');
   const [date, setDate] = useState('');
   const [slots, setSlots] = useState<Slot[]>([]);
   const [slot, setSlot] = useState<Slot | null>(null);
@@ -68,10 +70,11 @@ export default function BookingForm() {
     if (!audience) { setMessage('Choose who you are.'); return; }
     if (!agenda) { setMessage('Choose an agenda.'); return; }
     if (!meetingFormat) { setMessage('Choose a meeting format.'); return; }
+    if (!meetingWay) { setMessage('Choose a preferred virtual meeting way.'); return; }
     if (!slot) { setMessage('Choose an available time.'); return; }
     setLoading(true);
     setMessage('');
-    const conversationNotes = [`Identity: ${audience}`, `Agenda: ${agenda}`, `Meeting format: ${meetingFormat}`, form.notes.trim() ? `Additional context: ${form.notes.trim()}` : ''].filter(Boolean).join('\n');
+    const conversationNotes = [`Identity: ${audience}`, `Agenda: ${agenda}`, `Meeting format: ${meetingFormat}`, `Preferred meeting way: ${meetingWay}`, form.notes.trim() ? `Additional context: ${form.notes.trim()}` : ''].filter(Boolean).join('\n');
     try {
       const res = await fetch('/api/appointments', {
         method: 'POST',
@@ -120,6 +123,14 @@ export default function BookingForm() {
       </select>
     </div>}
     <div>
+      <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Preferred virtual meeting way</label>
+      <select className="fld" required value={meetingWay} onChange={(event) => setMeetingWay(event.target.value)}>
+        <option value="">Choose a meeting way</option>
+        {MEETING_WAYS.map((item) => <option key={item} value={item}>{item}</option>)}
+      </select>
+      <p className="mt-2 text-sm text-[#aebedd]">Your preference is shared with the host. The confirmed calendar setup determines the meeting link.</p>
+    </div>
+    <div>
       <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Meeting length</label>
       <select className="fld" required value={meetingLength} onChange={(event) => setMeetingLength(event.target.value)}>
         {MEETING_LENGTHS.map((length) => <option key={length.minutes} value={length.minutes} disabled={!types.some((type) => type.durationMinutes === length.minutes)}>{length.label}{types.some((type) => type.durationMinutes === length.minutes) ? '' : ' — unavailable'}</option>)}
@@ -130,6 +141,6 @@ export default function BookingForm() {
     {date && <div><label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Available times · {timezone}</label><div className="flex flex-wrap gap-2">{slots.length ? slots.map((item) => <button type="button" key={item.startsAt} onClick={() => setSlot(item)} className={`chip ${slot?.startsAt === item.startsAt ? 'on' : ''}`}>{item.label}</button>) : <p className="text-sm text-[#aebedd]">No available times on this date.</p>}</div></div>}
     <div className="grid gap-4 sm:grid-cols-2"><div><label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Name</label><input className="fld" required value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} /></div><div><label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Email</label><input className="fld" required type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} /></div></div>
     <div><label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Additional context <span className="font-normal normal-case tracking-normal opacity-70">(optional)</span></label><textarea className="fld" rows={4} maxLength={1800} placeholder="Share a little about your situation, project, or goals." value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} /></div>
-    {message && <p className="text-sm text-[#ff829b]" role="alert">{message}</p>}<button className="admin-button w-fit" disabled={loading || !slot || !audience || !agenda || !meetingFormat}>{loading ? 'Booking…' : 'Request this conversation'}</button>
+    {message && <p className="text-sm text-[#ff829b]" role="alert">{message}</p>}<button className="admin-button w-fit" disabled={loading || !slot || !audience || !agenda || !meetingFormat || !meetingWay}>{loading ? 'Booking…' : 'Request this conversation'}</button>
   </form>;
 }
