@@ -145,6 +145,10 @@ main > section.border-t::before { content: ''; position: absolute; right: 5%; to
 .explore-secondary-link { color: rgb(var(--muted)); text-decoration: underline; text-decoration-color: rgb(var(--rule)); text-underline-offset: .3rem; }
 .explore-secondary-link:hover { color: rgb(var(--ink)); text-decoration-color: currentColor; }
 .explore-section--books { background: linear-gradient(180deg, rgb(var(--panel) / .52), rgb(var(--paper))); }
+.book-preview-grid { display: grid; gap: 1rem; }
+.book-preview-card { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 1rem; min-height: 9.5rem; border: 1px solid rgb(var(--rule)); border-radius: 1.35rem; background: rgb(var(--card)); padding: 1rem; box-shadow: 0 .8rem 2rem rgb(var(--shadow) / .05); }
+.book-preview-cover { display: flex; aspect-ratio: 3 / 4; align-items: center; justify-content: center; overflow: hidden; border-radius: .65rem; background: linear-gradient(145deg, rgb(var(--forest) / .2), rgb(var(--panel))); color: rgb(var(--forest)); }
+.book-preview-cover img { height: 100%; width: 100%; object-fit: cover; }
 .explore-section--media { position: relative; isolation: isolate; background: linear-gradient(125deg, #000c2d 0%, #001858 58%, #0a2f85 100%); }
 .explore-section--media::after { content: ''; position: absolute; right: 8%; top: -8rem; height: 22rem; width: 22rem; border: 1px solid rgb(240 189 72 / .25); border-radius: 9999px; box-shadow: 0 0 0 2rem rgb(240 189 72 / .035), 0 0 0 4rem rgb(240 189 72 / .02); pointer-events: none; }
 .explore-section--media > .wrap { position: relative; z-index: 1; }
@@ -160,6 +164,7 @@ main > section.border-t::before { content: ''; position: absolute; right: 5%; to
 .explore-icon--appointment { border-color: rgb(var(--gold) / .4); background: rgb(var(--gold) / .14); color: rgb(var(--forest)); }
 @media (min-width: 640px) { .appointment-panel { padding: 2.5rem; } }
 @media (min-width: 768px) { .explore-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .explore-card { padding: 1.6rem; } }
+@media (min-width: 900px) { .book-preview-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .book-preview-card { grid-template-columns: 4rem minmax(0, 1fr); } }
 
 @keyframes settle { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 .settle { animation: settle .7s cubic-bezier(.2,.7,.2,1) both; }

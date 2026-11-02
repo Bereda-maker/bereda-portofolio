@@ -1,7 +1,49 @@
 import Link from 'next/link';
+import { asc, desc, eq } from 'drizzle-orm';
 import { ArrowRight, ArrowUpRight, BookOpen, CalendarDays, PlaySquare } from 'lucide-react';
 
-export default function Explore() {
+type BookPreview = {
+  id: number;
+  title: string;
+  author: string | null;
+  description: string | null;
+  coverUrl: string | null;
+};
+
+async function getBookPreviews(): Promise<{ books: BookPreview[]; unavailable: boolean }> {
+  try {
+    const { db } = await import('@/lib/db');
+    const { books } = await import('@/lib/schema');
+    const rows = await db.select({
+      id: books.id,
+      title: books.title,
+      author: books.author,
+      description: books.description,
+      metadata: books.metadata,
+    }).from(books)
+      .where(eq(books.isPublished, true))
+      .orderBy(desc(books.publishedAt), asc(books.title))
+      .limit(3);
+
+    return {
+      books: rows.map((book) => ({
+        id: book.id,
+        title: book.title,
+        author: book.author,
+        description: book.description,
+        coverUrl: typeof book.metadata?.coverUrl === 'string' ? book.metadata.coverUrl : null,
+      })),
+      unavailable: false,
+    };
+  } catch (error) {
+    console.error('[homepage/books]', error instanceof Error ? error.message : error);
+    return { books: [], unavailable: true };
+  }
+}
+
+export default async function Explore() {
+  const { books, unavailable } = await getBookPreviews();
+
   return (
     <>
       <section id="books" className="explore-section explore-section--books border-b border-rule" aria-labelledby="books-title">
@@ -17,6 +59,33 @@ export default function Explore() {
               <Link href="/books" className="explore-link mt-7">Browse the shelf <ArrowUpRight size={15} aria-hidden="true" /></Link>
             </div>
           </div>
+
+          {unavailable ? (
+            <p className="mt-10 text-sm text-muted" role="status">The book shelf is temporarily unavailable. Browse the full catalog for more details.</p>
+          ) : books.length > 0 ? (
+            <div className="book-preview-grid mt-12" aria-label="Featured books">
+              {books.map((book) => (
+                <article key={book.id} className="book-preview-card">
+                  <div className="book-preview-cover">
+                    {book.coverUrl ? (
+                      // External cover links are entered by the admin; a plain img keeps the homepage host-agnostic.
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={book.coverUrl} alt={`${book.title} cover`} loading="lazy" />
+                    ) : (
+                      <BookOpen size={28} aria-hidden="true" />
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-display text-lg font-semibold leading-tight tracking-[-.02em]">{book.title}</h3>
+                    {book.author && <p className="mt-1 text-sm text-muted">By {book.author}</p>}
+                    {book.description && <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted">{book.description}</p>}
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-10 text-sm text-muted">Published titles will appear here when they are ready to share.</p>
+          )}
         </div>
       </section>
 
