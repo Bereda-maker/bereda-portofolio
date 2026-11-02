@@ -14,7 +14,11 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
   openGraph: { title: TITLE, description: DESCRIPTION, type: 'website', siteName: 'Bereda Wako' },
   twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION },
-  icons: { icon: '/favicon.svg' },
+  icons: {
+    icon: [{ url: '/images/bereda-favicon.png', type: 'image/png', sizes: '512x512' }],
+    shortcut: '/images/bereda-favicon.png',
+    apple: '/images/bereda-favicon.png',
+  },
 };
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', themeColor: '#001858' };
 

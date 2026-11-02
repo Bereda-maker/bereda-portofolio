@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowUpRight, Download, Mail, Menu, X } from 'lucide-react';
+import { ArrowUpRight, ChevronDown, Download, Mail, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { NAV, SITE } from '@/data/content';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -17,9 +17,14 @@ export function SiteHeader() {
             <span className="truncate">{SITE.name}</span>
           </Link>
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <ul className="hidden items-center gap-1 rounded-full bg-panel/70 p-1 font-display text-[.83rem] sm:flex">
-              {NAV.map((item) => <li key={item.href}><Link href={item.href} className="inline-flex rounded-full px-3 py-2 text-muted transition hover:bg-card hover:text-ink">{item.label}</Link></li>)}
-            </ul>
+            <details className="group relative hidden sm:block">
+              <summary aria-label="Open site navigation" className="inline-flex cursor-pointer list-none items-center gap-2 rounded-full bg-panel/70 px-4 py-2.5 font-display text-[.83rem] font-semibold text-ink transition hover:bg-panel [&::-webkit-details-marker]:hidden">
+                Navigation <ChevronDown size={15} aria-hidden="true" className="transition-transform group-open:rotate-180" />
+              </summary>
+              <ul className="absolute right-0 top-full z-50 mt-3 min-w-52 rounded-2xl border border-rule bg-card p-2 font-display text-[.9rem] shadow-soft">
+                {NAV.map((item) => <li key={item.href}><Link href={item.href} className="block rounded-xl px-4 py-3 text-muted transition hover:bg-panel hover:text-ink">{item.label}</Link></li>)}
+              </ul>
+            </details>
             <a href={SITE.cv} download className="hidden items-center gap-1.5 rounded-full px-3 py-2 font-display text-[.83rem] font-semibold text-ink transition hover:bg-panel sm:inline-flex"><Download size={14} aria-hidden="true" /> CV</a>
             <ThemeToggle />
             <button type="button" className="inline-flex h-10 w-10 items-center justify-center rounded-full text-ink transition hover:bg-panel sm:hidden" aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen((open) => !open)}>
