@@ -7,16 +7,16 @@ type Slot = { startsAt: string; endsAt: string; label: string };
 type Audience = { label: string; agendas: string[] };
 
 const AUDIENCES: Audience[] = [
-  { label: 'Employers & Recruiters', agendas: ['Full-time employment', 'Part-time employment', 'Remote jobs', 'Contract employment', 'Junior developer positions', 'Software engineering internships'] },
-  { label: 'Freelance Clients & Businesses', agendas: ['Website development', 'Web application development', 'SaaS development', 'API development and integration', 'Website redesign and maintenance', 'Custom software solutions'] },
-  { label: 'Startup Founders & Entrepreneurs', agendas: ['MVP development', 'Startup product development', 'Idea validation and prototyping', 'Technical implementation', 'Product improvement', 'Startup launch support'] },
-  { label: 'Investors & Venture Capital Firms', agendas: ['Startup investment', 'Seed funding', 'Business growth funding', 'Product evaluation', 'Investment partnerships', 'Startup accelerator opportunities'] },
-  { label: 'Technical & Business Co-Founders', agendas: ['Building startups together', 'Technical co-founder opportunities', 'Business co-founder opportunities', 'Equity-based partnerships', 'Shared product ownership', 'Joint business development'] },
-  { label: 'Startups & Technology Companies', agendas: ['Software development contracts', 'Remote engineering roles', 'Product development collaboration', 'Technical consulting', 'Software integrations', 'Long-term engineering partnerships'] },
-  { label: 'Internship & Training Programs', agendas: ['Software engineering internships', 'Graduate training programs', 'Apprenticeships', 'Practical project experience', 'Technical mentorship', 'Professional development'] },
-  { label: 'Agencies & Consulting Firms', agendas: ['Outsourced development projects', 'Subcontracting opportunities', 'White-label development', 'Website and application development', 'Ongoing technical support', 'Client project collaboration'] },
-  { label: 'Mentors & Professional Networks', agendas: ['Career mentorship', 'Technical guidance', 'Portfolio reviews', 'Professional networking', 'Job referrals', 'Knowledge sharing'] },
-  { label: 'Strategic Partners & Collaborators', agendas: ['Joint product development', 'Technology partnerships', 'Business partnerships', 'Educational content collaboration', 'Open-source collaboration', 'Marketing and audience partnerships'] },
+  { label: 'Employers & Recruiters', agendas: ['Job Interview', 'Technical Interview', 'Initial Screening Call', 'Hiring Manager Interview', 'Portfolio Review', 'Career Discussion', 'Recruiter Introduction Call', 'Salary and Offer Discussion', 'Contract Employment Discussion', 'Internship Interview'] },
+  { label: 'Freelance Clients & Businesses', agendas: ['Client Discovery Call', 'Project Briefing', 'Requirements Gathering Meeting', 'Project Planning Meeting', 'Technical Consultation', 'Proposal Presentation', 'Project Cost Estimation Meeting', 'Project Demonstration', 'Progress Review Meeting', 'Project Handoff Meeting', 'Website Review Meeting', 'Maintenance and Support Discussion'] },
+  { label: 'Startup Founders & Entrepreneurs', agendas: ['Startup Introduction Call', 'Startup Idea Discussion', 'Product Discovery Meeting', 'Idea Validation Session', 'MVP Planning Meeting', 'Technical Feasibility Assessment', 'Product Strategy Session', 'Prototype Demonstration', 'Product Roadmap Planning', 'Startup Collaboration Discussion', 'Technical Consultation', 'Startup Launch Planning'] },
+  { label: 'Investors & Venture Capital Firms', agendas: ['Investor Introduction Call', 'Startup Pitch Meeting', 'Investment Opportunity Discussion', 'Product Demonstration', 'Fundraising Strategy Meeting', 'Business Model Presentation', 'Market Opportunity Discussion', 'Traction and Growth Review', 'Investor Due Diligence Meeting', 'Funding Negotiation', 'Investment Partnership Discussion', 'Follow-Up Investor Meeting'] },
+  { label: 'Technical & Business Co-Founders', agendas: ['Co-Founder Introduction Call', 'Co-Founder Compatibility Discussion', 'Business Idea Brainstorming', 'Technical Skills Assessment', 'Product Vision Alignment', 'Startup Planning Session', 'Roles and Responsibilities Discussion', 'Equity and Ownership Discussion', 'Founder Agreement Discussion', 'Business Model Planning', 'Product Development Planning', 'Long-Term Vision Meeting'] },
+  { label: 'Startups & Technology Companies', agendas: ['Company Introduction Call', 'Software Engineering Interview', 'Technical Assessment Discussion', 'Engineering Team Introduction', 'Product Development Meeting', 'Software Architecture Review', 'Code Review Discussion', 'API Integration Planning', 'Technical Consultation', 'Remote Work Opportunity Discussion', 'Product Collaboration Meeting', 'Technology Partnership Discussion'] },
+  { label: 'Internship & Training Programs', agendas: ['Internship Introduction Call', 'Internship Interview', 'Technical Skills Assessment', 'Portfolio Evaluation', 'Training Program Interview', 'Apprenticeship Discussion', 'Mentorship Introduction', 'Learning Goals Discussion', 'Career Development Session', 'Training Progress Review', 'Internship Performance Review', 'Program Application Discussion'] },
+  { label: 'Agencies & Consulting Firms', agendas: ['Agency Introduction Call', 'Partnership Introduction Meeting', 'Client Project Briefing', 'Contractor Interview', 'Project Scope Discussion', 'Development Proposal Review', 'Outsourcing Opportunity Discussion', 'White-Label Development Discussion', 'Resource and Capacity Planning', 'Project Estimation Meeting', 'Project Handoff Meeting', 'Long-Term Collaboration Discussion'] },
+  { label: 'Mentors & Professional Networks', agendas: ['Mentor Introduction Call', 'Career Guidance Session', 'Technical Mentorship Session', 'Portfolio Review', 'GitHub Profile Review', 'CV and Resume Review', 'Interview Preparation Session', 'Software Engineering Roadmap Discussion', 'Skill Development Planning', 'Professional Networking Call', 'Career Opportunity Discussion', 'Referral Discussion'] },
+  { label: 'Strategic Partners & Collaborators', agendas: ['Partnership Introduction Call', 'Strategic Partnership Meeting', 'Collaboration Brainstorming', 'Joint Product Development Planning', 'Technology Integration Discussion', 'Business Development Meeting', 'Educational Content Collaboration', 'Open-Source Collaboration Meeting', 'Marketing Partnership Discussion', 'Audience Growth Collaboration', 'Joint Venture Discussion', 'Partnership Proposal Review', 'Partnership Agreement Discussion', 'Long-Term Strategy Meeting'] },
 ];
 
 export default function BookingForm() {
@@ -57,11 +57,11 @@ export default function BookingForm() {
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     if (!audience) { setMessage('Choose who you are.'); return; }
-    if (!agenda) { setMessage('Choose what you would like to discuss.'); return; }
+    if (!agenda) { setMessage('Choose a meeting format.'); return; }
     if (!slot) { setMessage('Choose an available time.'); return; }
     setLoading(true);
     setMessage('');
-    const conversationNotes = [`Identity: ${audience}`, `Agenda: ${agenda}`, form.notes.trim() ? `Additional context: ${form.notes.trim()}` : ''].filter(Boolean).join('\n');
+    const conversationNotes = [`Identity: ${audience}`, `Meeting format: ${agenda}`, form.notes.trim() ? `Additional context: ${form.notes.trim()}` : ''].filter(Boolean).join('\n');
     try {
       const res = await fetch('/api/appointments', {
         method: 'POST',
@@ -90,9 +90,9 @@ export default function BookingForm() {
       </select>
     </div>
     {selectedAudience && <div>
-      <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">I would like to discuss...</label>
+      <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Meeting format</label>
       <select className="fld" required value={agenda} onChange={(event) => setAgenda(event.target.value)}>
-        <option value="">Choose your agenda</option>
+        <option value="">Choose a meeting format</option>
         {selectedAudience.agendas.map((item) => <option key={item} value={item}>{item}</option>)}
       </select>
     </div>}
