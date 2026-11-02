@@ -60,6 +60,7 @@ export default function BookingForm() {
 
   const selectedType = types.find((type) => String(type.id) === typeId);
   const selectedAudience = AUDIENCES.find((item) => item.label === audience);
+  const currentStep = !audience ? 1 : !agenda || !meetingFormat ? 2 : 3;
   const today = new Date().toISOString().slice(0, 10);
 
   async function submit(event: React.FormEvent) {
@@ -90,7 +91,13 @@ export default function BookingForm() {
 
   if (success) return <div className="admin-card p-6 sm:p-8"><p className="admin-eyebrow">Booking confirmed</p><h2 className="admin-title !text-3xl">You are all set.</h2><p className="admin-description">{message}</p></div>;
 
-  return <form onSubmit={submit} className="admin-card grid gap-5 p-5 sm:p-8">
+  return <form onSubmit={submit} className="booking-form admin-card grid gap-5 p-5 sm:p-8">
+    <div className="booking-form-intro">
+      <div className="flex flex-wrap items-center justify-between gap-3"><p className="eyebrow">Plan your conversation</p><span className="booking-timezone">Local time: {timezone}</span></div>
+      <h2 className="mt-3 font-display text-2xl font-semibold leading-tight tracking-[-.035em]">What would make this conversation useful?</h2>
+      <p className="mt-2 text-sm text-muted">Choose the closest fit. You can add more context at the end.</p>
+      <ol className="booking-stepper mt-6" aria-label="Booking steps"><li className={currentStep >= 1 ? 'is-current' : ''}><span>1</span><b>Context</b></li><li className={currentStep >= 2 ? 'is-current' : ''}><span>2</span><b>Format</b></li><li className={currentStep >= 3 ? 'is-current' : ''}><span>3</span><b>Time</b></li></ol>
+    </div>
     <div>
       <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">I am a...</label>
       <select className="fld" required value={audience} onChange={(event) => { setAudience(event.target.value); setAgenda(''); setMeetingFormat(''); }}>
