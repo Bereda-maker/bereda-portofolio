@@ -23,6 +23,11 @@ function localIso(anchorDate: string, offset: number, hour: number) {
 
 export default function AIPlanStudio({ period, anchorDate, existingTasks, onSaved }: Props) {
   const [open, setOpen] = useState(false);
+  const [intakeOpen, setIntakeOpen] = useState(false);
+  const [feelings, setFeelings] = useState('');
+  const [classes, setClasses] = useState('');
+  const [workMood, setWorkMood] = useState('');
+  const [mustDo, setMustDo] = useState('');
   const [draft, setDraft] = useState<Draft | null>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -31,10 +36,10 @@ export default function AIPlanStudio({ period, anchorDate, existingTasks, onSave
   async function generate() {
     setLoading(true); setError('');
     try {
-      const response = await fetch('/api/admin/ai-plan', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ period, startDate: anchorDate, existingTasks }) });
+      const response = await fetch('/api/admin/ai-plan', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ period, startDate: anchorDate, existingTasks, preferences: `How I feel: ${feelings || 'Not specified'}\nClasses or fixed commitments: ${classes || 'None provided'}\nMy work energy/mood: ${workMood || 'Not specified'}\nMust-do outcomes: ${mustDo || 'None specified'}` }) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'Could not generate an AI plan.');
-      setDraft(result); setOpen(true);
+      setDraft(result); setIntakeOpen(false); setOpen(true);
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'Could not generate an AI plan.'); }
     finally { setLoading(false); }
   }
@@ -57,9 +62,19 @@ export default function AIPlanStudio({ period, anchorDate, existingTasks, onSave
   return <>
     <div className="ai-plan-actions">
       <div><p className="ai-plan-kicker">AI planning studio</p><strong>Build a plan that fits how you work</strong><span>Generate a draft, edit every block, then confirm it.</span></div>
-      <div className="ai-plan-buttons"><button type="button" className="admin-button-secondary" onClick={() => void generate()} disabled={loading}>{loading ? 'Thinking…' : `Plan my ${period}`}</button></div>
+      <div className="ai-plan-buttons"><button type="button" className="admin-button-secondary" onClick={() => setIntakeOpen(true)} disabled={loading}>{loading ? 'Thinking…' : `Plan my ${period}`}</button></div>
     </div>
     {error && <p className="ai-plan-error" role="alert">{error}</p>}
+    {intakeOpen && <div className="planner-modal-backdrop" role="presentation" onMouseDown={() => !loading && setIntakeOpen(false)}><section className="admin-card ai-checkin-modal" role="dialog" aria-modal="true" aria-labelledby="ai-checkin-title" onMouseDown={(event) => event.stopPropagation()}>
+      <div className="ai-plan-modal-head"><div><p className="planner-modal-kicker">A quick check-in before we plan</p><h3 id="ai-checkin-title">How are you arriving today?</h3><p>I’ll use your answers to make a plan that works with your real energy, classes, and priorities.</p></div><button type="button" className="admin-button-secondary" onClick={() => setIntakeOpen(false)}>Close</button></div>
+      <form className="ai-checkin-form" onSubmit={(event) => { event.preventDefault(); void generate(); }}>
+        <label><span>How are you feeling?</span><textarea className="fld" rows={2} placeholder="Tired, excited, overwhelmed, focused…" value={feelings} onChange={(event) => setFeelings(event.target.value)} /></label>
+        <label><span>Do you have classes or fixed commitments?</span><textarea className="fld" rows={2} placeholder="Class at 10 AM, commute, family time, appointment…" value={classes} onChange={(event) => setClasses(event.target.value)} /></label>
+        <label><span>What kind of work mood or energy do you have?</span><textarea className="fld" rows={2} placeholder="Deep-focus mood, low energy, creative, only small tasks…" value={workMood} onChange={(event) => setWorkMood(event.target.value)} /></label>
+        <label><span>What must feel accomplished?</span><textarea className="fld" rows={2} placeholder="The one outcome that would make this day or week meaningful…" value={mustDo} onChange={(event) => setMustDo(event.target.value)} /></label>
+        <div className="ai-plan-modal-actions"><button type="button" className="admin-button-secondary" onClick={() => setIntakeOpen(false)}>Not now</button><button className="admin-button" disabled={loading}>{loading ? 'Listening…' : `Create my ${period} plan`}</button></div>
+      </form>
+    </section></div>}
     {open && draft && <div className="planner-modal-backdrop" role="presentation" onMouseDown={() => !saving && setOpen(false)}><section className="admin-card ai-plan-modal" role="dialog" aria-modal="true" aria-labelledby="ai-plan-title" onMouseDown={(event) => event.stopPropagation()}>
       <div className="ai-plan-modal-head"><div><p className="planner-modal-kicker">AI draft · editable before confirmation</p><h3 id="ai-plan-title">{draft.title}</h3><p>{draft.summary}</p></div><button type="button" className="admin-button-secondary" onClick={() => setOpen(false)} disabled={saving}>Close</button></div>
       <div className="ai-plan-draft-meta"><span>{draft.blocks.length} blocks</span><span>{period === 'day' ? '24-hour day' : '7-day week'}</span><span className="ai-status-pill">Draft</span></div>

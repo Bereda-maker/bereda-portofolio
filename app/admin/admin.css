@@ -585,3 +585,7 @@ textarea.fld { resize: vertical; line-height: 1.5; }
 .calendar-task-chip.status-done { border-left-color: var(--admin-ok); background: color-mix(in srgb, var(--admin-ok) 12%, var(--admin-surface)); opacity: .72; text-decoration: line-through; }
 @media (max-width: 900px) { .ai-plan-studio-grid { grid-template-columns: 1fr; } }
 @media (max-width: 700px) { .ai-plan-actions { align-items: flex-start; flex-direction: column; } .ai-plan-buttons, .ai-plan-buttons button { width: 100%; } .ai-plan-modal-head { flex-direction: column; } .ai-plan-modal-head button { align-self: flex-end; } .ai-plan-inline-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ai-plan-modal-actions { flex-direction: column-reverse; } .ai-plan-modal-actions button { width: 100%; } }
+.ai-checkin-modal { width: min(100%, 38rem); }
+.ai-checkin-form { display: grid; gap: .9rem; margin-top: 1.15rem; }
+.ai-checkin-form > label { display: grid; gap: .4rem; color: var(--admin-muted); font-size: .76rem; font-weight: 700; }
+.ai-checkin-form textarea { resize: vertical; line-height: 1.45; }
