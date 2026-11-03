@@ -589,3 +589,11 @@ textarea.fld { resize: vertical; line-height: 1.5; }
 .ai-checkin-form { display: grid; gap: .9rem; margin-top: 1.15rem; }
 .ai-checkin-form > label { display: grid; gap: .4rem; color: var(--admin-muted); font-size: .76rem; font-weight: 700; }
 .ai-checkin-form textarea { resize: vertical; line-height: 1.45; }
+.open-availability-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .55rem; margin-top: 1rem; }
+.open-availability-slot { display: grid; grid-template-columns: 1fr auto; gap: .15rem .6rem; border: 1px solid color-mix(in srgb, var(--admin-ok) 28%, var(--admin-border)); border-radius: .65rem; background: color-mix(in srgb, var(--admin-ok) 7%, var(--admin-surface)); padding: .65rem .75rem; text-align: left; transition: border-color .15s, background .15s, transform .15s; }
+.open-availability-slot:hover { border-color: var(--admin-ok); background: color-mix(in srgb, var(--admin-ok) 14%, var(--admin-surface)); transform: translateY(-1px); }
+.open-availability-slot span { color: var(--admin-muted); font-size: .68rem; }
+.open-availability-slot strong { color: var(--admin-ink); font-size: .82rem; }
+.open-availability-slot em { grid-row: 1 / span 2; grid-column: 2; align-self: center; border-radius: 999px; background: color-mix(in srgb, var(--admin-ok) 17%, transparent); padding: .22rem .42rem; color: var(--admin-ok); font-size: .62rem; font-style: normal; font-weight: 800; }
+.open-availability-empty, .open-availability-more { grid-column: 1 / -1; margin: .25rem 0 0; color: var(--admin-muted); font-size: .78rem; }
+@media (max-width: 700px) { .open-availability-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
