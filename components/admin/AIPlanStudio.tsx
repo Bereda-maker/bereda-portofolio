@@ -16,8 +16,8 @@ type Props = {
 function displayHour(hour: number) { return new Date(2000, 0, 1, hour).toLocaleTimeString([], { hour: 'numeric' }); }
 function localIso(anchorDate: string, offset: number, hour: number) {
   const date = new Date(`${anchorDate}T00:00:00`);
-  date.setDate(date.getDate() + offset);
-  date.setHours(hour, 0, 0, 0);
+  date.setDate(date.getDate() + offset + Math.floor(hour / 24));
+  date.setHours(hour % 24, 0, 0, 0);
   return date.toISOString();
 }
 
@@ -44,7 +44,7 @@ export default function AIPlanStudio({ period, anchorDate, existingTasks, onSave
     setSaving(true); setError('');
     try {
       for (const block of draft.blocks) {
-        await fetch('/api/admin/calendar-plans', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ kind: 'task', title: block.title, startsAt: localIso(anchorDate, block.dayOffset, block.startHour), endsAt: localIso(anchorDate, block.dayOffset, Math.min(23, block.startHour + block.durationHours)), priority: block.priority, status: 'confirmed', notes: `AI rationale: ${block.rationale}` }) }).then(async (response) => { if (!response.ok) throw new Error((await response.json()).error || 'Could not save an AI block.'); });
+        await fetch('/api/admin/calendar-plans', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ kind: 'task', title: block.title, startsAt: localIso(anchorDate, block.dayOffset, block.startHour), endsAt: localIso(anchorDate, block.dayOffset, block.startHour + block.durationHours), priority: block.priority, status: 'confirmed', notes: `AI rationale: ${block.rationale}` }) }).then(async (response) => { if (!response.ok) throw new Error((await response.json()).error || 'Could not save an AI block.'); });
       }
       setOpen(false); setDraft(null); onSaved();
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'Could not save the AI plan.'); }
