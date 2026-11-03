@@ -34,6 +34,7 @@ export default function AppointmentsPanel({ initialCalendarMessage = '' }: { ini
   const [error, setError] = useState(initialCalendarMessage);
   const [view, setView] = useState<View>('week');
   const [cursor, setCursor] = useState(() => new Date());
+  const [hydrated, setHydrated] = useState(false);
   const [showPlanner, setShowPlanner] = useState(false);
   const [typeForm, setTypeForm] = useState({ name: '', slug: '', durationMinutes: '30', description: '' });
   const [hoursForm, setHoursForm] = useState({ weekday: '1', start: '09:00', end: '17:00', timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC' });
@@ -72,6 +73,7 @@ export default function AppointmentsPanel({ initialCalendarMessage = '' }: { ini
     } else setEvents([]);
     await loadPlanning();
   }
+  useEffect(() => { setCursor(new Date()); setHydrated(true); }, []);
   useEffect(() => { load().catch(() => setError('Could not load appointment settings.')); }, []);
   useEffect(() => { if (data) loadPlanning().catch(() => setError('Could not refresh planning blocks.')); }, [cursor, view]);
   useEffect(() => { setPlanForm({ title: activePlan?.title || '', targetMinutes: String(activePlan?.targetMinutes || 600), targetLabel: activePlan?.targetLabel || '', notes: activePlan?.notes || '' }); }, [activePlan?.id, activePeriod, cursor]);
@@ -103,7 +105,7 @@ export default function AppointmentsPanel({ initialCalendarMessage = '' }: { ini
   const heading = view === 'month' ? cursor.toLocaleDateString([], { month: 'long', year: 'numeric' }) : view === 'week' ? `${visibleDays[0]?.toLocaleDateString([], { month: 'short', day: 'numeric' })} – ${visibleDays[6]?.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}` : cursor.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   const progressMinutes = tasks.filter((task) => task.status !== 'cancelled' && new Date(task.startsAt) >= periodStartFor(cursor, activePeriod) && new Date(task.startsAt) < (activePeriod === 'week' ? addDays(periodStartFor(cursor, activePeriod), 7) : new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))).reduce((sum, task) => sum + minutesBetween(task.startsAt, task.endsAt), 0);
 
-  if (!data) return <div className="admin-card p-6 text-sm text-[color:var(--admin-muted)]">Loading scheduling workspace…</div>;
+  if (!data || !hydrated) return <div className="admin-card p-6 text-sm text-[color:var(--admin-muted)]">Loading scheduling workspace…</div>;
   return <div className="grid gap-6">
     {error && <div className="admin-error" role="alert">{error}</div>}
     <section className="admin-card flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6"><div><p className="admin-eyebrow">Calendar connection</p><h2 className="text-xl font-semibold">{data.calendar.connected ? `Connected · ${data.calendar.accountLabel || 'Google Calendar'}` : 'Google Calendar is not connected'}</h2><p className="mt-1 text-sm text-[color:var(--admin-muted)]">{data.calendar.connected ? `Calendar ID: ${data.calendar.calendarId}` : 'Connect the calendar used for free/busy checks, bookings, and Google Meet links.'}</p></div><div className="flex gap-2">{data.calendar.connected ? <button className="admin-button-secondary" onClick={async () => { await request('/api/calendar/google/disconnect', 'POST'); await load(); }}>Disconnect</button> : <a className="admin-button" href="/api/calendar/google/connect">Connect Google Calendar</a>}</div></section>
