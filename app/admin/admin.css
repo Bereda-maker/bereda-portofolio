@@ -625,3 +625,53 @@ textarea.fld { resize: vertical; line-height: 1.5; }
 .open-availability-none { color: var(--admin-muted); font-size: .64rem; }
 @media (max-width: 900px) { .open-availability-board { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 700px) { .open-availability-board { display: flex; overflow-x: auto; padding-bottom: .25rem; } .open-availability-day { flex: 0 0 8.5rem; } .open-availability-board.is-day .open-availability-day { flex-basis: 100%; } }
+/* Mobile appointment workspace: preserve readable calendar columns while keeping every
+   control reachable with a thumb and preventing the admin shell from overflowing. */
+@media (max-width: 700px) {
+  .admin-content { padding: 1.1rem .75rem 2.5rem; }
+  .admin-page { gap: 1rem; }
+  .calendar-shell { overflow: visible; padding: .75rem; }
+  .calendar-toolbar { gap: .8rem; padding: .25rem .15rem 1rem; }
+  .calendar-toolbar > div:first-child { min-width: 0; width: 100%; }
+  .calendar-heading { font-size: 1.35rem; }
+  .calendar-controls { display: grid; width: 100%; grid-template-columns: auto 2.75rem 2.75rem minmax(0, 1fr); gap: .45rem; }
+  .calendar-controls > button { min-height: 2.75rem; }
+  .calendar-controls .calendar-view-switcher { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; margin: 0; }
+  .calendar-view-switcher button { min-height: 2.75rem; padding: .55rem .35rem; }
+  .calendar-controls > .admin-button { grid-column: 1 / -1; width: 100%; min-height: 2.9rem; }
+  .calendar-grid.calendar-month { grid-template-columns: repeat(7, minmax(5.25rem, 1fr)); min-width: 36.75rem; overflow: auto; }
+  .calendar-weekday { padding: .6rem .3rem; font-size: .58rem; }
+  .calendar-cell { min-height: 6.5rem; padding: .35rem; }
+  .calendar-event { padding: .32rem; }
+  .calendar-event strong { font-size: .62rem; }
+  .calendar-time-grid { grid-template-columns: 3.9rem repeat(7, minmax(6rem, 1fr)); max-height: 34rem; border-radius: .7rem; overscroll-behavior-x: contain; }
+  .calendar-time-head { min-height: 3.1rem; padding: .3rem .2rem; font-size: .62rem; }
+  .calendar-time-head strong { font-size: .58rem; }
+  .calendar-time-label { position: sticky; left: 0; z-index: 3; padding-inline: .3rem; font-size: .58rem; }
+  .calendar-time-head.calendar-time-label { z-index: 4; }
+  .calendar-time-slot { min-height: 2.8rem; padding: .15rem; }
+  .calendar-task-chip { min-height: 2.45rem; padding: .3rem .28rem; }
+  .calendar-task-chip strong { font-size: .61rem; }
+  .calendar-task-chip small { font-size: .53rem; }
+  .calendar-task-chip i { top: .15rem; right: .25rem; opacity: 1; min-width: 1.1rem; min-height: 1.1rem; text-align: center; }
+  .calendar-legend { gap: .55rem .8rem; padding-top: .8rem; font-size: .62rem; }
+  .planning-progress { width: 100%; justify-content: space-between; }
+  .admin-card.p-5, .admin-card.p-6 { padding: 1rem; }
+  .admin-section-heading { gap: .6rem; }
+  .admin-section-heading .admin-button-secondary { min-height: 2.6rem; }
+  .admin-card form .admin-button { width: 100%; min-height: 2.8rem; }
+  .admin-card form .fld { min-height: 2.75rem; }
+}
+
+@media (max-width: 420px) {
+  .admin-topbar { gap: .5rem; padding-inline: .65rem; }
+  .admin-topbar-left { gap: .45rem; }
+  .admin-crumbs { font-size: .74rem; }
+  .admin-content { padding-inline: .55rem; }
+  .calendar-shell { padding: .55rem; }
+  .calendar-controls { grid-template-columns: minmax(0, 1fr) 2.65rem 2.65rem; }
+  .calendar-controls > .admin-button-secondary { min-width: 0; }
+  .calendar-time-grid { grid-template-columns: 3.6rem repeat(7, minmax(5.4rem, 1fr)); }
+  .calendar-time-label { font-size: .54rem; }
+}
+
