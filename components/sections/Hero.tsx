@@ -21,6 +21,13 @@ export default function Hero() {
               <a href="#work" className="btn hero-btn-primary">View selected work <ArrowUpRight size={16} aria-hidden="true" /></a>
               <a href="#contact" className="btn hero-btn-quiet">Start a conversation <ArrowUpRight size={16} aria-hidden="true" /></a>
             </div>
+            <div className="hero-flow settle settle-3" aria-label="Product workflow: clarify, build, ship">
+              <span className="hero-flow-step"><span className="hero-flow-number">01</span>Clarify</span>
+              <span className="hero-flow-divider" aria-hidden="true" />
+              <span className="hero-flow-step"><span className="hero-flow-number">02</span>Build</span>
+              <span className="hero-flow-divider" aria-hidden="true" />
+              <span className="hero-flow-step"><span className="hero-flow-number">03</span>Ship</span>
+            </div>
             <div className="settle settle-3 mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 text-[.86rem] text-white/65">
               <a href={`mailto:${SITE.email}`} className="inline-flex items-center gap-2 transition hover:text-white"><Mail size={15} aria-hidden="true" />{SITE.email}</a>
               <a href={SITE.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 transition hover:text-white"><Github size={15} aria-hidden="true" />GitHub</a>
