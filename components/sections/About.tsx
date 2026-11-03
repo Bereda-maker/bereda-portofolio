@@ -84,9 +84,9 @@ export default function About() {
     <>
       <section id="about" className="border-b border-rule">
         <div className="wrap grid gap-12 py-20 md:grid-cols-[.7fr_1.3fr] md:gap-20 md:py-28">
-          <div className="relative aspect-[4/5] w-full max-w-[21rem] overflow-hidden rounded-[2rem] bg-forest shadow-soft">
-            <Image src={SITE.portrait} alt={`Portrait of ${SITE.name}`} fill sizes="336px" className="object-cover object-[58%_center]" />
-            <div className="absolute bottom-0 left-0 right-0 bg-ink/75 px-5 py-4 font-display text-[.75rem] uppercase tracking-[.18em] text-white/80">Product engineer · Ethiopia</div>
+          <div className="about-portrait relative aspect-[4/5] w-full max-w-[21rem] overflow-hidden rounded-[1.65rem] bg-forest shadow-soft ring-1 ring-ink/10">
+            <Image src={SITE.portrait} alt={`Portrait of ${SITE.name}`} fill sizes="(min-width: 768px) 336px, 100vw" className="object-cover object-[center_29%]" priority />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 via-ink/65 to-transparent px-5 pb-5 pt-12 font-display text-[.72rem] font-semibold uppercase tracking-[.15em] text-white/90 backdrop-blur-[2px]">Product engineer · Ethiopia</div>
           </div>
           <div>
             <p className="eyebrow">About</p>
