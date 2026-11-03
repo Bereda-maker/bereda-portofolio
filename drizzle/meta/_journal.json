@@ -36,6 +36,13 @@
       "when": 1793560100000,
       "tag": "0004_calendar_planning",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793560200000,
+      "tag": "0005_editable_project_content",
+      "breakpoints": true
     }
   ]
 }

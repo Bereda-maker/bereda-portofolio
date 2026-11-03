@@ -2,194 +2,51 @@
 import { useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import type { ProjectRow } from '@/lib/schema';
+import { PROJECTS, type Project } from '@/data/content';
+import { contentForProject, type EditableProjectContent } from '@/lib/project-content';
 import { useConfirm, useToast } from './AdminUI';
 
-type Props = {
-  project?: ProjectRow;
-  onSaved: (project: ProjectRow) => void;
-  onCancel: () => void;
-};
+type Props = { project?: ProjectRow; onSaved: (project: ProjectRow) => void; onCancel: () => void };
+type FormState = { title: string; category: string; description: string; demo: string; repo: string; image: string; walkthrough: string; alt: string; status: string; role: string; featured: boolean; caseStudy: Record<string, string>; features: string; evidence: string };
+type Errors = Partial<Record<keyof FormState | 'stack' | 'image', string>>;
+const LIMITS = { title: 200, category: 100, description: 2000, stack: 20, image: 2000, alt: 300, role: 2000 };
+const SUGGESTED_CATEGORIES = ['Flagship product', 'Commerce platform', 'Health & wellness', 'Travel platform', 'Portfolio'];
+const CASE_FIELDS = [
+  ['eyebrow', 'Label', '01 / flagship product'], ['tagline', 'Tagline', 'A short case-study headline'], ['context', 'Context', 'What is this product and who is it for?'], ['problem', 'The problem', 'What problem did it need to solve?'], ['contribution', 'My contribution', 'What did you own or build?'], ['workflow', 'Real workflow', 'How does the product work for a real user?'], ['architecture', 'Architecture', 'Describe the technical architecture.'], ['integrations', 'Integrations', 'Services and integrations used.'], ['verification', 'Verification and boundaries', 'What has been verified and what remains?'], ['next', 'Next', 'What would you improve or do next?'],
+] as const;
 
-type FormState = { title: string; category: string; description: string; demo: string; repo: string };
-type Errors = Partial<Record<keyof FormState | 'stack', string>>;
-
-// Limits mirror the Zod schema in app/api/admin/projects/route.ts.
-const LIMITS = { title: 200, category: 100, description: 2000, stack: 20 };
-const SUGGESTED_CATEGORIES = ['Project', 'Team', 'Client', 'Open source'];
-
+function staticFallback(p?: ProjectRow): Project | undefined { return p ? PROJECTS.find((candidate) => candidate.title === p.title) : undefined; }
+function initialContent(p?: ProjectRow): EditableProjectContent { return { ...(staticFallback(p) ?? {}), ...contentForProject(p) }; }
 function toFormState(p?: ProjectRow): FormState {
-  return { title: p?.title ?? '', category: p?.category ?? '', description: p?.description ?? '', demo: p?.demo ?? '', repo: p?.repo ?? '' };
+  const fallback = staticFallback(p);
+  const content = initialContent(p);
+  const study = { ...(fallback?.caseStudy ?? {}), ...(content.caseStudy ?? {}) };
+  return { title: p?.title ?? '', category: p?.category ?? '', description: p?.description ?? '', demo: p?.demo ?? '', repo: p?.repo ?? '', image: String(content.image ?? fallback?.image ?? ''), walkthrough: String(content.walkthrough ?? fallback?.walkthrough ?? ''), alt: String(content.alt ?? fallback?.alt ?? ''), status: String(content.status ?? fallback?.status ?? 'Live product'), role: String(content.role ?? fallback?.role ?? ''), featured: Boolean(content.featured ?? fallback?.featured ?? false), caseStudy: Object.fromEntries(CASE_FIELDS.map(([key]) => [key, String(study[key as keyof typeof study] ?? '')])), features: (study.features ?? []).join('\n'), evidence: (study.evidence ?? []).map((item) => `${item.label} | ${item.href}`).join('\n') };
 }
-
-const isUrl = (v: string) => v === '' || v === '#' || /^https?:\/\//i.test(v);
+const isUrl = (v: string) => v === '' || v === '#' || /^https?:\/\//i.test(v) || v.startsWith('/');
 
 export default function ProjectForm({ project, onSaved, onCancel }: Props) {
-  const confirm = useConfirm();
-  const toast = useToast();
-  const initial = useRef({ form: toFormState(project), tags: project?.stack ?? [] });
-  const [f, setF] = useState<FormState>(initial.current.form);
-  const [tags, setTags] = useState<string[]>(initial.current.tags);
-  const [draft, setDraft] = useState('');
-  const [errors, setErrors] = useState<Errors>({});
-  const [formErr, setFormErr] = useState('');
-  const [saving, setSaving] = useState(false);
-  const firstRef = useRef<HTMLInputElement>(null);
-  const isEdit = !!project;
-
+  const confirm = useConfirm(); const toast = useToast(); const initial = useRef({ form: toFormState(project), tags: project?.stack ?? [] });
+  const [f, setF] = useState<FormState>(initial.current.form); const [tags, setTags] = useState<string[]>(initial.current.tags); const [draft, setDraft] = useState(''); const [errors, setErrors] = useState<Errors>({}); const [formErr, setFormErr] = useState(''); const [saving, setSaving] = useState(false); const firstRef = useRef<HTMLInputElement>(null); const isEdit = !!project;
   const dirty = JSON.stringify(f) !== JSON.stringify(initial.current.form) || JSON.stringify(tags) !== JSON.stringify(initial.current.tags) || draft.trim() !== '';
-
-  useEffect(() => {
-    firstRef.current?.focus();
-    const previous = document.activeElement as HTMLElement | null;
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = ''; previous?.focus?.(); };
-  }, []);
-
-  const requestClose = async () => {
-    if (saving) return;
-    if (dirty && !(await confirm({ title: 'Discard your changes?', body: 'You have unsaved edits to this project.', confirmLabel: 'Discard', cancelLabel: 'Keep editing', danger: true }))) return;
-    onCancel();
+  useEffect(() => { firstRef.current?.focus(); const previous = document.activeElement as HTMLElement | null; document.body.style.overflow = 'hidden'; return () => { document.body.style.overflow = ''; previous?.focus?.(); }; }, []);
+  const requestClose = async () => { if (saving) return; if (dirty && !(await confirm({ title: 'Discard your changes?', body: 'You have unsaved edits to this project.', confirmLabel: 'Discard', cancelLabel: 'Keep editing', danger: true }))) return; onCancel(); };
+  const set = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => { setF((prev) => ({ ...prev, [k]: e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value })); if (errors[k]) setErrors((prev) => ({ ...prev, [k]: undefined })); };
+  const setStudy = (key: string) => (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => setF((prev) => ({ ...prev, caseStudy: { ...prev.caseStudy, [key]: e.target.value } }));
+  const addTags = (raw: string) => { const incoming = raw.split(',').map((s) => s.trim()).filter(Boolean); if (!incoming.length) return; setTags((prev) => { const next = [...prev]; for (const tag of incoming) if (!next.some((x) => x.toLowerCase() === tag.toLowerCase()) && next.length < LIMITS.stack) next.push(tag); return next; }); setDraft(''); };
+  const validate = (stack: string[]): Errors => { const e: Errors = {}; if (!f.title.trim()) e.title = 'Give the project a title.'; if (!f.category.trim()) e.category = 'Add a category.'; if (!f.description.trim()) e.description = 'Add a short description.'; if (!stack.length) e.stack = 'Add at least one technology.'; if (!isUrl(f.demo.trim())) e.demo = 'Use an https:// URL, a site path, or leave empty.'; if (!isUrl(f.repo.trim())) e.repo = 'Use an https:// URL, a site path, or leave empty.'; if (!f.image.trim()) e.image = 'Add the public hero image path or URL.'; return e; };
+  const submit = async (event?: React.FormEvent) => { event?.preventDefault(); const stack = draft.trim() ? [...tags, ...draft.split(',').map((s) => s.trim()).filter(Boolean)] : tags; const found = validate(stack); setErrors(found); if (Object.keys(found).length) { setFormErr('Fix the highlighted fields and try again.'); return; } setSaving(true); setFormErr('');
+    const evidence = f.evidence.split('\n').map((line) => line.trim()).filter(Boolean).map((line) => { const [label, ...url] = line.split('|'); return { label: label.trim(), href: url.join('|').trim() }; }).filter((item) => item.label && /^https?:\/\//i.test(item.href));
+    const content = { image: f.image.trim(), walkthrough: f.walkthrough.trim(), alt: f.alt.trim(), status: f.status.trim(), role: f.role.trim(), featured: f.featured, caseStudy: { ...f.caseStudy, features: f.features.split('\n').map((line) => line.trim()).filter(Boolean), evidence } };
+    try { const res = await fetch(isEdit ? `/api/admin/projects/${project!.id}` : '/api/admin/projects', { method: isEdit ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: f.title.trim(), category: f.category.trim(), description: f.description.trim(), stack, demo: f.demo.trim() || '#', repo: f.repo.trim() || '#', content }) }); const data: { project?: ProjectRow; error?: string } = await res.json().catch(() => ({})); if (!res.ok || !data.project) { setFormErr(data.error ?? 'Something went wrong. Please try again.'); return; } toast.success(isEdit ? 'Project content saved' : 'Project created'); onSaved(data.project); } catch { setFormErr('Could not reach the server. Check your connection and try again.'); } finally { setSaving(false); }
   };
-
-  const set = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setF((prev) => ({ ...prev, [k]: e.target.value }));
-    if (errors[k]) setErrors((prev) => ({ ...prev, [k]: undefined }));
-  };
-
-  const addTags = (raw: string) => {
-    const incoming = raw.split(',').map((s) => s.trim()).filter(Boolean);
-    if (incoming.length === 0) return;
-    setTags((prev) => {
-      const next = [...prev];
-      for (const t of incoming) if (!next.some((x) => x.toLowerCase() === t.toLowerCase()) && next.length < LIMITS.stack) next.push(t);
-      return next;
-    });
-    setDraft('');
-    setErrors((prev) => ({ ...prev, stack: undefined }));
-  };
-
-  const validate = (stack: string[]): Errors => {
-    const e: Errors = {};
-    if (!f.title.trim()) e.title = 'Give the project a title.';
-    if (!f.category.trim()) e.category = 'Add a category, for example “Client”.';
-    if (!f.description.trim()) e.description = 'Add a short description.';
-    if (stack.length === 0) e.stack = 'Add at least one technology.';
-    if (!isUrl(f.demo.trim())) e.demo = 'Use a full URL starting with https://, or leave it empty.';
-    if (!isUrl(f.repo.trim())) e.repo = 'Use a full URL starting with https://, or leave it empty.';
-    return e;
-  };
-
-  const submit = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    const stack = draft.trim() ? [...tags, ...draft.split(',').map((s) => s.trim()).filter(Boolean)] : tags;
-    const found = validate(stack);
-    setErrors(found);
-    if (Object.keys(found).length > 0) { setFormErr('Fix the highlighted fields and try again.'); return; }
-    setFormErr('');
-    setSaving(true);
-    try {
-      const res = await fetch(isEdit ? `/api/admin/projects/${project!.id}` : '/api/admin/projects', {
-        method: isEdit ? 'PATCH' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: f.title.trim(), category: f.category.trim(), description: f.description.trim(), stack, demo: f.demo.trim() || '#', repo: f.repo.trim() || '#' }),
-      });
-      const data: { project?: ProjectRow; error?: string } = await res.json().catch(() => ({}));
-      if (!res.ok || !data.project) { setFormErr(data.error ?? 'Something went wrong. Please try again.'); return; }
-      toast.success(isEdit ? 'Changes saved' : 'Project created');
-      onSaved(data.project);
-    } catch {
-      setFormErr('Could not reach the server. Check your connection and try again.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape' && !e.defaultPrevented) { e.stopPropagation(); void requestClose(); }
-    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); void submit(); }
-  };
-
-  const err = (k: keyof Errors) => errors[k];
-
-  return (
-    <div className="admin-overlay admin-overlay-right" onMouseDown={(e) => { if (e.target === e.currentTarget) void requestClose(); }} onKeyDown={onKeyDown}>
-      <form role="dialog" aria-modal="true" aria-labelledby="project-form-title" className="admin-drawer" onSubmit={submit} noValidate>
-        <header className="admin-drawer-head">
-          <div>
-            <h2 id="project-form-title">{isEdit ? 'Edit project' : 'New project'}</h2>
-            <p>{isEdit ? 'Changes go live on your public site within a minute.' : 'This appears in the Projects section of your public site.'}</p>
-          </div>
-          <button type="button" className="admin-icon-btn" aria-label="Close" onClick={() => void requestClose()}><X size={18} /></button>
-        </header>
-
-        <div className="admin-drawer-body">
-          <div className="admin-field">
-            <label htmlFor="pf-title">Title</label>
-            <input id="pf-title" ref={firstRef} className={`fld${err('title') ? ' err' : ''}`} maxLength={LIMITS.title} placeholder="e.g. Habesha Market" value={f.title} onChange={set('title')} aria-invalid={!!err('title')} aria-describedby={err('title') ? 'pf-title-err' : undefined} />
-            {err('title') && <p id="pf-title-err" className="admin-field-error">{err('title')}</p>}
-          </div>
-
-          <div className="admin-field">
-            <label htmlFor="pf-category">Category</label>
-            <input id="pf-category" list="pf-categories" className={`fld${err('category') ? ' err' : ''}`} maxLength={LIMITS.category} placeholder="Project, Team, Client…" value={f.category} onChange={set('category')} aria-invalid={!!err('category')} aria-describedby={err('category') ? 'pf-category-err' : undefined} />
-            <datalist id="pf-categories">{SUGGESTED_CATEGORIES.map((c) => <option key={c} value={c} />)}</datalist>
-            {err('category') && <p id="pf-category-err" className="admin-field-error">{err('category')}</p>}
-          </div>
-
-          <div className="admin-field">
-            <label htmlFor="pf-description">Description</label>
-            <textarea id="pf-description" className={`fld${err('description') ? ' err' : ''}`} rows={5} maxLength={LIMITS.description} placeholder="What it does, who it’s for, and what you built." value={f.description} onChange={set('description')} aria-invalid={!!err('description')} aria-describedby="pf-description-hint" />
-            <p id="pf-description-hint" className="admin-field-hint"><span>{err('description') ? <span className="admin-field-error">{err('description')}</span> : 'Plain text, shown on the project card.'}</span><span>{f.description.length}/{LIMITS.description}</span></p>
-          </div>
-
-          <div className="admin-field">
-            <label htmlFor="pf-stack">Technologies</label>
-            <div className={`admin-tags fld${err('stack') ? ' err' : ''}`} onClick={() => document.getElementById('pf-stack')?.focus()}>
-              {tags.map((t) => (
-                <span key={t} className="admin-tag">{t}<button type="button" aria-label={`Remove ${t}`} onClick={() => setTags((prev) => prev.filter((x) => x !== t))}><X size={11} /></button></span>
-              ))}
-              <input
-                id="pf-stack"
-                value={draft}
-                placeholder={tags.length ? '' : 'TypeScript, Next.js, PostgreSQL'}
-                aria-invalid={!!err('stack')}
-                aria-describedby="pf-stack-hint"
-                onChange={(e) => {
-                  const v = e.target.value;
-                  if (v.includes(',')) addTags(v); else setDraft(v);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') { if (draft.trim()) { e.preventDefault(); e.stopPropagation(); addTags(draft); } }
-                  else if (e.key === 'Backspace' && !draft && tags.length) setTags((prev) => prev.slice(0, -1));
-                }}
-                onBlur={() => addTags(draft)}
-              />
-            </div>
-            <p id="pf-stack-hint" className="admin-field-hint"><span>{err('stack') ? <span className="admin-field-error">{err('stack')}</span> : 'Press Enter or comma after each one.'}</span><span>{tags.length}/{LIMITS.stack}</span></p>
-          </div>
-
-          <div className="admin-field-row">
-            <div className="admin-field">
-              <label htmlFor="pf-demo">Live demo URL <em>optional</em></label>
-              <input id="pf-demo" type="url" inputMode="url" className={`fld${err('demo') ? ' err' : ''}`} placeholder="https://" value={f.demo === '#' ? '' : f.demo} onChange={set('demo')} aria-invalid={!!err('demo')} />
-              {err('demo') && <p className="admin-field-error">{err('demo')}</p>}
-            </div>
-            <div className="admin-field">
-              <label htmlFor="pf-repo">Repository URL <em>optional</em></label>
-              <input id="pf-repo" type="url" inputMode="url" className={`fld${err('repo') ? ' err' : ''}`} placeholder="https://github.com/…" value={f.repo === '#' ? '' : f.repo} onChange={set('repo')} aria-invalid={!!err('repo')} />
-              {err('repo') && <p className="admin-field-error">{err('repo')}</p>}
-            </div>
-          </div>
-        </div>
-
-        <footer className="admin-drawer-foot">
-          <p className={formErr ? 'admin-field-error' : 'admin-field-hint'} role={formErr ? 'alert' : undefined}>{formErr || <><kbd>{'Ctrl'}</kbd> <kbd>Enter</kbd> to save</>}</p>
-          <div className="admin-actions">
-            <button type="button" className="admin-button-secondary" onClick={() => void requestClose()} disabled={saving}>Cancel</button>
-            <button type="submit" className="admin-button" disabled={saving}>{saving ? 'Saving…' : isEdit ? 'Save changes' : 'Create project'}</button>
-          </div>
-        </footer>
-      </form>
-    </div>
-  );
+  const onKeyDown = (e: React.KeyboardEvent) => { if (e.key === 'Escape' && !e.defaultPrevented) { e.stopPropagation(); void requestClose(); } if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); void submit(); } };
+  const err = (key: keyof Errors) => errors[key];
+  return <div className="admin-overlay admin-overlay-right" onMouseDown={(e) => { if (e.target === e.currentTarget) void requestClose(); }} onKeyDown={onKeyDown}><form role="dialog" aria-modal="true" aria-labelledby="project-form-title" className="admin-drawer" onSubmit={submit} noValidate><header className="admin-drawer-head"><div><h2 id="project-form-title">{isEdit ? 'Edit project content' : 'New project'}</h2><p>{isEdit ? 'Update the public card, hero image, and case study.' : 'Create a project for the public portfolio.'}</p></div><button type="button" className="admin-icon-btn" aria-label="Close" onClick={() => void requestClose()}><X size={18} /></button></header>
+    <div className="admin-drawer-body">
+      <div className="admin-form-section"><p className="admin-form-section-title">Public card</p><div className="admin-field"><label htmlFor="pf-title">Title</label><input id="pf-title" ref={firstRef} className={`fld${err('title') ? ' err' : ''}`} maxLength={LIMITS.title} value={f.title} onChange={set('title')} />{err('title') && <p className="admin-field-error">{err('title')}</p>}</div><div className="admin-field"><label htmlFor="pf-category">Category</label><input id="pf-category" list="pf-categories" className={`fld${err('category') ? ' err' : ''}`} maxLength={LIMITS.category} placeholder="Flagship product, Client…" value={f.category} onChange={set('category')} /><datalist id="pf-categories">{SUGGESTED_CATEGORIES.map((c) => <option key={c} value={c} />)}</datalist></div><div className="admin-field"><label htmlFor="pf-description">Description</label><textarea id="pf-description" className={`fld${err('description') ? ' err' : ''}`} rows={4} maxLength={LIMITS.description} value={f.description} onChange={set('description')} /><p className="admin-field-hint"><span>{err('description') ?? 'Shown on the selected-work card.'}</span><span>{f.description.length}/{LIMITS.description}</span></p></div><div className="admin-field"><label htmlFor="pf-role">Contribution / role</label><textarea id="pf-role" className="fld" rows={3} maxLength={LIMITS.role} value={f.role} onChange={set('role')} /></div><div className="admin-field"><label>Technologies</label><div className={`admin-tags fld${err('stack') ? ' err' : ''}`} onClick={() => document.getElementById('pf-stack')?.focus()}>{tags.map((tag) => <span key={tag} className="admin-tag">{tag}<button type="button" aria-label={`Remove ${tag}`} onClick={() => setTags((prev) => prev.filter((x) => x !== tag))}><X size={11} /></button></span>)}<input id="pf-stack" value={draft} placeholder={tags.length ? '' : 'TypeScript, Next.js, PostgreSQL'} onChange={(e) => e.target.value.includes(',') ? addTags(e.target.value) : setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) { e.preventDefault(); addTags(draft); } }} onBlur={() => addTags(draft)} /></div></div></div>
+      <div className="admin-form-section"><p className="admin-form-section-title">Images and links</p><div className="admin-field"><label htmlFor="pf-image">Hero image path or URL</label><input id="pf-image" type="url" inputMode="url" className={`fld${err('image') ? ' err' : ''}`} placeholder="/images/projects/project-hero.jpg or https://…" value={f.image} onChange={set('image')} />{f.image && <img className="admin-project-preview" src={f.image} alt="Project hero preview" />}{err('image') && <p className="admin-field-error">{err('image')}</p>}</div><div className="admin-field"><label htmlFor="pf-alt">Image alt text</label><input id="pf-alt" className="fld" maxLength={LIMITS.alt} value={f.alt} onChange={set('alt')} /></div><div className="admin-field"><label htmlFor="pf-walkthrough">Video walkthrough path or URL <em>optional</em></label><input id="pf-walkthrough" className="fld" value={f.walkthrough} onChange={set('walkthrough')} /></div><div className="admin-field-row"><div className="admin-field"><label htmlFor="pf-status">Status label</label><input id="pf-status" className="fld" value={f.status} onChange={set('status')} /></div><label className="admin-check-row"><input type="checkbox" checked={f.featured} onChange={set('featured')} /><span><strong>Featured work</strong><small>Keep this project in selected work.</small></span></label></div><div className="admin-field-row"><div className="admin-field"><label htmlFor="pf-demo">Live demo URL</label><input id="pf-demo" className={`fld${err('demo') ? ' err' : ''}`} value={f.demo === '#' ? '' : f.demo} onChange={set('demo')} /></div><div className="admin-field"><label htmlFor="pf-repo">Repository URL</label><input id="pf-repo" className={`fld${err('repo') ? ' err' : ''}`} value={f.repo === '#' ? '' : f.repo} onChange={set('repo')} /></div></div></div>
+      <div className="admin-form-section"><p className="admin-form-section-title">Case study copy</p>{CASE_FIELDS.map(([key, label, placeholder]) => <div className="admin-field" key={key}><label htmlFor={`pf-${key}`}>{label}</label><textarea id={`pf-${key}`} className="fld" rows={key === 'tagline' || key === 'eyebrow' ? 2 : 4} placeholder={placeholder} value={f.caseStudy[key]} onChange={setStudy(key)} /></div>)}<div className="admin-field"><label htmlFor="pf-features">Features <em>one per line</em></label><textarea id="pf-features" className="fld" rows={5} value={f.features} onChange={set('features')} /></div><div className="admin-field"><label htmlFor="pf-evidence">Evidence links <em>one per line: label | https://…</em></label><textarea id="pf-evidence" className="fld" rows={4} value={f.evidence} onChange={set('evidence')} /></div></div>
+      {formErr && <p className="admin-field-error" role="alert">{formErr}</p>}
+    </div><footer className="admin-drawer-foot"><p className="admin-field-hint"><kbd>Ctrl</kbd> <kbd>Enter</kbd> to save</p><div className="admin-actions"><button type="button" className="admin-button-secondary" onClick={() => void requestClose()} disabled={saving}>Cancel</button><button type="submit" className="admin-button" disabled={saving}>{saving ? 'Saving…' : isEdit ? 'Save content' : 'Create project'}</button></div></footer></form></div>;
 }

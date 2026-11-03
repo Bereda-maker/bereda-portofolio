@@ -57,15 +57,23 @@ try {
       console.log(`All ${fromContent.length} project(s) from data/content.ts already exist in the database. Nothing to do.`);
     } else {
       for (const p of toInsert) {
+        const content = JSON.stringify({ image: p.image, walkthrough: p.walkthrough ?? '', alt: p.alt, status: p.status, role: p.role, featured: p.featured ?? false, caseStudy: p.caseStudy ?? {} });
         await sql`
-          insert into projects (title, category, description, stack, demo, repo)
-          values (${p.title}, ${p.category}, ${p.description}, ${sql.array(p.stack)}, ${p.demo}, ${p.repo})
+          insert into projects (title, category, description, stack, demo, repo, content)
+          values (${p.title}, ${p.category}, ${p.description}, ${sql.array(p.stack)}, ${p.demo}, ${p.repo}, ${content}::jsonb)
         `;
       }
       console.log(`Inserted ${toInsert.length} project(s): ${toInsert.map((p) => p.title).join(', ')}`);
       if (existingTitles.size > 0) {
         console.log(`Skipped ${existingTitles.size} already-seeded project(s).`);
       }
+    }
+    for (const p of fromContent) {
+      const content = JSON.stringify({ image: p.image, walkthrough: p.walkthrough ?? '', alt: p.alt, status: p.status, role: p.role, featured: p.featured ?? false, caseStudy: p.caseStudy ?? {} });
+      await sql`
+        update projects set content = ${content}::jsonb
+        where title = ${p.title} and content = '{}'::jsonb
+      `;
     }
   }
 } catch (err) {

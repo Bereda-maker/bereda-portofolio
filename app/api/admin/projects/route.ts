@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getSession } from '@/lib/auth';
 import { isSameOrigin } from '@/lib/same-origin';
+import { ProjectContentSchema } from '@/lib/project-content';
 
 export const runtime = 'nodejs';
 
@@ -14,6 +15,7 @@ const ProjectInput = z.object({
   // look like an absolute URL.
   demo: z.string().trim().refine((v) => v === '#' || /^https?:\/\//i.test(v), 'Demo must be "#" or a full https:// URL.'),
   repo: z.string().trim().refine((v) => v === '#' || /^https?:\/\//i.test(v), 'Repo must be "#" or a full https:// URL.'),
+  content: ProjectContentSchema.default({}),
 });
 
 export async function GET() {

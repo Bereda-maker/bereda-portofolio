@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { eq } from 'drizzle-orm';
 import { getSession } from '@/lib/auth';
 import { isSameOrigin } from '@/lib/same-origin';
+import { ProjectContentSchema } from '@/lib/project-content';
 
 export const runtime = 'nodejs';
 
@@ -14,6 +15,7 @@ const ProjectPatch = z
     stack: z.array(z.string().trim().min(1)).min(1, 'Add at least one stack tag.').max(20),
     demo: z.string().trim().refine((v) => v === '#' || /^https?:\/\//i.test(v), 'Demo must be "#" or a full https:// URL.'),
     repo: z.string().trim().refine((v) => v === '#' || /^https?:\/\//i.test(v), 'Repo must be "#" or a full https:// URL.'),
+    content: ProjectContentSchema,
   })
   .partial()
   .refine((v) => Object.keys(v).length > 0, { message: 'No fields to update.' });
