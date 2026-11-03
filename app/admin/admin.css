@@ -613,3 +613,15 @@ textarea.fld { resize: vertical; line-height: 1.5; }
 .plan-analytics-copy p { margin: 0; color: var(--admin-muted); font-size: .67rem; }
 .plan-analytics-copy em { color: var(--admin-blue); font-size: .67rem; font-style: normal; line-height: 1.35; }
 @media (max-width: 900px) { .plan-analytics-grid { grid-template-columns: 1fr; } }
+.open-availability-board { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: .6rem; margin-top: 1rem; }
+.open-availability-board.is-day { grid-template-columns: minmax(0, 1fr); }
+.open-availability-day { min-width: 0; border: 1px solid var(--admin-border); border-radius: .7rem; background: var(--admin-inset); padding: .65rem; }
+.open-availability-day-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .3rem; border-bottom: 1px solid var(--admin-border); padding-bottom: .45rem; }
+.open-availability-day-heading strong { color: var(--admin-ink); font-size: .72rem; }
+.open-availability-day-heading span { color: var(--admin-muted); font-size: .62rem; }
+.open-availability-chips { display: flex; flex-wrap: wrap; gap: .3rem; padding-top: .55rem; }
+.open-availability-chip { border: 1px solid color-mix(in srgb, var(--admin-ok) 32%, var(--admin-border)); border-radius: .35rem; background: color-mix(in srgb, var(--admin-ok) 8%, var(--admin-surface)); padding: .3rem .4rem; color: var(--admin-ok); font-size: .62rem; font-weight: 750; }
+.open-availability-chip:hover { border-color: var(--admin-ok); background: color-mix(in srgb, var(--admin-ok) 18%, var(--admin-surface)); }
+.open-availability-none { color: var(--admin-muted); font-size: .64rem; }
+@media (max-width: 900px) { .open-availability-board { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .open-availability-board { display: flex; overflow-x: auto; padding-bottom: .25rem; } .open-availability-day { flex: 0 0 8.5rem; } .open-availability-board.is-day .open-availability-day { flex-basis: 100%; } }
