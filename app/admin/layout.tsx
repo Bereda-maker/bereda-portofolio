@@ -1,4 +1,5 @@
 import './admin.css';
+import './appointments.css';
 import { AdminThemeSync } from '@/components/admin/AdminTheme';
 import { ADMIN_THEME_INIT_SCRIPT } from '@/lib/admin-theme';
 

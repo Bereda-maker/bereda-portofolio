@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type ExistingTask = { title: string; startsAt: string; endsAt: string; status: string };
 type DraftBlock = { dayOffset: number; startHour: number; durationHours: number; title: string; priority: 'low' | 'normal' | 'high'; rationale: string };
@@ -32,6 +32,13 @@ export default function AIPlanStudio({ period, anchorDate, existingTasks, onSave
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!intakeOpen && !open) return;
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape' && !loading && !saving) { setIntakeOpen(false); setOpen(false); } };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [intakeOpen, open, loading, saving]);
 
   async function generate() {
     setLoading(true); setError('');
