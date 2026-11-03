@@ -770,3 +770,24 @@ textarea.fld { resize: vertical; line-height: 1.5; }
   .calendar-time-grid:not(.single-day) .calendar-time-slot { min-width: 6.5rem; }
   .calendar-time-grid:not(.single-day) .calendar-time-label { min-width: 3.55rem; }
 }
+
+.reservation-row-actions { display: flex; align-items: center; justify-content: flex-end; gap: .55rem; flex-wrap: wrap; }
+.reservation-details-button { padding: .45rem .7rem; font-size: .75rem; }
+.reservation-details-backdrop { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; overflow-y: auto; background: var(--admin-scrim); padding: 1.25rem; backdrop-filter: blur(6px); }
+.reservation-details-modal { width: min(100%, 38rem); padding: 1.35rem; box-shadow: 0 1.5rem 4rem var(--admin-shadow); }
+.reservation-details-modal .admin-section-heading { align-items: flex-start; margin-bottom: 1rem; }
+.reservation-details-modal .admin-section-heading > div { display: grid; gap: .12rem; }
+.reservation-details-modal .admin-section-heading span { font-size: 1.15rem; font-weight: 700; }
+.reservation-details-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; margin: 0; }
+.reservation-details-grid > div { min-width: 0; border: 1px solid var(--admin-border); border-radius: .65rem; background: var(--admin-inset); padding: .75rem; }
+.reservation-details-grid dt { color: var(--admin-faint); font-size: .68rem; font-weight: 750; letter-spacing: .04em; text-transform: uppercase; }
+.reservation-details-grid dd { margin: .25rem 0 0; overflow-wrap: anywhere; color: var(--admin-ink); font-size: .88rem; }
+.reservation-details-grid dd a { color: var(--admin-blue); text-decoration: underline; text-underline-offset: 2px; }
+.reservation-details-notes { grid-column: 1 / -1; }
+@media (max-width: 560px) {
+  .reservation-row-actions { width: 100%; justify-content: space-between; }
+  .reservation-details-backdrop { align-items: end; padding: .65rem; }
+  .reservation-details-modal { max-height: 88vh; overflow-y: auto; border-radius: 1rem 1rem .7rem .7rem; padding: 1rem; }
+  .reservation-details-grid { grid-template-columns: 1fr; }
+  .reservation-details-notes { grid-column: auto; }
+}
