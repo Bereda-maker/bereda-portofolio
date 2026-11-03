@@ -675,3 +675,39 @@ textarea.fld { resize: vertical; line-height: 1.5; }
   .calendar-time-label { font-size: .54rem; }
 }
 
+
+/* Phone-first override: day view is the primary mobile interaction, not a squeezed
+   seven-column desktop grid. Week and month remain available from the view switcher. */
+@media (max-width: 700px) {
+  .calendar-time-grid.single-day {
+    grid-template-columns: 3.9rem minmax(0, 1fr);
+    min-width: 0;
+    overflow-x: hidden;
+  }
+  .calendar-time-grid.single-day .calendar-time-head:not(.calendar-time-label) {
+    min-height: 3.6rem;
+    padding: .5rem;
+  }
+  .calendar-time-grid.single-day .calendar-time-slot {
+    min-height: 3.5rem;
+    padding: .25rem;
+  }
+  .calendar-time-grid.single-day .calendar-task-chip {
+    min-height: 3rem;
+    border-left-width: 4px;
+    border-radius: .55rem;
+    padding: .42rem .5rem;
+  }
+  .calendar-time-grid.single-day .calendar-task-chip strong { font-size: .72rem; }
+  .calendar-time-grid.single-day .calendar-task-chip small { font-size: .6rem; }
+  .calendar-legend span:last-child { flex-basis: 100%; line-height: 1.35; }
+  .calendar-plan-banner { border-radius: .65rem; }
+}
+
+@media (max-width: 420px) {
+  .calendar-controls { grid-template-columns: minmax(0, 1fr) 2.7rem 2.7rem; }
+  .calendar-controls .calendar-view-switcher { grid-column: 1 / -1; }
+  .calendar-controls > .admin-button { grid-column: 1 / -1; }
+  .calendar-time-grid.single-day { grid-template-columns: 3.55rem minmax(0, 1fr); }
+  .calendar-time-label { padding-inline: .25rem; }
+}

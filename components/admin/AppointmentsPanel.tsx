@@ -75,7 +75,12 @@ export default function AppointmentsPanel({ initialCalendarMessage = '' }: { ini
     } else setEvents([]);
     await loadPlanning();
   }
-  useEffect(() => { setCursor(new Date()); setHydrated(true); }, []);
+  useEffect(() => {
+    setCursor(new Date());
+    const mobileQuery = window.matchMedia('(max-width: 700px)');
+    if (mobileQuery.matches) setView('day');
+    setHydrated(true);
+  }, []);
   useEffect(() => { load().catch(() => setError('Could not load appointment settings.')); }, []);
   useEffect(() => { if (data) loadPlanning().catch(() => setError('Could not refresh planning blocks.')); }, [cursor, view]);
   useEffect(() => { setPlanForm({ title: activePlan?.title || '', targetMinutes: String(activePlan?.targetMinutes || 600), targetLabel: activePlan?.targetLabel || '', notes: activePlan?.notes || '' }); }, [activePlan?.id, activePeriod, cursor]);
