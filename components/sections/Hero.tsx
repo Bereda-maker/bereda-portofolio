@@ -31,7 +31,7 @@ export default function Hero() {
             <div className="hero-stage-orbit" aria-hidden="true" />
             <div className="hero-stage-rule" aria-hidden="true" />
             <div className="hero-stage-label">Bereda Wako / 2026</div>
-            <Image src="/images/hero-laptop.webp" alt={`Portrait of ${SITE.name} holding a laptop`} fill priority sizes="(max-width: 1024px) 100vw, 55vw" className="hero-stage-image" />
+            <Image src="/images/hero-laptop.png" alt={`Portrait of ${SITE.name} holding a laptop`} fill priority sizes="(max-width: 1024px) 100vw, 55vw" className="hero-stage-image" />
           </div>
         </div>
         <div className="hero-metrics relative z-10 grid gap-5 px-5 pb-7 pt-5 sm:grid-cols-3 sm:px-8 sm:pb-9 sm:pt-6 lg:grid-cols-[.8fr_.8fr_.8fr_1.65fr] lg:gap-0 lg:px-[max(2rem,calc((100vw-68rem)/2))]">
