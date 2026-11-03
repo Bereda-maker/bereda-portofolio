@@ -852,3 +852,28 @@ textarea.fld { resize: vertical; line-height: 1.5; }
   .mobile-period-heading .admin-button { width: 100%; }
   .mobile-period-month .mobile-period-picker button { min-height: 2.45rem; }
 }
+
+/* Final screenshot-driven mobile tuning: make period selection and timeline text
+   comfortably tappable at narrow phone widths. */
+@media (max-width: 700px) {
+  .mobile-period-week .mobile-period-picker { display: flex; overflow-x: auto; padding-inline: .15rem; }
+  .mobile-period-week .mobile-period-picker button { flex-basis: 4.25rem; min-height: 3.9rem; }
+  .mobile-period-month .mobile-period-picker { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .45rem; }
+  .mobile-period-month .mobile-period-picker button { min-height: 3.25rem; border-radius: .7rem; }
+  .mobile-period-month .mobile-period-picker button strong { font-size: .88rem; }
+  .mobile-period-month .mobile-period-picker button span { font-size: .65rem; }
+  .mobile-period-heading { padding: .85rem; }
+  .mobile-period-heading h3 { font-size: 1.08rem; }
+  .mobile-period-heading span { font-size: .72rem; }
+  .mobile-period-timeline .calendar-time-head { min-height: 3.6rem; }
+  .mobile-period-timeline .calendar-time-label { font-size: .65rem; }
+  .mobile-period-timeline .calendar-time-slot { min-height: 3.65rem; }
+  .mobile-period-timeline .calendar-task-chip { min-height: 3.05rem; padding: .42rem .5rem; }
+  .mobile-period-timeline .calendar-task-chip strong { font-size: .74rem; }
+  .mobile-period-timeline .calendar-task-chip small { font-size: .61rem; }
+}
+@media (max-width: 420px) {
+  .mobile-period-month .mobile-period-picker { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .mobile-period-month .mobile-period-picker button { min-height: 3.1rem; }
+  .mobile-period-week .mobile-period-picker button { flex-basis: 4rem; }
+}
