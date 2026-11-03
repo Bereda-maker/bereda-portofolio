@@ -33,7 +33,7 @@ export default function Hero() {
               <a href={SITE.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 transition hover:text-white"><Github size={15} aria-hidden="true" />GitHub</a>
             </div>
           </div>
-          <div className="settle settle-3 hero-stage hero-stage-light relative">
+          <div className="settle settle-3 hero-stage relative">
             <div className="hero-stage-grid" aria-hidden="true" />
             <div className="hero-stage-orbit" aria-hidden="true" />
             <div className="hero-stage-rule" aria-hidden="true" />
