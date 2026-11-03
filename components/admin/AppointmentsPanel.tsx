@@ -36,6 +36,7 @@ export default function AppointmentsPanel({ initialCalendarMessage = '' }: { ini
   const [error, setError] = useState(initialCalendarMessage);
   const [view, setView] = useState<View>('week');
   const [cursor, setCursor] = useState(() => new Date());
+  const [mobileFocusDate, setMobileFocusDate] = useState(() => new Date());
   const [isMobile, setIsMobile] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [showPlanner, setShowPlanner] = useState(false);
@@ -79,6 +80,7 @@ export default function AppointmentsPanel({ initialCalendarMessage = '' }: { ini
   }
   useEffect(() => {
     setCursor(new Date());
+    setMobileFocusDate(new Date());
     const mobileQuery = window.matchMedia('(max-width: 700px)');
     const syncMobile = () => setIsMobile(mobileQuery.matches);
     syncMobile();
@@ -89,6 +91,7 @@ export default function AppointmentsPanel({ initialCalendarMessage = '' }: { ini
   }, []);
   useEffect(() => { load().catch(() => setError('Could not load appointment settings.')); }, []);
   useEffect(() => { if (data) loadPlanning().catch(() => setError('Could not refresh planning blocks.')); }, [cursor, view]);
+  useEffect(() => { setMobileFocusDate(cursor); }, [cursor, view]);
   useEffect(() => { setPlanForm({ title: activePlan?.title || '', targetMinutes: String(activePlan?.targetMinutes || 600), targetLabel: activePlan?.targetLabel || '', notes: activePlan?.notes || '' }); }, [activePlan?.id, activePeriod, cursor]);
 
   async function request(path: string, method: string, body?: unknown) {
@@ -123,16 +126,14 @@ export default function AppointmentsPanel({ initialCalendarMessage = '' }: { ini
   const openAvailability = availabilityDays.flatMap((day) => timeSlots.filter((slot) => !busyItemsForSlot(day, slot).length && !confirmedTasksForSlot(day, slot).length).map((slot) => ({ day, slot })));
 
   function renderMobileCalendar() {
-    const mobileDays = view === 'week' ? visibleDays : Array.from({ length: new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate() }, (_, index) => new Date(cursor.getFullYear(), cursor.getMonth(), index + 1));
-    return <div className={`mobile-calendar-list mobile-calendar-${view}`}>
-      <div className="mobile-calendar-intro"><strong>{view === 'week' ? 'Your week at a glance' : 'Your month at a glance'}</strong><span>Tap a day to plan time</span></div>
-      {mobileDays.map((day) => {
-        const dayItems = itemsFor(day).sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime());
-        return <article className={`mobile-calendar-day${keyFor(day) === keyFor(new Date()) ? ' today' : ''}`} key={keyFor(day)}>
-          <div className="mobile-calendar-day-head"><div><strong>{day.toLocaleDateString([], { weekday: 'long' })}</strong><span>{day.toLocaleDateString([], { month: 'short', day: 'numeric' })}</span></div><button type="button" className="mobile-calendar-plan" onClick={() => openPlanner(day)}>+ Plan</button></div>
-          {dayItems.length ? <div className="mobile-calendar-items">{dayItems.map((item) => item.kind === 'planning' && item.task ? <button type="button" className={`mobile-calendar-item planning status-${item.task.status}`} key={item.id} onClick={() => void changeTaskStatus(item.task!)}><span><strong>{item.title}</strong><small>{formatTime(item.startsAt)} · {item.task.status.replace('_', ' ')}</small></span><i onClick={(event) => { event.stopPropagation(); void deleteTask(item.task!.id); }} aria-label={`Delete ${item.title}`}>×</i></button> : item.href ? <a className={`mobile-calendar-item ${item.kind}`} href={item.href} target="_blank" rel="noreferrer" key={item.id}><span><strong>{item.title}</strong><small>{formatTime(item.startsAt)} · {item.kind === 'google' ? 'Google Calendar' : 'Reservation'}</small></span></a> : <div className={`mobile-calendar-item ${item.kind}`} key={item.id}><span><strong>{item.title}</strong><small>{formatTime(item.startsAt)} · Reservation</small></span></div>)}</div> : <button type="button" className="mobile-calendar-empty" onClick={() => openPlanner(day)}>No events · tap to plan</button>}
-        </article>;
-      })}
+    const periodDays = view === 'week' ? visibleDays : Array.from({ length: new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate() }, (_, index) => new Date(cursor.getFullYear(), cursor.getMonth(), index + 1));
+    const focusDay = periodDays.find((day) => keyFor(day) === keyFor(mobileFocusDate)) || periodDays[0] || cursor;
+    return <div className={`mobile-period-calendar mobile-period-${view}`}>
+      <div className="mobile-period-picker" role="tablist" aria-label={`${view} dates`}>
+        {periodDays.map((day) => <button type="button" role="tab" aria-selected={keyFor(day) === keyFor(focusDay)} className={keyFor(day) === keyFor(focusDay) ? 'active' : ''} key={keyFor(day)} onClick={() => setMobileFocusDate(day)}><strong>{view === 'month' ? day.getDate() : dayShort[day.getDay()]}</strong><span>{view === 'month' ? day.toLocaleDateString([], { weekday: 'short' }) : day.getDate()}</span>{itemsFor(day).length > 0 && <i aria-label={`${itemsFor(day).length} events`} />}</button>)}
+      </div>
+      <div className="mobile-period-heading"><div><p className="admin-eyebrow">{view === 'week' ? 'Week schedule' : 'Month schedule'}</p><h3>{focusDay.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' })}</h3><span>{itemsFor(focusDay).length ? `${itemsFor(focusDay).length} scheduled item${itemsFor(focusDay).length === 1 ? '' : 's'}` : 'No events scheduled'}</span></div><button type="button" className="admin-button" onClick={() => openPlanner(focusDay)}>+ Plan time</button></div>
+      <div className="calendar-time-grid single-day mobile-period-timeline"><div className="calendar-time-head calendar-time-label">Time</div><div className={`calendar-time-head${keyFor(focusDay) === keyFor(new Date()) ? ' today' : ''}`}><strong>{dayShort[focusDay.getDay()]}</strong><span>{focusDay.getDate()}</span></div>{timeSlots.map((slot) => <div className="calendar-time-row" key={slot}><div className="calendar-time-label">{new Date(2000, 0, 1, Math.floor(slot / 60), slot % 60).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</div><button type="button" className="calendar-time-slot" onClick={() => openPlanner(focusDay, Math.floor(slot / 60), slot % 60)}>{itemsForSlot(focusDay, slot).map((item) => <span key={item.id} className={`calendar-task-chip calendar-event-chip ${item.kind}`}><strong>{item.title}</strong><small>{formatTime(item.startsAt)} · {item.kind === 'google' ? 'Google Calendar' : item.kind === 'reservation' ? 'Reservation' : 'Planning'}</small></span>)}{tasksForSlot(focusDay, slot).map((task) => <span key={task.id} className={`calendar-task-chip priority-${task.priority} status-${task.status}`} onClick={(event) => { event.stopPropagation(); void changeTaskStatus(task); }} title="Click to advance status"><strong>{task.title}</strong><small>{formatTime(task.startsAt)} · {task.status.replace('_', ' ')}</small><i onClick={(event) => { event.stopPropagation(); void deleteTask(task.id); }} aria-label={`Delete ${task.title}`}>×</i></span>)}</button></div>)}</div>
     </div>;
   }
 

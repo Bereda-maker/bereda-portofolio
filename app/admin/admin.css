@@ -829,3 +829,26 @@ textarea.fld { resize: vertical; line-height: 1.5; }
   .mobile-calendar-month { grid-template-columns: 1fr; }
   .mobile-calendar-month .mobile-calendar-day { min-height: 0; }
 }
+
+/* Mobile Week/Month use the same focused timeline interaction as Day view. */
+.mobile-period-calendar { display: grid; gap: .8rem; }
+.mobile-period-picker { display: flex; gap: .4rem; overflow-x: auto; overscroll-behavior-x: contain; padding: .15rem .1rem .35rem; scrollbar-width: thin; }
+.mobile-period-picker button { position: relative; display: grid; flex: 0 0 3.4rem; min-height: 3.45rem; place-items: center; gap: .08rem; border: 1px solid var(--admin-border); border-radius: .65rem; background: var(--admin-inset); color: var(--admin-muted); }
+.mobile-period-picker button strong { color: var(--admin-ink); font-size: .76rem; }
+.mobile-period-picker button span { font-size: .58rem; }
+.mobile-period-picker button.active { border-color: var(--admin-blue); background: color-mix(in srgb, var(--admin-blue) 13%, var(--admin-surface)); color: var(--admin-blue); box-shadow: 0 0 0 1px var(--admin-blue); }
+.mobile-period-picker button.active strong { color: var(--admin-blue); }
+.mobile-period-picker button i { position: absolute; right: .35rem; top: .35rem; height: .35rem; width: .35rem; border-radius: 999px; background: var(--admin-gold); }
+.mobile-period-month .mobile-period-picker { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); overflow: visible; }
+.mobile-period-month .mobile-period-picker button { width: 100%; min-height: 2.7rem; flex-basis: auto; }
+.mobile-period-heading { display: flex; align-items: center; justify-content: space-between; gap: .75rem; border: 1px solid var(--admin-border); border-radius: .75rem; background: var(--admin-inset); padding: .75rem; }
+.mobile-period-heading > div { min-width: 0; }
+.mobile-period-heading h3 { margin: .08rem 0 .15rem; color: var(--admin-ink); font-size: 1rem; }
+.mobile-period-heading span { color: var(--admin-muted); font-size: .68rem; }
+.mobile-period-heading .admin-button { flex: 0 0 auto; min-height: 2.65rem; }
+.mobile-period-timeline { min-width: 0 !important; width: 100% !important; max-width: 100%; overflow-x: hidden !important; }
+@media (max-width: 420px) {
+  .mobile-period-heading { align-items: flex-start; flex-direction: column; }
+  .mobile-period-heading .admin-button { width: 100%; }
+  .mobile-period-month .mobile-period-picker button { min-height: 2.45rem; }
+}
