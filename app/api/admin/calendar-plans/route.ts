@@ -11,6 +11,7 @@ const TaskInput = z.object({
   startsAt: z.coerce.date(),
   endsAt: z.coerce.date(),
   priority: z.enum(['low', 'normal', 'high']).default('normal'),
+  status: z.enum(['planned', 'confirmed', 'in_progress', 'done', 'cancelled']).default('planned'),
   notes: z.string().trim().max(1000).optional().default(''),
 }).refine((value) => value.endsAt > value.startsAt, { message: 'End time must be after start time.' });
 
@@ -61,7 +62,7 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   if (!(await isAdminRequest())) return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-  const parsed = z.object({ id: z.coerce.number().int().positive(), status: z.enum(['planned', 'in_progress', 'done', 'cancelled']).optional(), title: z.string().trim().min(1).max(160).optional() }).safeParse(await request.json().catch(() => null));
+  const parsed = z.object({ id: z.coerce.number().int().positive(), status: z.enum(['planned', 'confirmed', 'in_progress', 'done', 'cancelled']).optional(), title: z.string().trim().min(1).max(160).optional() }).safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: 'Invalid planning update.' }, { status: 400 });
   const { db } = await import('@/lib/db');
   const { calendarTasks } = await import('@/lib/schema');
