@@ -1,17 +1,17 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Briefcase, GraduationCap, Laptop, Megaphone } from 'lucide-react';
-import { EXPERIENCE, SITE } from '@/data/content';
+import { SITE } from '@/data/content';
 
 const EXPERIENCE_ICONS = [Laptop, Megaphone, GraduationCap, Briefcase];
-const EXPERIENCE_IDS = ['experience-teaching', 'experience-marketing', 'experience-education', 'experience-startup'];
 
-function ExperienceTimeline({ experiences }: { experiences: typeof EXPERIENCE | Array<{ slug:string; role:string; place:string; type:string; image:string; imageAlt:string; text:string; details:string[]; links:{label:string;href:string}[] }> }) {
+
+function ExperienceTimeline({ experiences }: { experiences: Array<{ slug:string; role:string; place:string; type:string; image:string; imageAlt:string; text:string; details:string[]; links:{label:string;href:string}[] }> }) {
   return (
     <div className="grid gap-5 md:grid-cols-2">
       {experiences.map((experience, index) => {
         const Icon = EXPERIENCE_ICONS[index] ?? Briefcase;
-        const experienceId = EXPERIENCE_IDS[index] ?? `experience-${experience.slug}`;
+        const experienceId = `experience-${experience.slug}`;
 
         return (
           <article id={experienceId} key={experience.slug} className="experience-card scroll-mt-28 overflow-hidden p-0">
@@ -79,7 +79,7 @@ function ExperienceTimeline({ experiences }: { experiences: typeof EXPERIENCE | 
   );
 }
 
-export default function About({ experiences = EXPERIENCE }: { experiences?: typeof EXPERIENCE | Array<{ slug:string; role:string; place:string; type:string; image:string; imageAlt:string; text:string; details:string[]; links:{label:string;href:string}[] }> }) {
+export default function About({ experiences }: { experiences: Array<{ slug:string; role:string; place:string; type:string; image:string; imageAlt:string; text:string; details:string[]; links:{label:string;href:string}[] }> }) {
   return (
     <>
       <section id="about" className="border-b border-rule">

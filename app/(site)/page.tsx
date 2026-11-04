@@ -11,7 +11,7 @@ import { SITE } from '@/data/content';
 import { getProjects } from '@/lib/projects';
 import { getExperiences } from '@/lib/experiences';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export default async function Page() {
   const [projects, experiences] = await Promise.all([getProjects(), getExperiences()]);

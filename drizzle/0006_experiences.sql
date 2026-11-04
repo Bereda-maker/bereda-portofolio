@@ -15,3 +15,4 @@ CREATE TABLE IF NOT EXISTS "experiences" (
 );
 CREATE UNIQUE INDEX IF NOT EXISTS "experiences_slug_unique" ON "experiences" ("slug");
 CREATE INDEX IF NOT EXISTS "experiences_order_idx" ON "experiences" ("sort_order");
+ALTER TABLE "experiences" ENABLE ROW LEVEL SECURITY;
