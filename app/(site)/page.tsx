@@ -7,6 +7,7 @@ import Extracurricular from '@/components/sections/Extracurricular';
 import Explore from '@/components/sections/Explore';
 import Contact from '@/components/sections/Contact';
 import { SiteFooter, SiteHeader } from '@/components/SiteChrome';
+import SectionDivider from '@/components/SectionDivider';
 import { SITE } from '@/data/content';
 import { getProjects } from '@/lib/projects';
 import { getExperiences } from '@/lib/experiences';
@@ -24,5 +25,5 @@ export default async function Page() {
     email: SITE.email,
     sameAs: [SITE.github, SITE.linkedin].filter(Boolean),
   };
-  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /><SiteHeader /><main><Hero /><Work projects={projects} /><Capabilities /><Proof /><About experiences={experiences} /><Extracurricular /><Explore /><Contact /></main><SiteFooter /></>;
+  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /><SiteHeader /><main className="home-flow"><Hero /><SectionDivider variant="flow" to="paper" /><Work projects={projects} /><SectionDivider variant="smooth" to="panel" /><Capabilities /><SectionDivider variant="organic" to="paper" /><Proof /><SectionDivider variant="topo" to="paper" /><About experiences={experiences} /><SectionDivider variant="ribbon" to="panel" overlay="down" /><Extracurricular /><SectionDivider variant="morph" to="paper" /><Explore /><SectionDivider variant="layered" to="panel" /><Contact /><SectionDivider variant="smooth" to="paper" flipX /></main><SiteFooter flush /></>;
 }

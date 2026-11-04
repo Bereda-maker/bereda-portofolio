@@ -48,7 +48,6 @@ export default function Hero() {
           <div className="hero-capabilities"><p>What I can own</p><div><span>Product UI</span><span>Typed APIs</span><span>Data + deploy</span></div></div>
         </div>
       </div>
-      <div className="hero-bottom-seam" aria-hidden="true" />
     </section>
   );
 }
