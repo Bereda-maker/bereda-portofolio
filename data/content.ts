@@ -159,7 +159,7 @@ export const EXTRACURRICULAR = [
     title: 'Theological studies',
     label: 'Study · Faith · Discipline',
     image: '/images/extracurricular-theology.png',
-    alt: 'Open Bible, theology books, study notes, and a gold medal on a warm wooden desk',
+    alt: 'Bereda Wako receiving a graduation medal during a Holistic Bible College theological studies ceremony',
     text: 'Gold medalist in Diploma Practical Theology across all of Ethiopia from Holistic Bible College.',
   },
   {
