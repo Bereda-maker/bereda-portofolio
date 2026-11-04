@@ -61,9 +61,9 @@ export function SiteHeader() {
   );
 }
 
-export function SiteFooter() {
+export function SiteFooter({ flush = false }: { flush?: boolean } = {}) {
   return (
-    <footer className="border-t border-rule">
+    <footer className={flush ? '' : 'border-t border-rule'}>
       <div className="wrap flex flex-wrap items-center justify-between gap-x-8 gap-y-3 py-8 font-display text-[.9rem] text-muted">
         <p>© {new Date().getFullYear()} {SITE.name}</p>
         <ul className="flex flex-wrap gap-x-6 gap-y-2">

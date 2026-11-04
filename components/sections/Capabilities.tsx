@@ -5,7 +5,7 @@ const ICON_KEY: Record<string, string> = { ...Object.fromEntries(TECH), ...STACK
 
 export default function Capabilities() {
   return (
-    <section id="services" className="border-b border-rule bg-panel">
+    <section id="services" className="bg-panel">
       <div className="wrap py-20 md:py-28">
         <div className="grid gap-5 md:grid-cols-[.8fr_1.2fr] md:gap-16"><div><p className="eyebrow">What I can own</p><h2 className="section-title mt-3 max-w-[12ch]">From product idea to a maintainable release.</h2></div><p className="max-w-[35rem] text-[1.15rem] text-muted">I do not start with a technology shopping list. I start with the user, the risk, and the smallest slice that can teach us something.</p></div>
         <dl className="mt-12 grid gap-4 sm:grid-cols-2">

@@ -1,3 +1,4 @@
+import SectionDivider from '@/components/SectionDivider';
 import Link from 'next/link';
 import { asc, desc, eq } from 'drizzle-orm';
 import { ArrowRight, ArrowUpRight, BookOpen, CalendarDays, PlaySquare } from 'lucide-react';
@@ -98,7 +99,7 @@ export default async function Explore() {
 
   return (
     <>
-      <section id="books" className="explore-section explore-section--books border-b border-rule" aria-labelledby="books-title">
+      <section id="books" className="explore-section explore-section--books" aria-labelledby="books-title">
         <div className="wrap py-20 md:py-28">
           <div className="grid gap-10 md:grid-cols-[.8fr_1.2fr] md:items-end md:gap-16">
             <div>
@@ -141,7 +142,8 @@ export default async function Explore() {
         </div>
       </section>
 
-      <section id="media" className="explore-section explore-section--media border-b border-rule bg-forest-dark text-white" aria-labelledby="media-title">
+      <SectionDivider variant="split" to="paper" overlay="down" />
+      <section id="media" className="explore-section explore-section--media bg-forest-dark text-white" aria-labelledby="media-title">
         <div className="wrap py-20 md:py-28">
           <div className="grid gap-10 md:grid-cols-[1.1fr_.9fr] md:items-center md:gap-16">
             <div>
@@ -175,7 +177,8 @@ export default async function Explore() {
         </div>
       </section>
 
-      <section id="appointment" className="explore-section explore-section--appointment border-b border-rule" aria-labelledby="appointment-title">
+      <SectionDivider variant="parallax" to="paper" />
+      <section id="appointment" className="explore-section explore-section--appointment" aria-labelledby="appointment-title">
         <div className="wrap py-20 md:py-28">
           <div className="appointment-panel">
             <div className="grid gap-10 md:grid-cols-[.85fr_1.15fr] md:items-center md:gap-16">

@@ -1,3 +1,4 @@
+import SectionDivider from '@/components/SectionDivider';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Briefcase, GraduationCap, Laptop, Megaphone } from 'lucide-react';
@@ -82,7 +83,7 @@ function ExperienceTimeline({ experiences }: { experiences: Array<{ slug:string;
 export default function About({ experiences }: { experiences: Array<{ slug:string; role:string; place:string; type:string; image:string; imageAlt:string; text:string; details:string[]; links:{label:string;href:string}[] }> }) {
   return (
     <>
-      <section id="about" className="border-b border-rule">
+      <section id="about">
         <div className="wrap grid gap-12 py-20 md:grid-cols-[.7fr_1.3fr] md:gap-20 md:py-28">
           <div className="about-portrait relative aspect-[4/5] w-full max-w-[21rem] overflow-hidden rounded-[1.65rem] bg-forest shadow-soft ring-1 ring-ink/10">
             <Image src={SITE.portrait} alt={`Portrait of ${SITE.name}`} fill sizes="(min-width: 768px) 336px, 100vw" className="object-cover object-[center_29%]" priority />
@@ -104,7 +105,8 @@ export default function About({ experiences }: { experiences: Array<{ slug:strin
           </div>
         </div>
       </section>
-      <section id="experience" className="border-b border-rule bg-panel">
+      <SectionDivider variant="translucent" to="panel" />
+      <section id="experience" className="bg-panel">
         <div className="wrap py-20 md:py-28">
           <div className="grid gap-5 md:grid-cols-[.8fr_1.2fr] md:items-end md:gap-16">
             <div><p className="eyebrow">Experience</p><h2 className="section-title mt-3 max-w-[12ch]">A path from teaching to building.</h2></div>
