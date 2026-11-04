@@ -9,6 +9,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'Content',
     items: [
       { href: '/admin/projects', label: 'Projects', icon: FolderKanban, keywords: 'portfolio work case studies' },
+      { href: '/admin/experiences', label: 'Experiences', icon: Briefcase, keywords: 'career work history employment' },
       { href: '/admin/books', label: 'Books', icon: BookOpen, keywords: 'publishing products' },
       { href: '/admin/videos', label: 'Videos', icon: Video, keywords: 'media publishing' },
       { href: '/admin/content', label: 'Content', icon: FileText, keywords: 'articles writing drafts' },

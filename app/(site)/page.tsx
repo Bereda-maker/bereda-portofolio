@@ -9,11 +9,12 @@ import Contact from '@/components/sections/Contact';
 import { SiteFooter, SiteHeader } from '@/components/SiteChrome';
 import { SITE } from '@/data/content';
 import { getProjects } from '@/lib/projects';
+import { getExperiences } from '@/lib/experiences';
 
 export const revalidate = 60;
 
 export default async function Page() {
-  const projects = await getProjects();
+  const [projects, experiences] = await Promise.all([getProjects(), getExperiences()]);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -23,5 +24,5 @@ export default async function Page() {
     email: SITE.email,
     sameAs: [SITE.github, SITE.linkedin].filter(Boolean),
   };
-  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /><SiteHeader /><main><Hero /><Work projects={projects} /><Capabilities /><Proof /><About /><Extracurricular /><Explore /><Contact /></main><SiteFooter /></>;
+  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /><SiteHeader /><main><Hero /><Work projects={projects} /><Capabilities /><Proof /><About experiences={experiences} /><Extracurricular /><Explore /><Contact /></main><SiteFooter /></>;
 }

@@ -6,10 +6,10 @@ import { EXPERIENCE, SITE } from '@/data/content';
 const EXPERIENCE_ICONS = [Laptop, Megaphone, GraduationCap, Briefcase];
 const EXPERIENCE_IDS = ['experience-teaching', 'experience-marketing', 'experience-education', 'experience-startup'];
 
-function ExperienceTimeline() {
+function ExperienceTimeline({ experiences }: { experiences: typeof EXPERIENCE | Array<{ slug:string; role:string; place:string; type:string; image:string; imageAlt:string; text:string; details:string[]; links:{label:string;href:string}[] }> }) {
   return (
     <div className="grid gap-5 md:grid-cols-2">
-      {EXPERIENCE.map((experience, index) => {
+      {experiences.map((experience, index) => {
         const Icon = EXPERIENCE_ICONS[index] ?? Briefcase;
         const experienceId = EXPERIENCE_IDS[index] ?? `experience-${experience.slug}`;
 
@@ -79,7 +79,7 @@ function ExperienceTimeline() {
   );
 }
 
-export default function About() {
+export default function About({ experiences = EXPERIENCE }: { experiences?: typeof EXPERIENCE | Array<{ slug:string; role:string; place:string; type:string; image:string; imageAlt:string; text:string; details:string[]; links:{label:string;href:string}[] }> }) {
   return (
     <>
       <section id="about" className="border-b border-rule">
@@ -110,7 +110,7 @@ export default function About() {
             <div><p className="eyebrow">Experience</p><h2 className="section-title mt-3 max-w-[12ch]">A path from teaching to building.</h2></div>
             <p className="max-w-[35rem] text-[1.15rem] text-muted">The products are only part of the story. Teaching, marketing, formal study, and startup leadership shaped how I understand people, systems, and the work required to make an idea useful.</p>
           </div>
-          <div className="mt-12"><ExperienceTimeline /></div>
+          <div className="mt-12"><ExperienceTimeline experiences={experiences} /></div>
         </div>
       </section>
     </>
