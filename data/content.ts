@@ -314,7 +314,7 @@ export const PROJECTS: Project[] = [
     "stack": ["Next.js", "TypeScript", "PostgreSQL", "Drizzle ORM"],
     "demo": "https://bereda-dev.vercel.app",
     "repo": "https://github.com/Bereda-maker/bereda-portofolio",
-    "image": "/images/hero-laptop.png",
+    "image": "/images/hero-laptop-final.png",
     "alt": "Bereda Wako portrait with a laptop, used as the portfolio platform project image",
     "status": "Completed",
     "role": "Product design and end-to-end implementation of the public portfolio, case-study system, admin dashboard, and deployment workflows",
