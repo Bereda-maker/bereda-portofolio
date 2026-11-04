@@ -166,14 +166,14 @@ export const EXTRACURRICULAR = [
     title: 'Music',
     label: 'Vocal · Piano · Guitar',
     image: '/images/extracurricular-music.png',
-    alt: 'Microphone, acoustic guitar, piano, and headphones in a warm music studio',
+    alt: 'Bereda Wako playing piano in a warm music studio with a microphone and acoustic guitar',
     text: 'I make space for music through vocal performance, piano, and guitar — a creative counterweight to technical work.',
   },
   {
     title: 'Reading',
     label: 'Curiosity · Reflection · Growth',
     image: '/images/extracurricular-reading.png',
-    alt: 'Open book, notebook, pencil, and reading lamp on a quiet wooden table',
+    alt: 'Bereda Wako reading an open book in a warm study nook with books and a reading lamp',
     text: 'Reading keeps the questions open: a steady habit for learning, reflection, and seeing problems from a wider angle.',
   },
 ];
