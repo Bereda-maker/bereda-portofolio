@@ -124,7 +124,7 @@ export const EXPERIENCE = [
     place: 'Hawassa University',
     type: 'Education · Computer science',
     image: '/images/experience/computer-science.webp',
-    imageAlt: 'Editorial illustration of an open computer-science book, laptop, and campus architecture.',
+    imageAlt: 'Bereda Wako studying at a library desk beneath a Hawassa University sign.',
     text: 'Earned a Computer Science degree from Hawassa University, one of Ethiopia’s leading universities, building the technical foundation behind my product, systems, and software engineering work.',
     details: [
       'Earned a Bachelor of Science in Computer Science at Hawassa University.',
