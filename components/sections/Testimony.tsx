@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { ArrowLeft, ArrowRight, ArrowUpRight, Quote, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, Phone, Quote, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { TESTIMONIALS, type Testimonial } from '@/data/content';
 
@@ -73,10 +73,13 @@ export default function Testimony() {
             <p className="eyebrow mt-6">A collaborator’s perspective</p>
             <h3 id="testimony-modal-title" className="mt-2 font-display text-[clamp(1.8rem,4vw,2.75rem)] font-semibold leading-tight tracking-[-.04em]">{selected.name}</h3>
             <p className="mt-1 font-display text-sm font-semibold text-forest">{selected.role} · {selected.company}</p>
-            <p className="testimony-modal-description">{selected.description}</p>
+            <div className="testimony-modal-about"><span>About this person</span><p>{selected.description}</p></div>
             <blockquote className="testimony-modal-quote">“{selected.quote}”</blockquote>
             <p className="mt-6 text-[1rem] leading-relaxed text-muted">{selected.story}</p>
-            <a className="testimony-modal-contact" href={selected.contact.href}>{selected.contact.label}<ArrowUpRight size={16} aria-hidden="true" /></a>
+            <div className="testimony-modal-contact-row">
+              <a className="testimony-modal-phone" href={`tel:${selected.phone.replace(/[^+\d]/g, '')}`}><Phone size={16} aria-hidden="true" /><span><small>Phone</small><strong>{selected.phone}</strong></span></a>
+              <a className="testimony-modal-contact" href={selected.contact.href}>{selected.contact.label}<ArrowUpRight size={16} aria-hidden="true" /></a>
+            </div>
           </section>
         </div>
       )}

@@ -25,6 +25,7 @@ export type Testimonial = {
   imageAlt: string;
   accent: string;
   contact: { label: string; href: string };
+  phone: string;
 };
 
 export type Project = {
@@ -199,37 +200,37 @@ export const TESTIMONIALS: Testimonial[] = [
     name: 'Mekdes Tadesse', role: 'Founder', company: 'Deborah Education', description: 'Education product founder focused on making structured learning more accessible to Ethiopian students.',
     quote: 'Bereda turns a complicated product idea into a clear, working experience that students can actually use.',
     story: 'Working with Bereda helped us move from a big education vision to a focused product. He asked the right questions, made the workflow tangible, and kept the experience grounded in what Ethiopian students need every day.',
-    image: 'https://i.pravatar.cc/160?img=47', imageAlt: 'Portrait of Mekdes Tadesse', accent: '#f0bd48', contact: { label: 'Contact via Deborah Education', href: '#contact' },
+    image: 'https://i.pravatar.cc/160?img=47', imageAlt: 'Portrait of Mekdes Tadesse', accent: '#f0bd48', contact: { label: 'Contact via Deborah Education', href: '#contact' }, phone: '+251 900 000 001',
   },
   {
     name: 'Dawit Alemu', role: 'Operations Director', company: 'Gezahegn & Elfinesh', description: 'Hospitality operator who connects brand experience, customer care, and day-to-day execution.',
     quote: 'He brings the same care to the details that he brings to the big picture.',
     story: 'Bereda understands that a digital presence is also a promise to customers. His combination of communication, visual judgment, and technical follow-through made every conversation productive and every handoff clearer.',
-    image: 'https://i.pravatar.cc/160?img=12', imageAlt: 'Portrait of Dawit Alemu', accent: '#7da3ff', contact: { label: 'Contact via Gezahegn & Elfinesh', href: '#contact' },
+    image: 'https://i.pravatar.cc/160?img=12', imageAlt: 'Portrait of Dawit Alemu', accent: '#7da3ff', contact: { label: 'Contact via Gezahegn & Elfinesh', href: '#contact' }, phone: '+251 900 000 002',
   },
   {
     name: 'Selamawit Bekele', role: 'Product Lead', company: 'TenaSew Wellness', description: 'Product lead shaping calm, practical wellness experiences for a growing local audience.',
     quote: 'The product feels calm because Bereda knows how to make complexity disappear behind a thoughtful interface.',
     story: 'Bereda brought structure to a wellness product with many audiences and sensitive moments. He balanced clarity, warmth, and practical engineering decisions so the platform could grow without losing its human tone.',
-    image: 'https://i.pravatar.cc/160?img=32', imageAlt: 'Portrait of Selamawit Bekele', accent: '#d98675', contact: { label: 'Contact via TenaSew Wellness', href: '#contact' },
+    image: 'https://i.pravatar.cc/160?img=32', imageAlt: 'Portrait of Selamawit Bekele', accent: '#d98675', contact: { label: 'Contact via TenaSew Wellness', href: '#contact' }, phone: '+251 900 000 003',
   },
   {
     name: 'Yonas Girma', role: 'Marketplace Partner', company: 'Negus Gebeya', description: 'Marketplace partner interested in building more trusted digital commerce journeys in Ethiopia.',
     quote: 'He thinks beyond screens and sees the whole journey from discovery to trust to action.',
     story: 'Bereda worked across the marketplace journey, not just the landing page. He paid attention to the moments that create confidence for sellers and buyers, and translated those moments into a coherent product system.',
-    image: 'https://i.pravatar.cc/160?img=11', imageAlt: 'Portrait of Yonas Girma', accent: '#8ec6a5', contact: { label: 'Contact via Negus Gebeya', href: '#contact' },
+    image: 'https://i.pravatar.cc/160?img=11', imageAlt: 'Portrait of Yonas Girma', accent: '#8ec6a5', contact: { label: 'Contact via Negus Gebeya', href: '#contact' }, phone: '+251 900 000 004',
   },
   {
     name: 'Hana Worku', role: 'Course Coordinator', company: 'Ethio Computer School', description: 'Learning facilitator helping people turn technical concepts into practical, confidence-building projects.',
     quote: 'His teaching makes technical ideas feel practical, approachable, and worth trying immediately.',
     story: 'Bereda creates a learning environment where people build while they learn. He explains the why behind a decision, then gives learners enough structure to make something real with their own hands.',
-    image: 'https://i.pravatar.cc/160?img=44', imageAlt: 'Portrait of Hana Worku', accent: '#c49bdb', contact: { label: 'Contact via Ethio Computer School', href: '#contact' },
+    image: 'https://i.pravatar.cc/160?img=44', imageAlt: 'Portrait of Hana Worku', accent: '#c49bdb', contact: { label: 'Contact via Ethio Computer School', href: '#contact' }, phone: '+251 900 000 005',
   },
   {
     name: 'Abel Tesfaye', role: 'Startup Collaborator', company: 'Ethiopia product community', description: 'Startup collaborator who helps early teams find momentum without losing clarity or craft.',
     quote: 'He is the person you want in the room when an idea needs both momentum and a point of view.',
     story: 'Bereda brings energy to early-stage work without skipping the hard thinking. He can zoom out to clarify the opportunity, zoom in to ship the next step, and keep a team moving with honest, useful feedback.',
-    image: 'https://i.pravatar.cc/160?img=68', imageAlt: 'Portrait of Abel Tesfaye', accent: '#e58b54', contact: { label: 'Start a conversation', href: '#contact' },
+    image: 'https://i.pravatar.cc/160?img=68', imageAlt: 'Portrait of Abel Tesfaye', accent: '#e58b54', contact: { label: 'Start a conversation', href: '#contact' }, phone: '+251 900 000 006',
   },
 ];
 
