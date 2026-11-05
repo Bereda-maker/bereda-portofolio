@@ -3,6 +3,7 @@ import Work from '@/components/sections/Work';
 import Capabilities from '@/components/sections/Capabilities';
 import Proof from '@/components/sections/Proof';
 import About from '@/components/sections/About';
+import Testimony from '@/components/sections/Testimony';
 import Extracurricular from '@/components/sections/Extracurricular';
 import Explore from '@/components/sections/Explore';
 import Contact from '@/components/sections/Contact';
@@ -25,5 +26,5 @@ export default async function Page() {
     email: SITE.email,
     sameAs: [SITE.github, SITE.linkedin].filter(Boolean),
   };
-  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /><SiteHeader /><main className="home-flow"><Hero /><SectionDivider variant="flow" to="paper" /><Work projects={projects} /><SectionDivider variant="smooth" to="panel" /><Capabilities /><SectionDivider variant="organic" to="paper" /><Proof /><SectionDivider variant="topo" to="paper" /><About experiences={experiences} /><SectionDivider variant="ribbon" to="panel" overlay="down" /><Extracurricular /><SectionDivider variant="morph" to="paper" /><Explore /><SectionDivider variant="layered" to="panel" /><Contact /><SectionDivider variant="smooth" to="paper" flipX /></main><SiteFooter flush /></>;
+  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /><SiteHeader /><main className="home-flow"><Hero /><SectionDivider variant="flow" to="paper" /><Work projects={projects} /><SectionDivider variant="smooth" to="panel" /><Capabilities /><SectionDivider variant="organic" to="paper" /><Proof /><SectionDivider variant="topo" to="paper" /><About experiences={experiences} /><Testimony /><SectionDivider variant="ribbon" to="panel" overlay="down" /><Extracurricular /><SectionDivider variant="morph" to="paper" /><Explore /><SectionDivider variant="layered" to="panel" /><Contact /><SectionDivider variant="smooth" to="paper" flipX /></main><SiteFooter flush /></>;
 }

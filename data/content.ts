@@ -13,6 +13,18 @@ export type CaseStudy = {
   next: string;
 };
 
+
+export type Testimonial = {
+  name: string;
+  role: string;
+  company: string;
+  quote: string;
+  story: string;
+  image: string;
+  imageAlt: string;
+  accent: string;
+};
+
 export type Project = {
   title: string;
   category: string;
@@ -60,6 +72,7 @@ export const NAV: NavigationItem[] = [
     { label: 'Education', href: '/#experience-education' },
     { label: 'Startup leadership', href: '/#experience-startup' },
   ] },
+  { label: 'Testimony', href: '/#testimony' },
   { label: 'Extracurricular', href: '/#extracurricular' },
   { label: 'Books', href: '/books' },
   { label: 'Media', items: [
@@ -175,6 +188,46 @@ export const EXTRACURRICULAR = [
     image: '/images/extracurricular-reading.png',
     alt: 'Bereda Wako reading an open book in a warm study nook with books and a reading lamp',
     text: 'Reading keeps the questions open: a steady habit for learning, reflection, and seeing problems from a wider angle.',
+  },
+];
+
+
+export const TESTIMONIALS: Testimonial[] = [
+  {
+    name: 'Mekdes Tadesse', role: 'Founder', company: 'Deborah Education',
+    quote: 'Bereda turns a complicated product idea into a clear, working experience that students can actually use.',
+    story: 'Working with Bereda helped us move from a big education vision to a focused product. He asked the right questions, made the workflow tangible, and kept the experience grounded in what Ethiopian students need every day.',
+    image: 'https://i.pravatar.cc/160?img=47', imageAlt: 'Portrait of Mekdes Tadesse', accent: '#f0bd48',
+  },
+  {
+    name: 'Dawit Alemu', role: 'Operations Director', company: 'Gezahegn & Elfinesh',
+    quote: 'He brings the same care to the details that he brings to the big picture.',
+    story: 'Bereda understands that a digital presence is also a promise to customers. His combination of communication, visual judgment, and technical follow-through made every conversation productive and every handoff clearer.',
+    image: 'https://i.pravatar.cc/160?img=12', imageAlt: 'Portrait of Dawit Alemu', accent: '#7da3ff',
+  },
+  {
+    name: 'Selamawit Bekele', role: 'Product Lead', company: 'TenaSew Wellness',
+    quote: 'The product feels calm because Bereda knows how to make complexity disappear behind a thoughtful interface.',
+    story: 'Bereda brought structure to a wellness product with many audiences and sensitive moments. He balanced clarity, warmth, and practical engineering decisions so the platform could grow without losing its human tone.',
+    image: 'https://i.pravatar.cc/160?img=32', imageAlt: 'Portrait of Selamawit Bekele', accent: '#d98675',
+  },
+  {
+    name: 'Yonas Girma', role: 'Marketplace Partner', company: 'Negus Gebeya',
+    quote: 'He thinks beyond screens and sees the whole journey from discovery to trust to action.',
+    story: 'Bereda worked across the marketplace journey, not just the landing page. He paid attention to the moments that create confidence for sellers and buyers, and translated those moments into a coherent product system.',
+    image: 'https://i.pravatar.cc/160?img=11', imageAlt: 'Portrait of Yonas Girma', accent: '#8ec6a5',
+  },
+  {
+    name: 'Hana Worku', role: 'Course Coordinator', company: 'Ethio Computer School',
+    quote: 'His teaching makes technical ideas feel practical, approachable, and worth trying immediately.',
+    story: 'Bereda creates a learning environment where people build while they learn. He explains the why behind a decision, then gives learners enough structure to make something real with their own hands.',
+    image: 'https://i.pravatar.cc/160?img=44', imageAlt: 'Portrait of Hana Worku', accent: '#c49bdb',
+  },
+  {
+    name: 'Abel Tesfaye', role: 'Startup Collaborator', company: 'Ethiopia product community',
+    quote: 'He is the person you want in the room when an idea needs both momentum and a point of view.',
+    story: 'Bereda brings energy to early-stage work without skipping the hard thinking. He can zoom out to clarify the opportunity, zoom in to ship the next step, and keep a team moving with honest, useful feedback.',
+    image: 'https://i.pravatar.cc/160?img=68', imageAlt: 'Portrait of Abel Tesfaye', accent: '#e58b54',
   },
 ];
 
