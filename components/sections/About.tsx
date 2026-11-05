@@ -25,6 +25,7 @@ function ExperienceTimeline({ experiences }: { experiences: Array<{ slug:string;
                 src={experience.image}
                 alt={experience.imageAlt}
                 fill
+                unoptimized={/^https?:\/\//i.test(experience.image)}
                 sizes="(min-width: 768px) 50vw, 100vw"
                 className="object-cover transition-transform duration-500 group-hover:scale-[1.035]"
               />
