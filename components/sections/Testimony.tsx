@@ -69,16 +69,22 @@ export default function Testimony() {
           <section className="testimony-modal" role="dialog" aria-modal="true" aria-labelledby="testimony-modal-title">
             <button type="button" className="testimony-modal-close" onClick={() => setSelected(null)} aria-label="Close testimony details"><X size={20} /></button>
             <div className="testimony-modal-accent" style={{ backgroundColor: selected.accent }} />
-            <Image src={selected.image} alt={selected.imageAlt} width={88} height={88} unoptimized className="testimony-modal-avatar" />
-            <p className="eyebrow mt-6">A collaborator’s perspective</p>
-            <h3 id="testimony-modal-title" className="mt-2 font-display text-[clamp(1.8rem,4vw,2.75rem)] font-semibold leading-tight tracking-[-.04em]">{selected.name}</h3>
-            <p className="mt-1 font-display text-sm font-semibold text-forest">{selected.role} · {selected.company}</p>
-            <div className="testimony-modal-about"><span>About this person</span><p>{selected.description}</p></div>
-            <blockquote className="testimony-modal-quote">“{selected.quote}”</blockquote>
-            <p className="mt-6 text-[1rem] leading-relaxed text-muted">{selected.story}</p>
-            <div className="testimony-modal-contact-row">
-              <a className="testimony-modal-phone" href={`tel:${selected.phone.replace(/[^+\d]/g, '')}`}><Phone size={16} aria-hidden="true" /><span><small>Phone</small><strong>{selected.phone}</strong></span></a>
-              <a className="testimony-modal-contact" href={selected.contact.href}>{selected.contact.label}<ArrowUpRight size={16} aria-hidden="true" /></a>
+            <div className="testimony-modal-layout">
+              <div className="testimony-modal-profile">
+                <Image src={selected.image} alt={selected.imageAlt} width={112} height={112} unoptimized className="testimony-modal-avatar" />
+                <p className="eyebrow mt-6">A collaborator’s perspective</p>
+                <h3 id="testimony-modal-title" className="mt-2 font-display text-[clamp(1.8rem,4vw,2.75rem)] font-semibold leading-tight tracking-[-.04em]">{selected.name}</h3>
+                <p className="mt-1 font-display text-sm font-semibold text-forest">{selected.role} · {selected.company}</p>
+              </div>
+              <div className="testimony-modal-main">
+                <div className="testimony-modal-about"><span>About {selected.name}</span><p>{selected.description}</p></div>
+                <blockquote className="testimony-modal-quote">“{selected.quote}”</blockquote>
+                <p className="mt-6 text-[1rem] leading-relaxed text-muted">{selected.story}</p>
+                <div className="testimony-modal-contact-row">
+                  <a className="testimony-modal-phone" href={`tel:${selected.phone.replace(/[^+\d]/g, '')}`}><Phone size={16} aria-hidden="true" /><span><small>Phone</small><strong>{selected.phone}</strong></span></a>
+                  <a className="testimony-modal-contact" href={selected.contact.href}>Open contact form<ArrowUpRight size={16} aria-hidden="true" /></a>
+                </div>
+              </div>
             </div>
           </section>
         </div>
