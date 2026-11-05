@@ -164,7 +164,10 @@ main:not(.home-flow) > section.border-t::before { content: ''; position: absolut
 .testimony-modal-accent { position: absolute; inset: 0 0 auto; height: .35rem; }
 .testimony-modal-close { position: absolute; top: 1rem; right: 1rem; display: inline-flex; height: 2.5rem; width: 2.5rem; align-items: center; justify-content: center; border: 1px solid rgb(var(--rule)); border-radius: 9999px; background: rgb(var(--paper)); color: rgb(var(--ink)); }
 .testimony-modal-avatar { border-radius: 9999px; object-fit: cover; box-shadow: 0 0 0 5px rgb(var(--paper)), 0 0 0 6px rgb(var(--rule)); }
+.testimony-modal-description { margin-top: 1.25rem; max-width: 34rem; color: rgb(var(--muted)); font-size: .98rem; line-height: 1.5; }
 .testimony-modal-quote { margin-top: 2rem; border-left: 3px solid rgb(var(--gold)); padding-left: 1rem; font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; letter-spacing: -.025em; line-height: 1.25; }
+.testimony-modal-contact { display: inline-flex; align-items: center; gap: .45rem; margin-top: 1.5rem; border-bottom: 1px solid rgb(var(--forest) / .35); padding-bottom: .25rem; color: rgb(var(--forest)); font-family: var(--font-display); font-size: .84rem; font-weight: 700; text-decoration: none; }
+.testimony-modal-contact:hover { border-color: currentColor; }
 @media (max-width: 700px) {
   .testimony-signal { margin-bottom: 1.75rem; }
   .testimony-heading { grid-template-columns: 1fr; }
