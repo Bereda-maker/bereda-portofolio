@@ -110,7 +110,7 @@ export const EXPERIENCE = [
     place: 'Gezahegn and Elfinesh Hotel & Resort',
     type: 'Hospitality · Marketing',
     image: '/images/experience/hospitality.webp',
-    imageAlt: 'Editorial illustration of a hotel welcome space and visual campaign cards.',
+    imageAlt: 'Bereda Wako at a desk alongside real Gezahegn & Elfinesh Hotel & Resort pool, garden, and sign photographs.',
     text: 'Worked in marketing for one of Ethiopia’s largest hotel and resort operations, building experience in positioning a hospitality brand, communicating value, and connecting an organization with its audience.',
     details: [
       'Worked on brand positioning and customer communication in hospitality.',
