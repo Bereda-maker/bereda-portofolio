@@ -172,6 +172,8 @@ main:not(.home-flow) > section.border-t::before { content: ''; position: absolut
 .testimony-modal-about > span { color: rgb(var(--muted)); font-family: var(--font-display); font-size: .66rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
 .testimony-modal-about p { margin-top: .3rem; max-width: 34rem; color: rgb(var(--muted)); font-size: .98rem; line-height: 1.5; }
 .testimony-modal-quote { margin-top: 2rem; border-left: 3px solid rgb(var(--gold)); padding-left: 1rem; font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; letter-spacing: -.025em; line-height: 1.25; }
+.testimony-modal-story { margin-top: 1.5rem; color: rgb(var(--muted)); font-size: 1rem; line-height: 1.65; }
+.testimony-modal-story p + p { margin-top: 1rem; }
 .testimony-modal-contact-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; border-top: 1px solid rgb(var(--rule)); padding-top: 1rem; }
 .testimony-modal-phone { display: inline-flex; align-items: center; gap: .55rem; color: rgb(var(--forest)); text-decoration: none; }
 .testimony-modal-phone span { display: grid; gap: .1rem; }

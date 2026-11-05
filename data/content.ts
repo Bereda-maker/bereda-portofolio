@@ -197,10 +197,10 @@ export const EXTRACURRICULAR = [
 
 export const TESTIMONIALS: Testimonial[] = [
   {
-    name: 'Mekdes Tadesse', role: 'Founder', company: 'Deborah Education', description: 'Education product founder focused on making structured learning more accessible to Ethiopian students.',
-    quote: 'Bereda turns a complicated product idea into a clear, working experience that students can actually use.',
-    story: 'Working with Bereda helped us move from a big education vision to a focused product. He asked the right questions, made the workflow tangible, and kept the experience grounded in what Ethiopian students need every day.',
-    image: 'https://i.pravatar.cc/160?img=47', imageAlt: 'Portrait of Mekdes Tadesse', accent: '#f0bd48', contact: { label: 'Open contact form', href: '#contact' }, phone: '+251 900 000 001',
+    name: 'Getabalew Tadiwos', role: 'CEO & Founder', company: 'Ethio Computer School', description: 'CEO and Founder of Ethio Computer School, collaborating with Bereda on practical web development education and digital skills.',
+    quote: 'Bereda demonstrates a strong willingness to learn, share knowledge, and contribute to technology education.',
+    story: 'I have had the opportunity to work with Bereda Wako through Ethio Computer School, where we collaborate in delivering web development education. Throughout our collaboration, I have observed his technical knowledge, passion for technology, and commitment to helping others develop practical digital skills.\n\nBereda demonstrates a strong willingness to learn, share knowledge, and contribute to technology education. His ability to approach web development from both a practical and educational perspective makes him a valuable collaborator.\n\nI appreciate his dedication, initiative, and enthusiasm for continuous professional growth. I believe he has great potential to grow as a software developer and make meaningful contributions to the technology industry.\n\nI am pleased to recommend him to organizations, collaborators, and professionals seeking someone with a genuine passion for software development and technology education.',
+    image: '/images/testimonials/getabalew-tadiwos.webp', imageAlt: 'Getabalew Tadiwos, CEO and Founder of Ethio Computer School', accent: '#f0bd48', contact: { label: 'Open contact form', href: '#contact' }, phone: '+251 911 410 963',
   },
   {
     name: 'Dawit Alemu', role: 'Operations Director', company: 'Gezahegn & Elfinesh', description: 'Hospitality operator who connects brand experience, customer care, and day-to-day execution.',

@@ -79,7 +79,9 @@ export default function Testimony() {
               <div className="testimony-modal-main">
                 <div className="testimony-modal-about"><span>About {selected.name}</span><p>{selected.description}</p></div>
                 <blockquote className="testimony-modal-quote">“{selected.quote}”</blockquote>
-                <p className="mt-6 text-[1rem] leading-relaxed text-muted">{selected.story}</p>
+                <div className="testimony-modal-story">
+                  {selected.story.split('\n\n').map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                </div>
                 <div className="testimony-modal-contact-row">
                   <a className="testimony-modal-phone" href={`tel:${selected.phone.replace(/[^+\d]/g, '')}`}><Phone size={16} aria-hidden="true" /><span><small>Phone</small><strong>{selected.phone}</strong></span></a>
                   <a className="testimony-modal-contact" href={selected.contact.href}>Open contact form<ArrowUpRight size={16} aria-hidden="true" /></a>
