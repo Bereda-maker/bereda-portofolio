@@ -1,13 +1,13 @@
 import SectionDivider from '@/components/SectionDivider';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, Briefcase, GraduationCap, Laptop, Megaphone } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Briefcase, CalendarDays, GraduationCap, Laptop, Megaphone } from 'lucide-react';
 import { SITE } from '@/data/content';
 
 const EXPERIENCE_ICONS = [Laptop, Megaphone, GraduationCap, Briefcase];
 
 
-function ExperienceTimeline({ experiences }: { experiences: Array<{ slug:string; role:string; place:string; type:string; image:string; imageAlt:string; text:string; details:string[]; links:{label:string;href:string}[] }> }) {
+function ExperienceTimeline({ experiences }: { experiences: Array<{ slug:string; role:string; place:string; type:string; period:string; image:string; imageAlt:string; text:string; details:string[]; links:{label:string;href:string}[] }> }) {
   return (
     <div className="grid gap-5 md:grid-cols-2">
       {experiences.map((experience, index) => {
@@ -50,6 +50,7 @@ function ExperienceTimeline({ experiences }: { experiences: Array<{ slug:string;
                 {experience.role}
               </h3>
               <p className="mt-1 font-display text-[.92rem] font-semibold text-forest">{experience.place}</p>
+              {experience.period && <p className="mt-2 inline-flex items-center gap-2 font-display text-sm font-medium text-muted"><CalendarDays size={14} aria-hidden="true" /><span>{experience.period}</span></p>}
               <p className="mt-4 text-[.98rem] text-muted">{experience.text}</p>
 
               {experience.links.length > 0 && (
@@ -81,7 +82,7 @@ function ExperienceTimeline({ experiences }: { experiences: Array<{ slug:string;
   );
 }
 
-export default function About({ experiences }: { experiences: Array<{ slug:string; role:string; place:string; type:string; image:string; imageAlt:string; text:string; details:string[]; links:{label:string;href:string}[] }> }) {
+export default function About({ experiences }: { experiences: Array<{ slug:string; role:string; place:string; type:string; period:string; image:string; imageAlt:string; text:string; details:string[]; links:{label:string;href:string}[] }> }) {
   return (
     <>
       <section id="about">

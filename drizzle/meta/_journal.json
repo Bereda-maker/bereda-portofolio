@@ -57,6 +57,13 @@
       "when": 1793793601000,
       "tag": "0007_seed_experiences",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793869581751,
+      "tag": "0008_experience_period",
+      "breakpoints": true
     }
   ]
 }
