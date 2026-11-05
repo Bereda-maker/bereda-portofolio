@@ -203,10 +203,10 @@ export const TESTIMONIALS: Testimonial[] = [
     image: '/images/testimonials/getabalew-tadiwos.webp', imageAlt: 'Getabalew Tadiwos, CEO and Founder of Ethio Computer School', accent: '#f0bd48', contact: { label: 'Open contact form', href: '#contact' }, phone: '+251 911 410 963',
   },
   {
-    name: 'Dawit Alemu', role: 'Operations Director', company: 'Gezahegn & Elfinesh', description: 'Hospitality operator who connects brand experience, customer care, and day-to-day execution.',
-    quote: 'He brings the same care to the details that he brings to the big picture.',
-    story: 'Bereda understands that a digital presence is also a promise to customers. His combination of communication, visual judgment, and technical follow-through made every conversation productive and every handoff clearer.',
-    image: 'https://i.pravatar.cc/160?img=12', imageAlt: 'Portrait of Dawit Alemu', accent: '#7da3ff', contact: { label: 'Open contact form', href: '#contact' }, phone: '+251 900 000 002',
+    name: 'Mintesnot Fisseha', role: 'CEO & Founder', company: 'ye-buna.com · 95k+ users', description: 'CEO and Founder of ye-buna.com, one of Ethiopia’s largest platforms with more than 95,000 users.',
+    quote: 'Bereda demonstrated a thoughtful approach to understanding project requirements, addressing technical challenges, and translating ideas into functional solutions.',
+    story: 'I had the opportunity to work professionally with Bereda Wako on the Gezahegn & Elfinesh Hotel & Resort project. During our collaboration, I observed his interest in software development, technical abilities, and commitment to delivering practical digital solutions.\n\nBereda demonstrated a thoughtful approach to understanding project requirements, addressing technical challenges, and translating ideas into functional solutions. His willingness to explore new technologies, solve problems, and continuously improve his development skills made him a valuable collaborator.\n\nI appreciate his dedication, technical curiosity, and enthusiasm for building technology-driven solutions that address real business needs. I believe he has strong potential to continue growing as a software developer and contribute meaningfully to the technology industry.\n\nI am pleased to recommend Bereda to organizations, businesses, and professionals looking for a motivated and growth-oriented technology professional.',
+    image: '/images/testimonials/mintesnot-fisseha.webp', imageAlt: 'Mintesnot Fisseha, CEO and Founder of ye-buna.com', accent: '#7da3ff', contact: { label: 'Open contact form', href: '#contact' }, phone: '+251 934 751 319',
   },
   {
     name: 'Selamawit Bekele', role: 'Product Lead', company: 'TenaSew Wellness', description: 'Product lead shaping calm, practical wellness experiences for a growing local audience.',
