@@ -25,12 +25,13 @@ function ExperienceTimeline({ experiences }: { experiences: Array<{ slug:string;
                 src={experience.image}
                 alt={experience.imageAlt}
                 fill
+                unoptimized={/^https?:\/\//i.test(experience.image)}
                 sizes="(min-width: 768px) 50vw, 100vw"
                 className="object-cover transition-transform duration-500 group-hover:scale-[1.035]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-forest-dark/60 via-transparent to-transparent" aria-hidden="true" />
               <span className="absolute bottom-4 left-4 rounded-full border border-white/25 bg-forest-dark/75 px-3 py-1 font-display text-[.68rem] font-semibold uppercase tracking-[.14em] text-white">
-                Editorial illustration
+                {experience.place}
               </span>
             </Link>
 
