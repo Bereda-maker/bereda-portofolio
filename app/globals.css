@@ -127,19 +127,29 @@ main:not(.home-flow) > section.border-t::before { content: ''; position: absolut
 .experience-item .eyebrow { font-size: .62rem; }
 .experience-card { border: 1px solid rgb(var(--rule)); border-radius: 1.65rem; background: rgb(var(--card)); padding: 0; box-shadow: 0 .8rem 2rem rgb(var(--shadow) / .06); }
 .experience-card .experience-marker { background: rgb(var(--card)); }
-.testimony-section { overflow: hidden; background: rgb(var(--paper)); }
+.testimony-section { position: relative; overflow: hidden; background: radial-gradient(circle at 8% 18%, rgb(var(--gold) / .08), transparent 22rem), linear-gradient(180deg, rgb(var(--paper)) 0%, rgb(var(--panel) / .58) 100%); }
+.testimony-section::before { content: ''; position: absolute; top: 0; right: 8%; left: 8%; height: 1px; background: linear-gradient(90deg, transparent, rgb(var(--gold) / .7), rgb(var(--forest) / .35), transparent); }
+.testimony-section::after { content: '“'; position: absolute; top: 3rem; right: 4%; color: rgb(var(--forest) / .045); font-family: var(--font-display); font-size: clamp(16rem, 30vw, 30rem); font-weight: 600; line-height: .7; pointer-events: none; }
+.testimony-section > .wrap { position: relative; z-index: 1; }
+.testimony-signal { display: flex; align-items: center; gap: .75rem; margin-bottom: 2.25rem; color: rgb(var(--muted)); font-family: var(--font-display); font-size: .65rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+.testimony-signal i { display: block; height: 1px; width: 3.5rem; background: linear-gradient(90deg, rgb(var(--gold)), rgb(var(--forest) / .3)); }
 .testimony-heading { display: grid; gap: 1.5rem; align-items: end; grid-template-columns: minmax(0, .9fr) minmax(16rem, .65fr); }
 .testimony-intro { display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; }
 .testimony-intro p { max-width: 24rem; color: rgb(var(--muted)); font-size: 1.08rem; line-height: 1.45; }
 .testimony-controls { display: flex; flex: 0 0 auto; gap: .5rem; }
 .testimony-controls button { display: inline-flex; height: 2.75rem; width: 2.75rem; align-items: center; justify-content: center; border: 1px solid rgb(var(--rule)); border-radius: 9999px; background: rgb(var(--card)); color: rgb(var(--ink)); transition: transform .2s ease, background-color .2s ease, color .2s ease; }
 .testimony-controls button:hover { transform: translateY(-2px); background: rgb(var(--forest)); color: white; }
-.testimony-track { display: flex; gap: 1rem; overflow-x: auto; margin: 3rem calc((100vw - 100%) / -2) 0; padding: .35rem max(1.25rem, calc((100vw - 74rem) / 2 + 1.25rem)) 1.25rem; scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: rgb(var(--forest) / .45) transparent; }
-.testimony-card { display: flex; min-height: 22rem; width: min(28rem, calc(84vw - 1rem)); flex: 0 0 min(28rem, calc(84vw - 1rem)); scroll-snap-align: start; flex-direction: column; justify-content: space-between; border: 1px solid rgb(var(--rule)); border-radius: 1.65rem; background: rgb(var(--card)); padding: 1.35rem; box-shadow: 0 .8rem 2rem rgb(var(--shadow) / .06); transition: transform .25s ease, box-shadow .25s ease; }
-.testimony-card:hover { transform: translateY(-4px); box-shadow: 0 1.1rem 2.5rem rgb(var(--shadow) / .12); }
-.testimony-card-top { display: flex; align-items: center; justify-content: space-between; color: rgb(var(--forest)); }
-.testimony-card-top span { font-family: var(--font-display); font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgb(var(--muted)); }
-.testimony-card blockquote { margin: 2rem 0; max-width: 22ch; font-family: var(--font-display); font-size: clamp(1.35rem, 2.4vw, 1.85rem); font-weight: 600; letter-spacing: -.04em; line-height: 1.12; }
+.testimony-rule { display: flex; align-items: center; gap: .65rem; margin-top: 2.8rem; color: rgb(var(--muted) / .75); font-family: var(--font-display); font-size: .64rem; font-weight: 700; letter-spacing: .12em; }
+.testimony-rule i { display: block; height: 1px; width: 5rem; background: rgb(var(--rule)); }
+.testimony-track { display: flex; gap: 1rem; overflow-x: auto; margin: .85rem calc((100vw - 100%) / -2) 0; padding: .35rem max(1.25rem, calc((100vw - 74rem) / 2 + 1.25rem)) 1.25rem; scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: rgb(var(--forest) / .45) transparent; }
+.testimony-card { position: relative; isolation: isolate; display: flex; min-height: 23rem; width: min(28rem, calc(84vw - 1rem)); flex: 0 0 min(28rem, calc(84vw - 1rem)); scroll-snap-align: start; flex-direction: column; justify-content: space-between; overflow: hidden; border: 1px solid rgb(var(--rule)); border-radius: 1.65rem; background: linear-gradient(145deg, rgb(var(--card)) 0%, rgb(var(--card) / .82) 100%); padding: 1.35rem; box-shadow: 0 .8rem 2rem rgb(var(--shadow) / .06); transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.testimony-card::before { content: ''; position: absolute; inset: 0 0 auto; z-index: -1; height: .25rem; background: linear-gradient(90deg, var(--testimony-accent), transparent 78%); }
+.testimony-card-glow { position: absolute; z-index: -1; right: -5rem; top: -5rem; height: 13rem; width: 13rem; border-radius: 9999px; background: var(--testimony-accent); opacity: .11; filter: blur(1px); }
+.testimony-card:hover { transform: translateY(-6px) rotate(-.35deg); border-color: color-mix(in srgb, var(--testimony-accent) 55%, rgb(var(--rule))); box-shadow: 0 1.2rem 2.8rem rgb(var(--shadow) / .13); }
+.testimony-card-top { display: flex; align-items: center; justify-content: space-between; color: var(--testimony-accent); }
+.testimony-card-index { font-family: var(--font-display); font-size: .65rem; font-weight: 700; letter-spacing: .12em; color: rgb(var(--muted)); }
+.testimony-card-company { margin-top: 1.7rem; font-family: var(--font-display); font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgb(var(--muted)); }
+.testimony-card blockquote { margin: .7rem 0 2rem; max-width: 22ch; font-family: var(--font-display); font-size: clamp(1.35rem, 2.4vw, 1.85rem); font-weight: 600; letter-spacing: -.04em; line-height: 1.12; }
 .testimony-profile { display: flex; align-items: center; gap: .7rem; border-top: 1px solid rgb(var(--rule)); padding-top: 1rem; color: rgb(var(--ink)); text-align: left; }
 .testimony-profile:hover strong { color: rgb(var(--forest)); }
 .testimony-profile strong, .testimony-profile small { display: block; }
@@ -156,11 +166,14 @@ main:not(.home-flow) > section.border-t::before { content: ''; position: absolut
 .testimony-modal-avatar { border-radius: 9999px; object-fit: cover; box-shadow: 0 0 0 5px rgb(var(--paper)), 0 0 0 6px rgb(var(--rule)); }
 .testimony-modal-quote { margin-top: 2rem; border-left: 3px solid rgb(var(--gold)); padding-left: 1rem; font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; letter-spacing: -.025em; line-height: 1.25; }
 @media (max-width: 700px) {
+  .testimony-signal { margin-bottom: 1.75rem; }
   .testimony-heading { grid-template-columns: 1fr; }
   .testimony-intro { align-items: start; }
   .testimony-track { margin-top: 2.25rem; }
   .testimony-modal { padding: 1.75rem; }
 }
+.extracurricular-section { position: relative; isolation: isolate; }
+.extracurricular-section::before { content: ''; position: absolute; top: 0; right: 7%; left: 7%; z-index: -1; height: 1px; background: linear-gradient(90deg, transparent, rgb(240 189 72 / .7) 28%, rgb(125 163 255 / .6) 72%, transparent); box-shadow: 0 0 1.5rem rgb(125 163 255 / .18); }
 .extracurricular-eyebrow { color: #f0bd48; font-family: var(--font-display); font-size: .72rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
 .extracurricular-card { overflow: hidden; border: 1px solid rgb(255 255 255 / .14); border-radius: 1.65rem; background: rgb(255 255 255 / .07); box-shadow: 0 1rem 2.5rem rgb(0 0 0 / .12); }
 .extracurricular-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; }

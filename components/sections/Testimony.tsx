@@ -5,13 +5,15 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, Quote, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { TESTIMONIALS, type Testimonial } from '@/data/content';
 
-function TestimonyCard({ item, onOpen }: { item: Testimonial; onOpen: () => void }) {
+function TestimonyCard({ item, index, onOpen }: { item: Testimonial; index: number; onOpen: () => void }) {
   return (
-    <article className="testimony-card">
+    <article className="testimony-card" style={{ ['--testimony-accent' as string]: item.accent }}>
+      <div className="testimony-card-glow" aria-hidden="true" />
       <div className="testimony-card-top">
+        <span className="testimony-card-index">0{index + 1} / 06</span>
         <Quote size={22} strokeWidth={1.6} aria-hidden="true" />
-        <span>{item.company}</span>
       </div>
+      <span className="testimony-card-company">{item.company}</span>
       <blockquote>“{item.quote}”</blockquote>
       <button type="button" className="testimony-profile" onClick={onOpen} aria-label={`Read more about ${item.name}`}>
         <Image src={item.image} alt={item.imageAlt} width={52} height={52} unoptimized className="testimony-avatar" />
@@ -41,6 +43,7 @@ export default function Testimony() {
   return (
     <section id="testimony" className="testimony-section" aria-labelledby="testimony-title">
       <div className="wrap py-20 md:py-28">
+        <div className="testimony-signal" aria-hidden="true"><span>Voices / 2026</span><i /><span>Proof in motion</span></div>
         <div className="testimony-heading">
           <div>
             <p className="eyebrow">Testimony</p>
@@ -54,8 +57,9 @@ export default function Testimony() {
             </div>
           </div>
         </div>
+        <div className="testimony-rule" aria-hidden="true"><span>01</span><i /><span>06</span></div>
         <div id="testimony-track" className="testimony-track" tabIndex={0} aria-label="Testimonies from collaborators">
-          {TESTIMONIALS.map((item) => <TestimonyCard key={item.name} item={item} onOpen={() => setSelected(item)} />)}
+          {TESTIMONIALS.map((item, index) => <TestimonyCard key={item.name} item={item} index={index} onOpen={() => setSelected(item)} />)}
         </div>
         <p className="testimony-hint">Scroll or drag to explore · Select a profile to read the full story</p>
       </div>
