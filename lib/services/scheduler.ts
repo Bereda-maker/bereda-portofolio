@@ -7,7 +7,11 @@ export async function getSlots(date: string, durationMinutes: number, timezone: 
   const { db } = await import('@/lib/db');
   const { appointments, availability, blockedTimes } = await import('@/lib/schema');
   const weekday = localWeekday(date);
-  const windows = await db.select().from(availability).where(and(eq(availability.weekday, weekday), eq(availability.isActive, true)));
+  const configuredWindows = await db.select().from(availability).where(and(eq(availability.weekday, weekday), eq(availability.isActive, true)));
+  // The admin Open availability board treats a day with no recurring windows as
+  // open calendar time. Keep the public scheduler consistent with that view;
+  // bookings, blocked times, and Google Calendar busy periods still remove slots.
+  const windows = configuredWindows.length ? configuredWindows : [{ startMinute: 0, endMinute: 24 * 60, timezone }];
   const dayStart = localDateTimeToUtc(date, 0, timezone);
   const dayEnd = localDateTimeToUtc(date, 24 * 60, timezone);
   const existing = await db.select({ id: appointments.id, startsAt: appointments.startsAt, endsAt: appointments.endsAt, status: appointments.status }).from(appointments).where(and(lt(appointments.startsAt, dayEnd), gte(appointments.endsAt, dayStart), ne(appointments.status, 'cancelled')));
@@ -17,8 +21,8 @@ export async function getSlots(date: string, durationMinutes: number, timezone: 
   const result: Array<{ startsAt: string; endsAt: string; label: string }> = [];
   for (const window of windows) {
     for (let minute = window.startMinute; minute + durationMinutes <= window.endMinute; minute += 30) {
-      const startsAt = localDateTimeToUtc(date, minute, timezone);
-      const endsAt = localDateTimeToUtc(date, minute + durationMinutes, timezone);
+      const startsAt = localDateTimeToUtc(date, minute, window.timezone);
+      const endsAt = localDateTimeToUtc(date, minute + durationMinutes, window.timezone);
       const conflict = validateAppointmentConflicts({ startsAt, endsAt }, existing, blocked);
       const calendarConflict = busy.some((item) => new Date(item.start).getTime() < endsAt.getTime() && startsAt.getTime() < new Date(item.end).getTime());
       if (conflict.ok && !calendarConflict) result.push({ startsAt: startsAt.toISOString(), endsAt: endsAt.toISOString(), label: new Intl.DateTimeFormat('en-US', { timeZone: timezone, hour: 'numeric', minute: '2-digit' }).format(startsAt) });
