@@ -221,10 +221,10 @@ export const TESTIMONIALS: Testimonial[] = [
     image: '/images/testimonials/biniam.jpg', imageAlt: 'Biniam G/Mariyam, General Manager at Gezahegn and Elfinesh Hotel and Resort', accent: '#8ec6a5', contact: { label: 'Open contact form', href: '#contact' }, phone: '+251 923 994 191',
   },
   {
-    name: 'Hana Worku', role: 'Course Coordinator', company: 'Ethio Computer School', description: 'Learning facilitator helping people turn technical concepts into practical, confidence-building projects.',
-    quote: 'His teaching makes technical ideas feel practical, approachable, and worth trying immediately.',
-    story: 'Bereda creates a learning environment where people build while they learn. He explains the why behind a decision, then gives learners enough structure to make something real with their own hands.',
-    image: 'https://i.pravatar.cc/160?img=44', imageAlt: 'Portrait of Hana Worku', accent: '#c49bdb', contact: { label: 'Open contact form', href: '#contact' }, phone: '+251 900 000 005',
+    name: 'Temesgen Endale', role: 'Instructor & TBIC Leader', company: 'Hawassa University', description: 'Instructor and TBIC leader at Hawassa University, mentoring innovation, entrepreneurship, and technology-driven solutions.',
+    quote: 'His interest in building practical solutions and exploring entrepreneurial opportunities demonstrates promising potential as both a software developer and an emerging technology entrepreneur.',
+    story: 'I have had the opportunity to mentor Bereda Wako through his EthioVista projects, where I observed his interest in innovation, entrepreneurial thinking, and the application of technology to address practical challenges.\n\nThroughout our mentorship, Bereda demonstrated enthusiasm for exploring new ideas, developing technology-driven solutions, and thinking beyond conventional software development. His approach reflects a growing understanding of how innovation, technology, and business opportunities can come together to create meaningful products and services.\n\nI appreciate his curiosity, initiative, and willingness to learn and refine his ideas. His interest in building practical solutions and exploring entrepreneurial opportunities demonstrates promising potential as both a software developer and an emerging technology entrepreneur.\n\nI believe Bereda has the mindset and determination to continue developing innovative solutions and contribute positively to the growing technology ecosystem.',
+    image: 'https://i.pravatar.cc/160?img=44', imageAlt: 'Portrait placeholder for Temesgen Endale', accent: '#c49bdb', contact: { label: 'Open contact form', href: '#contact' }, phone: '+251 916 140 498',
   },
   {
     name: 'Abel Tesfaye', role: 'Startup Collaborator', company: 'Ethiopia product community', description: 'Startup collaborator who helps early teams find momentum without losing clarity or craft.',
