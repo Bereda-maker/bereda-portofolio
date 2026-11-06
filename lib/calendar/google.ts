@@ -4,6 +4,8 @@ import { decryptSecret, encryptSecret } from './security';
 const GOOGLE_AUTH = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN = 'https://oauth2.googleapis.com/token';
 const GOOGLE_CALENDAR = 'https://www.googleapis.com/calendar/v3';
+const GOOGLE_GMAIL = 'https://gmail.googleapis.com/gmail/v1';
+const ORGANIZER_EMAIL = 'beriwako56@gmail.com';
 
 export function googleConfigured() {
   return Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_REDIRECT_URI);
@@ -14,7 +16,7 @@ export function googleRedirectUri() {
 }
 
 export function googleAuthorizationUrl(state: string) {
-  const params = new URLSearchParams({ client_id: process.env.GOOGLE_CLIENT_ID || '', redirect_uri: googleRedirectUri(), response_type: 'code', access_type: 'offline', prompt: 'consent', scope: 'https://www.googleapis.com/auth/calendar', state });
+  const params = new URLSearchParams({ client_id: process.env.GOOGLE_CLIENT_ID || '', redirect_uri: googleRedirectUri(), response_type: 'code', access_type: 'offline', prompt: 'consent', scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/gmail.send', state });
   return `${GOOGLE_AUTH}?${params.toString()}`;
 }
 
@@ -88,4 +90,36 @@ export async function createGoogleEvent(input: { refreshToken: string; calendarI
   ];
   const data = await googleFetch(`/calendars/${encodeURIComponent(input.calendarId)}/events?conferenceDataVersion=1&sendUpdates=all`, input.refreshToken, { method: 'POST', body: JSON.stringify({ summary: input.title, description: input.notes || undefined, start: { dateTime: input.startsAt.toISOString(), timeZone: input.timezone }, end: { dateTime: input.endsAt.toISOString(), timeZone: input.timezone }, attendees, conferenceData: { createRequest: { requestId: `bereda-${Date.now()}-${Math.random().toString(36).slice(2)}`, conferenceSolutionKey: { type: 'hangoutsMeet' } } } }) }) as { id: string; htmlLink?: string; hangoutLink?: string; conferenceData?: { entryPoints?: Array<{ entryPointType?: string; uri?: string }> } };
   return { eventId: data.id, eventUrl: data.htmlLink, meetingUrl: data.hangoutLink || data.conferenceData?.entryPoints?.find((entry) => entry.entryPointType === 'video')?.uri };
+}
+
+function encodeBase64Url(value: string) {
+  return Buffer.from(value, 'utf8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
+export async function sendOrganizerBookingEmail(input: { refreshToken: string; attendeeEmail: string; attendeeName: string; startsAt: Date; endsAt: Date; timezone: string; meetingUrl?: string | null; eventUrl?: string | null }) {
+  const accessToken = await getAccessToken(input.refreshToken);
+  const start = new Intl.DateTimeFormat('en-US', { timeZone: input.timezone, dateStyle: 'full', timeStyle: 'short' }).format(input.startsAt);
+  const end = new Intl.DateTimeFormat('en-US', { timeZone: input.timezone, timeStyle: 'short' }).format(input.endsAt);
+  const body = [
+    `A new portfolio meeting has been booked by ${input.attendeeName}.`,
+    '',
+    `Attendee: ${input.attendeeName}`,
+    `Email: ${input.attendeeEmail}`,
+    `Time: ${start}–${end} (${input.timezone})`,
+    `Google Meet: ${input.meetingUrl || 'Included in the calendar invitation'}`,
+    `Calendar event: ${input.eventUrl || 'Open the event from Google Calendar'}`,
+  ].join('\n');
+  const raw = [
+    `From: ${ORGANIZER_EMAIL}`,
+    `To: ${ORGANIZER_EMAIL}`,
+    'Subject: New portfolio meeting booked',
+    'Content-Type: text/plain; charset="UTF-8"',
+    'Content-Transfer-Encoding: 8bit',
+    '',
+    body,
+  ].join('\r\n');
+  const response = await fetch(`${GOOGLE_GMAIL}/users/me/messages/send`, { method: 'POST', headers: { authorization: `Bearer ${accessToken}`, 'content-type': 'application/json' }, body: JSON.stringify({ raw: encodeBase64Url(raw) }), cache: 'no-store' });
+  const data = await response.json().catch(() => ({})) as { id?: string; error?: { message?: string } };
+  if (!response.ok || !data.id) throw new Error(data.error?.message || 'Gmail organizer notification failed.');
+  return data.id;
 }

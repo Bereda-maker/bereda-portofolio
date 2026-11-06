@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { and, eq, gte, lt, ne, sql } from 'drizzle-orm';
 import { z } from 'zod';
-import { createGoogleEvent, getGoogleBusy, getGoogleConnection } from '@/lib/calendar/google';
+import { createGoogleEvent, getGoogleBusy, getGoogleConnection, sendOrganizerBookingEmail } from '@/lib/calendar/google';
 import { validateAppointmentConflicts } from '@/lib/services/appointments';
 
 export const runtime = 'nodejs';
@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
   try {
     const event = await createGoogleEvent({ refreshToken: connection.refreshToken, calendarId: connection.calendarId || 'primary', title: `${type.name} — ${input.name}`, startsAt, endsAt, timezone: input.timezone, attendeeEmail: input.email, attendeeName: input.name, organizerEmail: 'beriwako56@gmail.com', notes: input.notes });
     await db.update(appointments).set({ status: 'confirmed', providerEventId: event.eventId, updatedAt: new Date() }).where(eq(appointments.id, reservation.id));
+    await sendOrganizerBookingEmail({ refreshToken: connection.refreshToken, attendeeEmail: input.email, attendeeName: input.name, startsAt, endsAt, timezone: input.timezone, meetingUrl: event.meetingUrl, eventUrl: event.eventUrl }).catch((notificationError) => console.error('[appointments] organizer email failed', notificationError instanceof Error ? notificationError.message : notificationError));
     return NextResponse.json({ ok: true, appointmentId: reservation.id, meetingUrl: event.meetingUrl || null, eventUrl: event.eventUrl || null }, { status: 201 });
   } catch (error) {
     await db.update(appointments).set({ status: 'cancelled', updatedAt: new Date() }).where(eq(appointments.id, reservation.id)).catch(() => undefined);
