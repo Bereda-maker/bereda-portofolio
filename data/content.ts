@@ -154,7 +154,7 @@ export const EXPERIENCE = [
     place: 'EthioVista · Deborah School · TenaSew · Negus Gebeya',
     type: 'Leadership · Ethiopia-rooted startups',
     image: '/images/experience/startup-builder.webp',
-    imageAlt: 'Editorial illustration of connected product panels for travel, education, wellness, and commerce.',
+    imageAlt: 'Senior software-engineer workstation with the Deborah, Negus Gebeya, TenaSew, and EthioVista websites on four monitors; the engineer is seen from behind.',
     text: 'Lead and build Ethiopia-rooted startups across travel, education, wellness, and commerce. Each product starts with a local problem, a clear user workflow, and a practical path from idea to live experience.',
     details: [
       'Lead and build products across travel, education, wellness, and commerce.',
