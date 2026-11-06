@@ -18,6 +18,7 @@
 - [x] **Homepage hero refresh:** preserve the existing navbar; customize the hero with a dark green editorial panel, personal headline, regenerated transparent laptop portrait using the supplied face, content-driven responsive image sizing, gold/mint accents, responsive CTAs, no selected-build card, no outer border/margin space, and verified proof-oriented metrics instead of copying the reference image literally.
 - [x] **Deployment confirmation:** pushed commit `49b1e43588641fc00c3a758cfb7df8f2010bf62c` to the existing GitHub remote; Render deployment is live and both public Books routes serve the new catalog.
 - [ ] **EthioVista source handoff:** add a direct repository link and deeper source-based evidence when the owner supplies the missing repository.
+- [x] **Public appointment booking:** expose only the configured 30-minute and 1-hour options, render availability in a grouped day card consistent with the admin open-availability view, show calendar-loading feedback, and provide clickable meeting and calendar-event links after confirmation.
 
 ## Latest Books release verification
 - Commit `49b1e43588641fc00c3a758cfb7df8f2010bf62c` is live on Render (`dep-dbjps6bncjis73dsntl0`) and the Vercel Books route serves the same new catalog.
