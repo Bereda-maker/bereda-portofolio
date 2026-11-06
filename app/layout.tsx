@@ -4,7 +4,7 @@ import '@fontsource-variable/newsreader';
 import './globals.css';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bereda-portofolio.onrender.com';
-const TITLE = 'Bereda Wako — Full-stack product engineer for web apps';
+const TITLE = 'Bereda Wako — From idea to shipped product';
 const DESCRIPTION = 'Build your next web product with an end-to-end engineering partner. MVP definition, intuitive product UI, dependable backends, and deployment for founders and teams.';
 
 export const metadata: Metadata = {

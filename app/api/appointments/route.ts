@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
   });
   if (!reservation) return NextResponse.json({ error: 'That time has already been taken. Please choose another slot.' }, { status: 409 });
   try {
-    const event = await createGoogleEvent({ refreshToken: connection.refreshToken, calendarId: connection.calendarId || 'primary', title: `${type.name} — ${input.name}`, startsAt, endsAt, timezone: input.timezone, attendeeEmail: input.email, attendeeName: input.name, notes: input.notes });
+    const event = await createGoogleEvent({ refreshToken: connection.refreshToken, calendarId: connection.calendarId || 'primary', title: `${type.name} — ${input.name}`, startsAt, endsAt, timezone: input.timezone, attendeeEmail: input.email, attendeeName: input.name, organizerEmail: 'beriwako56@gmail.com', notes: input.notes });
     await db.update(appointments).set({ status: 'confirmed', providerEventId: event.eventId, updatedAt: new Date() }).where(eq(appointments.id, reservation.id));
     return NextResponse.json({ ok: true, appointmentId: reservation.id, meetingUrl: event.meetingUrl || null, eventUrl: event.eventUrl || null }, { status: 201 });
   } catch (error) {
