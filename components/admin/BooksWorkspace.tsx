@@ -176,10 +176,10 @@ export default function BooksWorkspace() {
                 {books.map((book) => (
                   <tr key={book.id}>
                     <td className="admin-td-main"><strong className="admin-cell-title">{book.title}</strong><span className="admin-cell-sub">{book.author || 'Author not set'} <span aria-hidden="true">·</span> <span>{book.slug}</span></span></td>
-                    <td>{book.category || '—'}</td>
-                    <td><span className={`admin-badge ${book.isPublished ? 'ok' : 'warn'}`}>{book.isPublished ? 'Published' : 'Draft'}</span></td>
-                    <td><time dateTime={book.updatedAt}>{new Date(book.updatedAt).toLocaleDateString()}</time></td>
-                    <td><div className="admin-row-actions">
+                    <td data-label="Category">{book.category || '—'}</td>
+                    <td data-label="Status"><span className={`admin-badge ${book.isPublished ? 'ok' : 'warn'}`}>{book.isPublished ? 'Published' : 'Draft'}</span></td>
+                    <td data-label="Updated"><time dateTime={book.updatedAt}>{new Date(book.updatedAt).toLocaleDateString()}</time></td>
+                    <td className="admin-td-actions"><div className="admin-row-actions">
                       {metadataText(book, 'externalBookUrl') && <a className="admin-icon-btn" href={metadataText(book, 'externalBookUrl')} target="_blank" rel="noreferrer" aria-label={`Open external page for ${book.title}`}><ExternalLink size={15} /></a>}
                       <button type="button" className="admin-icon-btn" aria-label={`Edit ${book.title}`} onClick={() => startEdit(book)}><Pencil size={15} /></button>
                       <button type="button" className="admin-icon-btn danger" aria-label={`Delete ${book.title}`} disabled={deletingId === book.id} onClick={() => void deleteBook(book)}><Trash2 size={15} /></button>

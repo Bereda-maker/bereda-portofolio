@@ -15,14 +15,14 @@ export default function Work({ projects }: { projects: Project[] }) {
           <div><p className="eyebrow">Selected work</p><h2 className="section-title mt-3 max-w-[13ch]">Complete products, real workflows.</h2></div>
           <p className="max-w-[31rem] text-[1.1rem] text-muted">Open the live site, inspect the source, or read the case study to see how the product was scoped, built, tested, and prepared for handoff.</p>
         </div>
-        <div className="mt-12 grid gap-7 lg:grid-cols-2">
-          {projects.map((p, i) => <article key={p.title} className={`project-card group overflow-hidden rounded-[1.65rem] border border-rule bg-card shadow-soft ${i === 0 ? 'lg:col-span-2 lg:grid lg:grid-cols-[1.1fr_.9fr]' : ''}`}>
+        <div className="mt-12 grid grid-cols-1 gap-7 md:grid-cols-2">
+          {projects.map((p, i) => <article key={p.title} className={`project-card group overflow-hidden rounded-[1.65rem] border border-rule bg-card shadow-soft ${i === 0 ? 'md:col-span-2 lg:grid lg:grid-cols-[1.1fr_.9fr]' : ''}`}>
             <div className={`project-media group/media relative overflow-hidden bg-panel ${i === 0 ? 'lg:min-h-[24rem]' : ''}`}>
               <img src={p.image} alt={p.alt} className={`project-image ${i === 0 ? 'lg:aspect-auto lg:h-full lg:min-h-[24rem]' : ''}`} />
               <Link href={`/projects/${slugify(p.title)}`} className="project-media-label" aria-label={`Read the ${p.title} case study`}><span>{p.category}</span><ArrowUpRight size={15} aria-hidden="true" /></Link>
             </div>
-            <div className="flex flex-col p-6 sm:p-8">
-              <div className="flex items-start justify-between gap-5"><div><p className="eyebrow">{p.category}</p><h3 className="mt-3 font-display text-[clamp(1.65rem,3vw,2.35rem)] font-semibold leading-tight tracking-[-.04em]"><Link href={`/projects/${slugify(p.title)}`} className="hover:text-forest">{p.title}</Link></h3></div><span className="shrink-0 rounded-full border border-forest/25 bg-forest/10 px-3 py-1 font-display text-[.72rem] font-semibold uppercase tracking-[.12em] text-forest">{p.status}</span></div>
+            <div className="flex flex-col p-6 sm:p-8 md:p-5 lg:p-8">
+              <div className="flex flex-col items-start gap-3 lg:flex-row lg:justify-between lg:gap-5"><div className="min-w-0"><p className="eyebrow">{p.category}</p><h3 className="mt-3 break-words font-display text-[clamp(1.55rem,3vw,2.35rem)] font-semibold leading-tight tracking-[-.04em]"><Link href={`/projects/${slugify(p.title)}`} className="hover:text-forest">{p.title}</Link></h3></div><span className="order-first max-w-full shrink-0 rounded-full border border-forest/25 bg-forest/10 px-3 py-1 lg:order-none font-display text-[.72rem] font-semibold uppercase tracking-[.12em] text-forest">{p.status}</span></div>
               <p className="mt-4 max-w-[37rem] text-[1.08rem] leading-relaxed text-muted">{p.description}</p>
               <p className="mt-5 max-w-[38rem] text-[.92rem] text-muted"><span className="font-display font-semibold text-ink">My contribution:</span> {p.role}</p>
               <ul className="mt-6 flex flex-wrap gap-2" aria-label="Built with">{p.stack.map((t) => <li key={t} className="tag"><TechIcon k={STACK_ICON[t]} size={14} />{t}</li>)}</ul>

@@ -192,10 +192,10 @@ export default function VideosWorkspace() {
                 {videos.map((video) => (
                   <tr key={video.id}>
                     <td className="admin-td-main"><strong className="admin-cell-title">{video.title}</strong><span className="admin-cell-sub">{video.slug}</span></td>
-                    <td>{video.provider}</td>
-                    <td><span className={`admin-badge ${video.isPublished ? 'ok' : 'warn'}`}>{video.isPublished ? 'Published' : 'Draft'}</span></td>
-                    <td><time dateTime={video.updatedAt}>{new Date(video.updatedAt).toLocaleDateString()}</time></td>
-                    <td><div className="admin-row-actions">
+                    <td data-label="Source">{video.provider}</td>
+                    <td data-label="Status"><span className={`admin-badge ${video.isPublished ? 'ok' : 'warn'}`}>{video.isPublished ? 'Published' : 'Draft'}</span></td>
+                    <td data-label="Updated"><time dateTime={video.updatedAt}>{new Date(video.updatedAt).toLocaleDateString()}</time></td>
+                    <td className="admin-td-actions"><div className="admin-row-actions">
                       <button type="button" className="admin-icon-btn" aria-label={`Edit ${video.title}`} onClick={() => startEdit(video)}><Pencil size={15} /></button>
                       <button type="button" className="admin-icon-btn danger" aria-label={`Delete ${video.title}`} disabled={deletingId === video.id} onClick={() => void deleteVideo(video)}><Trash2 size={15} /></button>
                     </div></td>

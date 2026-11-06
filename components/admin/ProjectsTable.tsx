@@ -124,19 +124,19 @@ export default function ProjectsTable({ initialProjects }: { initialProjects: Pr
                     <button type="button" className="admin-cell-title" onClick={() => setEditing(p)}>{p.title}</button>
                     <div className="admin-cell-sub"><span className="admin-badge">{p.category}</span><span>{p.description}</span></div>
                   </td>
-                  <td>
+                  <td data-label="Technologies">
                     <div className="admin-chips">
                       {p.stack.slice(0, 3).map((s) => <span key={s} className="admin-tag static">{s}</span>)}
                       {p.stack.length > 3 && <span className="admin-tag static muted" title={p.stack.slice(3).join(', ')}>+{p.stack.length - 3}</span>}
                     </div>
                   </td>
-                  <td>
+                  <td data-label="Links">
                     <div className="admin-links">
                       {p.demo !== '#' ? <a href={p.demo} target="_blank" rel="noopener noreferrer">Demo <ExternalLink size={12} aria-hidden="true" /></a> : <span className="admin-muted-dash" title="No demo link">—</span>}
                       {p.repo !== '#' ? <a href={p.repo} target="_blank" rel="noopener noreferrer">Repo <ExternalLink size={12} aria-hidden="true" /></a> : null}
                     </div>
                   </td>
-                  <td>
+                  <td className="admin-td-actions">
                     <div className="admin-row-actions">
                       <button type="button" className="admin-icon-btn" onClick={() => setEditing(p)} aria-label={`Edit ${p.title}`} title="Edit"><Pencil size={15} /></button>
                       <button type="button" className="admin-icon-btn danger" onClick={() => remove(p)} disabled={deletingId === p.id} aria-label={`Delete ${p.title}`} title="Delete"><Trash2 size={15} /></button>
