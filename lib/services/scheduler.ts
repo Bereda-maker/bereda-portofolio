@@ -20,7 +20,9 @@ export async function getSlots(date: string, durationMinutes: number, timezone: 
   const busy = connection ? await getGoogleBusy(connection.calendarId || 'primary', connection.refreshToken, dayStart, dayEnd).catch(() => []) : [];
   const result: Array<{ startsAt: string; endsAt: string; label: string }> = [];
   for (const window of windows) {
-    for (let minute = window.startMinute; minute + durationMinutes <= window.endMinute; minute += 30) {
+    // Slot boundaries follow the selected meeting length: 30-minute meetings
+    // start every 30 minutes, while 1-hour meetings start every 60 minutes.
+    for (let minute = window.startMinute; minute + durationMinutes <= window.endMinute; minute += durationMinutes) {
       const startsAt = localDateTimeToUtc(date, minute, window.timezone);
       const endsAt = localDateTimeToUtc(date, minute + durationMinutes, window.timezone);
       const conflict = validateAppointmentConflicts({ startsAt, endsAt }, existing, blocked);
