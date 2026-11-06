@@ -8,7 +8,7 @@ type Audience = { label: string; agendas: string[]; meetingFormats: string[] };
 type BookingConfirmation = { meetingUrl: string | null; eventUrl: string | null; date: string; slot: Slot };
 
 const MEETING_LENGTHS = [{ minutes: 30, label: '30 min' }, { minutes: 60, label: '1 hr' }];
-const MEETING_WAYS = ['Google Meet', 'Zoom', 'Microsoft Teams', 'WhatsApp video call', 'I am flexible — use the available link'];
+const MEETING_WAY = 'Google Meet';
 
 const AUDIENCES: Audience[] = [
   { label: 'Employers & Recruiters', agendas: ['Full-time employment', 'Part-time employment', 'Remote jobs', 'Contract employment', 'Junior developer positions', 'Software engineering internships'], meetingFormats: ['Job Interview', 'Technical Interview', 'Initial Screening Call', 'Hiring Manager Interview', 'Portfolio Review', 'Career Discussion', 'Recruiter Introduction Call', 'Salary and Offer Discussion', 'Contract Employment Discussion', 'Internship Interview'] },
@@ -31,7 +31,7 @@ export default function BookingForm() {
   const [audience, setAudience] = useState('');
   const [agenda, setAgenda] = useState('');
   const [meetingFormat, setMeetingFormat] = useState('');
-  const [meetingWay, setMeetingWay] = useState('');
+  const meetingWay = MEETING_WAY;
   const [date, setDate] = useState('');
   const [slots, setSlots] = useState<Slot[]>([]);
   const [slot, setSlot] = useState<Slot | null>(null);
@@ -81,7 +81,6 @@ export default function BookingForm() {
     if (!audience) { setMessage('Choose who you are.'); return; }
     if (!agenda) { setMessage('Choose an agenda.'); return; }
     if (!meetingFormat) { setMessage('Choose a meeting format.'); return; }
-    if (!meetingWay) { setMessage('Choose a preferred virtual meeting way.'); return; }
     if (!slot) { setMessage('Choose an available time.'); return; }
     setLoading(true); setMessage('');
     const conversationNotes = [`Identity: ${audience}`, `Agenda: ${agenda}`, `Meeting format: ${meetingFormat}`, `Preferred meeting way: ${meetingWay}`, form.notes.trim() ? `Additional context: ${form.notes.trim()}` : ''].filter(Boolean).join('\n');
@@ -100,7 +99,7 @@ export default function BookingForm() {
     <div><label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">I am a...</label><select className="fld" required value={audience} onChange={(event) => { setAudience(event.target.value); setAgenda(''); setMeetingFormat(''); }}><option value="">Choose your identity</option>{AUDIENCES.map((item) => <option key={item.label} value={item.label}>{item.label}</option>)}</select></div>
     {selectedAudience && <div><label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Agenda</label><select className="fld" required value={agenda} onChange={(event) => { setAgenda(event.target.value); setMeetingFormat(''); }}><option value="">Choose an agenda</option>{selectedAudience.agendas.map((item) => <option key={item} value={item}>{item}</option>)}</select></div>}
     {selectedAudience && agenda && <div><label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Meeting format</label><select className="fld" required value={meetingFormat} onChange={(event) => setMeetingFormat(event.target.value)}><option value="">Choose a meeting format</option>{selectedAudience.meetingFormats.map((item) => <option key={item} value={item}>{item}</option>)}</select></div>}
-    <div><label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Preferred virtual meeting way</label><select className="fld" required value={meetingWay} onChange={(event) => setMeetingWay(event.target.value)}><option value="">Choose a meeting way</option>{MEETING_WAYS.map((item) => <option key={item} value={item}>{item}</option>)}</select><p className="mt-2 text-sm text-[#aebedd]">Your preference is shared with the host. The confirmed calendar setup determines the meeting link.</p></div>
+    <div><label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Video meeting</label><div className="booking-meeting-way"><strong>{MEETING_WAY}</strong><span>Secure link created with your calendar invitation.</span></div><p className="mt-2 text-sm text-[#aebedd]">Google Meet is the available video conferencing option for confirmed bookings.</p></div>
     <div><label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Meeting length</label><select className="fld" required value={meetingLength} onChange={(event) => setMeetingLength(event.target.value)}>{MEETING_LENGTHS.map((length) => <option key={length.minutes} value={length.minutes} disabled={!types.some((type) => type.durationMinutes === length.minutes)}>{length.label}{typesLoading ? ' — loading' : !types.some((type) => type.durationMinutes === length.minutes) ? ' — unavailable' : ''}</option>)}</select>{selectedType?.description && <p className="mt-2 text-sm text-[#aebedd]">{selectedType.description}</p>}</div>
     <div><label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Date</label><input className="fld" type="date" min={today} value={date} onChange={(event) => setDate(event.target.value)} /></div>
     {date && <section className="booking-availability" aria-live="polite" aria-busy={availabilityLoading}><div className="booking-availability-heading"><div><label className="block text-xs font-bold uppercase tracking-widest text-[#aebedd]">Open availability</label><p>{selectedType ? `${selectedType.name} · ${selectedType.durationMinutes === 60 ? '1 hour' : '30 minutes'} slots` : 'Choose a meeting length first'}</p></div>{!availabilityLoading && <span>{slots.length} open {slots.length === 1 ? 'time' : 'times'}</span>}</div>{availabilityLoading ? <div className="booking-availability-loading" role="status"><span>Checking the calendar…</span><div>{Array.from({ length: 6 }, (_, index) => <i key={index} />)}</div></div> : slots.length ? <div className="booking-availability-day"><div className="booking-availability-day-heading"><strong>{new Date(`${date}T12:00:00`).toLocaleDateString([], { weekday: 'short' })}</strong><span>{new Date(`${date}T12:00:00`).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span></div><div className="booking-availability-chips">{slots.map((item) => <button type="button" key={item.startsAt} onClick={() => setSlot(item)} className={`chip ${slot?.startsAt === item.startsAt ? 'on' : ''}`}>{item.label}</button>)}</div></div> : <p className="booking-availability-empty">No open times on this date. Try another day.</p>}</section>}
