@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message || 'Invalid booking details.' }, { status: 400 });
   const input = parsed.data;
   const { db } = await import('@/lib/db');
-  const { appointmentTypes, appointments, blockedTimes } = await import('@/lib/schema');
+  const { appointmentTypes, appointments, blockedTimes, calendarTasks } = await import('@/lib/schema');
   const type = (await db.select().from(appointmentTypes).where(and(eq(appointmentTypes.id, input.typeId), eq(appointmentTypes.isActive, true))).limit(1))[0];
   if (!type) return NextResponse.json({ error: 'Appointment type is not available.' }, { status: 404 });
   const startsAt = new Date(input.startsAt); const endsAt = new Date(input.endsAt);
@@ -26,7 +26,8 @@ export async function POST(request: NextRequest) {
     await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${startsAt.toISOString()} || '|' || ${endsAt.toISOString()}))`);
     const existing = await tx.select({ id: appointments.id, startsAt: appointments.startsAt, endsAt: appointments.endsAt, status: appointments.status }).from(appointments).where(and(lt(appointments.startsAt, endsAt), gte(appointments.endsAt, startsAt), ne(appointments.status, 'cancelled')));
     const blocked = await tx.select({ id: blockedTimes.id, startsAt: blockedTimes.startsAt, endsAt: blockedTimes.endsAt }).from(blockedTimes).where(and(lt(blockedTimes.startsAt, endsAt), gte(blockedTimes.endsAt, startsAt)));
-    if (!validateAppointmentConflicts({ startsAt, endsAt }, existing, blocked).ok) return null;
+    const planned = await tx.select({ id: calendarTasks.id, startsAt: calendarTasks.startsAt, endsAt: calendarTasks.endsAt, status: calendarTasks.status }).from(calendarTasks).where(and(lt(calendarTasks.startsAt, endsAt), gte(calendarTasks.endsAt, startsAt), ne(calendarTasks.status, 'cancelled')));
+    if (!validateAppointmentConflicts({ startsAt, endsAt }, existing, [...blocked, ...planned]).ok) return null;
     const [created] = await tx.insert(appointments).values({ appointmentTypeId: type.id, attendeeName: input.name, attendeeEmail: input.email, status: 'pending', startsAt, endsAt, timezone: input.timezone, notes: input.notes || null }).returning({ id: appointments.id });
     return created;
   });
