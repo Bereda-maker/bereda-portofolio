@@ -227,10 +227,10 @@ export const TESTIMONIALS: Testimonial[] = [
     image: '/images/testimonials/temesgen.jpg', imageAlt: 'Temesgen Endale, Instructor and TBIC Leader at Hawassa University', accent: '#c49bdb', contact: { label: 'Open contact form', href: '#contact' }, phone: '+251 916 140 498',
   },
   {
-    name: 'Abel Tesfaye', role: 'Startup Collaborator', company: 'Ethiopia product community', description: 'Startup collaborator who helps early teams find momentum without losing clarity or craft.',
+    name: 'Deborah Melkamu', role: 'Startup Collaborator', company: 'EthioVista', description: 'Startup collaborator who worked with Bereda on EthioVista, helping shape an Ethiopia-rooted travel product with clarity and momentum.',
     quote: 'He is the person you want in the room when an idea needs both momentum and a point of view.',
     story: 'Bereda brings energy to early-stage work without skipping the hard thinking. He can zoom out to clarify the opportunity, zoom in to ship the next step, and keep a team moving with honest, useful feedback.',
-    image: 'https://i.pravatar.cc/160?img=68', imageAlt: 'Portrait of Abel Tesfaye', accent: '#e58b54', contact: { label: 'Start a conversation', href: '#contact' }, phone: '+251 900 000 006',
+    image: '', imageAlt: 'No portrait provided for Deborah Melkamu', accent: '#e58b54', contact: { label: 'Start a conversation', href: '#contact' }, phone: '+251 945 620 552',
   },
 ];
 

@@ -16,7 +16,7 @@ function TestimonyCard({ item, index, onOpen }: { item: Testimonial; index: numb
       <span className="testimony-card-company">{item.company}</span>
       <blockquote>“{item.quote}”</blockquote>
       <button type="button" className="testimony-profile" onClick={onOpen} aria-label={`Read more about ${item.name}`}>
-        <Image src={item.image} alt={item.imageAlt} width={52} height={52} unoptimized className="testimony-avatar" />
+        {item.image ? <Image src={item.image} alt={item.imageAlt} width={52} height={52} unoptimized className="testimony-avatar" /> : <span className="testimony-avatar testimony-avatar-empty" aria-label={item.imageAlt} />}
         <span className="min-w-0 text-left"><strong>{item.name}</strong><small>{item.role}</small></span>
         <ArrowUpRight size={17} aria-hidden="true" />
       </button>
@@ -71,7 +71,7 @@ export default function Testimony() {
             <div className="testimony-modal-accent" style={{ backgroundColor: selected.accent }} />
             <div className="testimony-modal-layout">
               <div className="testimony-modal-profile">
-                <Image src={selected.image} alt={selected.imageAlt} width={112} height={112} unoptimized className="testimony-modal-avatar" />
+                {selected.image ? <Image src={selected.image} alt={selected.imageAlt} width={112} height={112} unoptimized className="testimony-modal-avatar" /> : <span className="testimony-modal-avatar testimony-modal-avatar-empty" aria-label={selected.imageAlt} />}
                 <p className="eyebrow mt-6">A collaborator’s perspective</p>
                 <h3 id="testimony-modal-title" className="mt-2 font-display text-[clamp(1.8rem,4vw,2.75rem)] font-semibold leading-tight tracking-[-.04em]">{selected.name}</h3>
                 <p className="mt-1 font-display text-sm font-semibold text-forest">{selected.role} · {selected.company}</p>
