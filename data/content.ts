@@ -232,6 +232,12 @@ export const TESTIMONIALS: Testimonial[] = [
     story: 'Bereda brings energy to early-stage work without skipping the hard thinking. He can zoom out to clarify the opportunity, zoom in to ship the next step, and keep a team moving with honest, useful feedback.',
     image: '', imageAlt: 'No portrait provided for Deborah Melkamu', accent: '#e58b54', contact: { label: 'Start a conversation', href: '#contact' }, phone: '+251 945 620 552',
   },
+  {
+    name: 'Robel', role: 'Software Engineer', company: 'Remote · International clients', description: 'Software engineer and close friend who has shared long nights of learning, coding, and building ambitious technology projects with Bereda.',
+    quote: 'Lock in time, bro. Hustle together.',
+    story: 'I have known Bereda Wako not only as a close friend but also as a fellow software development enthusiast with whom I have shared an ambitious journey in technology.\n\nWe have spent countless hours learning, coding, exploring ideas, and working on projects together. Sometimes, our coding sessions at the Hub lasted so long that the sun would rise while we were still working. Those experiences reflect Bereda\'s dedication, consistency, and genuine passion for software development.\n\nWhat I particularly admire about him is his ambition, entrepreneurial mindset, and determination to turn ideas into meaningful digital products. He is someone who believes in continuous learning, putting in the work, and pushing beyond his comfort zone to achieve his goals.\n\nHaving shared this journey with him, I have witnessed his commitment to personal and professional growth. I believe he has the discipline, creativity, and determination to build a successful career in the global technology industry.\n\nAs we often remind each other, "Lock in time, bro. Hustle together." I look forward to seeing everything he continues to accomplish.',
+    image: '', imageAlt: 'No portrait provided for Robel', accent: '#6da8d8', contact: { label: 'Start a conversation', href: '#contact' }, phone: '+251 959 101 928',
+  },
 ];
 
 export const PROJECTS: Project[] = [

@@ -5,12 +5,12 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, Phone, Quote, X } from 'lucide-rea
 import { useEffect, useState } from 'react';
 import { TESTIMONIALS, type Testimonial } from '@/data/content';
 
-function TestimonyCard({ item, index, onOpen }: { item: Testimonial; index: number; onOpen: () => void }) {
+function TestimonyCard({ item, index, total, onOpen }: { item: Testimonial; index: number; total: number; onOpen: () => void }) {
   return (
     <article className="testimony-card" style={{ ['--testimony-accent' as string]: item.accent }}>
       <div className="testimony-card-glow" aria-hidden="true" />
       <div className="testimony-card-top">
-        <span className="testimony-card-index">0{index + 1} / 06</span>
+        <span className="testimony-card-index">{String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}</span>
         <Quote size={22} strokeWidth={1.6} aria-hidden="true" />
       </div>
       <span className="testimony-card-company">{item.company}</span>
@@ -57,9 +57,9 @@ export default function Testimony() {
             </div>
           </div>
         </div>
-        <div className="testimony-rule" aria-hidden="true"><span>01</span><i /><span>06</span></div>
+        <div className="testimony-rule" aria-hidden="true"><span>01</span><i /><span>{String(TESTIMONIALS.length).padStart(2, '0')}</span></div>
         <div id="testimony-track" className="testimony-track" tabIndex={0} aria-label="Testimonies from collaborators">
-          {TESTIMONIALS.map((item, index) => <TestimonyCard key={item.name} item={item} index={index} onOpen={() => setSelected(item)} />)}
+          {TESTIMONIALS.map((item, index) => <TestimonyCard key={item.name} item={item} index={index} total={TESTIMONIALS.length} onOpen={() => setSelected(item)} />)}
         </div>
         <p className="testimony-hint">Scroll or drag to explore · Select a profile to read the full story</p>
       </div>
