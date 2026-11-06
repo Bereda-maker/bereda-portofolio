@@ -209,10 +209,10 @@ export const TESTIMONIALS: Testimonial[] = [
     image: '/images/testimonials/mintesnot-fisseha.webp', imageAlt: 'Mintesnot Fisseha, CEO and Founder of ye-buna.com', accent: '#7da3ff', contact: { label: 'Open contact form', href: '#contact' }, phone: '+251 934 751 319',
   },
   {
-    name: 'Selamawit Bekele', role: 'Product Lead', company: 'TenaSew Wellness', description: 'Product lead shaping calm, practical wellness experiences for a growing local audience.',
-    quote: 'The product feels calm because Bereda knows how to make complexity disappear behind a thoughtful interface.',
-    story: 'Bereda brought structure to a wellness product with many audiences and sensitive moments. He balanced clarity, warmth, and practical engineering decisions so the platform could grow without losing its human tone.',
-    image: 'https://i.pravatar.cc/160?img=32', imageAlt: 'Portrait of Selamawit Bekele', accent: '#d98675', contact: { label: 'Open contact form', href: '#contact' }, phone: '+251 900 000 003',
+    name: 'Sosh Furi', role: 'CEO & Software Engineer', company: 'Vintage Technologies PLC', description: 'CEO and Software Engineer at Vintage Technologies PLC, focused on recognizing practical software innovation and emerging technology talent.',
+    quote: 'Bereda distinguished himself by successfully completing the Vintage Challenge and placing among the top five participants with Negus Gebeya.',
+    story: 'I had the opportunity to recognize Bereda Wako\'s work through the Vintage Challenge – Round 1: Used Goods Web Marketplace. Among the participants, Bereda distinguished himself by successfully completing the challenge and achieving a position among the top five participants with his software product, Negus Gebeya.\n\nHis work demonstrated creativity, innovative thinking, and the ability to transform a practical business concept into a software solution. His participation reflected an interest in solving real-world problems through technology and developing solutions that create practical value.\n\nI appreciate his initiative, commitment to innovation, and enthusiasm for software development. His achievement in the challenge demonstrates promising potential as an emerging software developer and technology innovator.\n\nI wish him continued success in his professional journey and future contributions to the technology industry.',
+    image: '/images/testimonials/sosh.jpg', imageAlt: 'Sosh Furi, CEO and Software Engineer at Vintage Technologies PLC', accent: '#d98675', contact: { label: 'Open contact form', href: '#contact' }, phone: '+251 916 772 303',
   },
   {
     name: 'Yonas Girma', role: 'Marketplace Partner', company: 'Negus Gebeya', description: 'Marketplace partner interested in building more trusted digital commerce journeys in Ethiopia.',
