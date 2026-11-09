@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS "experiences" (
   "role" text NOT NULL,
   "place" text NOT NULL,
   "type" text NOT NULL,
-  "image" text DEFAULT '/images/experience/teaching.webp' NOT NULL,
+  "image" text DEFAULT '/images/placeholder.svg' NOT NULL,
   "image_alt" text DEFAULT '' NOT NULL,
   "text" text NOT NULL,
   "details" jsonb DEFAULT '[]'::jsonb NOT NULL,

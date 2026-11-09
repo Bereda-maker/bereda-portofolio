@@ -8,8 +8,8 @@ export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
 export default async function OgImage() {
-  const portrait = await readFile(join(process.cwd(), 'public/images/about-portrait-og.png'));
-  const portraitSrc = `data:image/png;base64,${portrait.toString('base64')}`;
+  const portrait = await readFile(join(process.cwd(), 'public/images/about-portrait.webp'));
+  const portraitSrc = `data:image/jpeg;base64,${portrait.toString('base64')}`;
 
   return new ImageResponse(
     (

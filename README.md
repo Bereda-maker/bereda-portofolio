@@ -8,7 +8,7 @@ contact messages — one repo, one Next.js app, deployed on Railway.
 
 The homepage copy lives in `components/sections/*.tsx` and `data/content.ts`. Before sharing the site widely:
 
-- Replace `public/images/hero.png` (set in `SITE.portrait`) with a real, natural photo of yourself.
+- Replace `public/images/placeholder.svg` (set in `SITE.portrait`) with a real, natural photo of yourself.
 - Set `SITE.linkedin` in `data/content.ts`; the LinkedIn links stay hidden while it is empty.
 - Add real `demo` and `repo` URLs to each project (`"#"` means "not published yet" and the link is hidden). Keep `PROJECTS` plain JSON, because `scripts/seed.mjs` parses it.
 - Edit `TECH_GROUPS` so the tool lists match how you actually work.
@@ -157,7 +157,7 @@ persisted).
 
 ## Other assets
 
-`public/images/hero.png` — transparent hero cutout. `public/images/frame-*.jpg`
+`public/images/placeholder.svg` — transparent hero cutout. `public/images/placeholder.svg*.jpg`
 — section background photos. `public/video/projects-bg.mp4` — Projects
 section background video. `data/icons.ts` — brand icon paths (Simple Icons,
 CC0).
