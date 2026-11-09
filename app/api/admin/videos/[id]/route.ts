@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { getSession } from '@/lib/auth';
 import { isSameOrigin } from '@/lib/same-origin';
+import { parseVimeoUrl } from '@/lib/vimeo';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 const Input = z.object({ title: z.string().trim().min(1).max(200), slug: z.string().trim().max(200).optional().default(''), description: z.string().trim().max(5000).optional().default(''), sourceUrl: z.string().trim().min(1).max(2048), durationSeconds: z.union([z.number().int().min(1).max(86400), z.null()]).optional().transform(v => v ?? null), isPublished: z.boolean() });
@@ -13,7 +14,7 @@ function parseSource(raw: string): { provider: string; externalId: string } | nu
     const host = url.hostname.toLowerCase();
     if (['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtube-nocookie.com'].includes(host)) { const id = url.pathname === '/watch' ? url.searchParams.get('v') : url.pathname.match(/^\/(?:embed|shorts)\/([^/]+)/)?.[1]; return id && /^[A-Za-z0-9_-]{11}$/.test(id) ? { provider: 'youtube', externalId: id } : null; }
     if (host === 'youtu.be') { const id = url.pathname.split('/').filter(Boolean)[0]; return id && /^[A-Za-z0-9_-]{11}$/.test(id) ? { provider: 'youtube', externalId: id } : null; }
-    if (['vimeo.com', 'www.vimeo.com', 'player.vimeo.com'].includes(host)) { const id = url.pathname.match(/(?:^|\/)(\d+)(?:\/|$)/)?.[1]; return id ? { provider: 'vimeo', externalId: id } : null; }
+    const vimeo = parseVimeoUrl(raw); if (vimeo) return vimeo;
     return /\.(mp4|webm)$/i.test(url.pathname) ? { provider: 'external', externalId: url.toString() } : null;
   } catch { return null; }
 }

@@ -1,4 +1,5 @@
 import SectionDivider from '@/components/SectionDivider';
+import { getVimeoEmbedUrl } from '@/lib/vimeo';
 import Link from 'next/link';
 import { asc, desc, eq } from 'drizzle-orm';
 import { ArrowRight, ArrowUpRight, BookOpen, CalendarDays, PlaySquare } from 'lucide-react';
@@ -84,8 +85,9 @@ function VideoPreviewPlayer({ video }: { video: VideoPreview }) {
   if (video.provider === 'youtube' && /^[A-Za-z0-9_-]{11}$/.test(video.externalId)) {
     return <iframe className="aspect-video w-full rounded-xl bg-black/30" src={`https://www.youtube-nocookie.com/embed/${encodeURIComponent(video.externalId)}`} title={`Video: ${video.title}`} loading="lazy" referrerPolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />;
   }
-  if (video.provider === 'vimeo' && /^\d+$/.test(video.externalId)) {
-    return <iframe className="aspect-video w-full rounded-xl bg-black/30" src={`https://player.vimeo.com/video/${encodeURIComponent(video.externalId)}`} title={`Video: ${video.title}`} loading="lazy" referrerPolicy="strict-origin-when-cross-origin" allow="fullscreen; picture-in-picture" allowFullScreen />;
+  const vimeoUrl = video.provider === 'vimeo' ? getVimeoEmbedUrl(video.externalId) : null;
+  if (vimeoUrl) {
+    return <iframe className="aspect-video w-full rounded-xl bg-black/30" src={vimeoUrl} title={`Video: ${video.title}`} loading="lazy" referrerPolicy="strict-origin-when-cross-origin" allow="fullscreen; picture-in-picture" allowFullScreen />;
   }
   if (video.provider === 'external' && isDirectVideoUrl(video.externalId)) {
     return <video className="aspect-video w-full rounded-xl bg-black/30" src={video.externalId} controls preload="none" aria-label={`Video: ${video.title}`} />;
