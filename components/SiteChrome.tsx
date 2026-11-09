@@ -32,7 +32,7 @@ export function SiteHeader() {
                 </Link>}
               </li>)}
             </ul>
-            <a href={SITE.cv} download className="hidden items-center gap-1.5 rounded-full px-3 py-2 font-display text-[.78rem] font-semibold text-ink transition hover:bg-panel 2xl:inline-flex"><Download size={14} aria-hidden="true" /> CV</a>
+            <a href={SITE.cv} download aria-label="Download CV" title="Download CV" className="hidden items-center gap-1.5 rounded-full px-2.5 py-2 font-display text-[.78rem] font-semibold text-ink transition hover:bg-panel lg:inline-flex"><Download size={14} aria-hidden="true" /><span className="hidden 2xl:inline">CV</span></a>
             <ThemeToggle />
             <button type="button" className="inline-flex h-10 w-10 items-center justify-center rounded-full text-ink transition hover:bg-panel lg:hidden" aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen((open) => !open)}>
               {menuOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
@@ -51,7 +51,7 @@ export function SiteHeader() {
                   </ul>
                 </details> : <Link href={item.href || '/'} onClick={() => setMenuOpen(false)} className={`block rounded-2xl px-4 py-3 transition hover:bg-panel ${item.label === 'Appointment' ? 'bg-gold font-semibold text-ink hover:bg-[#ffd263]' : 'text-muted hover:text-ink'}`}>{item.label}</Link>}
               </li>)}
-              <li><a href={SITE.cv} download onClick={() => setMenuOpen(false)} className="block rounded-2xl px-4 py-3 font-semibold text-ink transition hover:bg-panel">Download CV</a></li>
+              <li><a href={SITE.cv} download onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-2xl px-4 py-3 font-semibold text-ink transition hover:bg-panel"><Download size={16} aria-hidden="true" />Download CV</a></li>
               <li><a href={`mailto:${SITE.email}`} onClick={() => setMenuOpen(false)} className="block rounded-2xl px-4 py-3 font-semibold text-muted transition hover:bg-panel hover:text-ink">Email me</a></li>
             </ul>
           </div>
