@@ -1,5 +1,12 @@
 export type VimeoSource = { provider: 'vimeo'; externalId: string };
 
+// This video was saved before privacy-hash support was added, so its database
+// row contains only the numeric ID. Keep the old record playable until it is
+// edited and saved again from the admin panel.
+const LEGACY_HASHES: Record<string, string> = {
+  '1229693804': '387686400b',
+};
+
 function isValidHash(value: string): boolean {
   return /^[A-Za-z0-9]+$/.test(value);
 }
@@ -30,7 +37,8 @@ export function parseVimeoUrl(raw: string): VimeoSource | null {
 export function getVimeoEmbedUrl(value: string): string | null {
   const match = value.match(/^(\d+)(?:\?h=([A-Za-z0-9]+))?$/);
   if (!match) return null;
-  const [, id, hash] = match;
+  const [, id, parsedHash] = match;
+  const hash = parsedHash || LEGACY_HASHES[id];
   return `https://player.vimeo.com/video/${id}${hash ? `?h=${encodeURIComponent(hash)}` : ''}`;
 }
 
