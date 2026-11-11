@@ -1,13 +1,13 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getSession } from '@/lib/auth';
 import { isSameOrigin } from '@/lib/same-origin';
-import { applications, opportunityEvidence, opportunityMatches, opportunities, outreachDrafts } from '@/lib/schema';
+import { applications, dailyApplicationGoals, opportunityEvidence, opportunityMatches, opportunities, outreachDrafts, trackedApplications } from '@/lib/schema';
 import { draftOutreach, saveMatch } from '@/lib/services/opportunity-agent';
 
 export const runtime = 'nodejs';
-const ActionInput = z.object({ action: z.enum(['match', 'draft_outreach', 'approve_match', 'reject_match', 'delete_draft']), profileId: z.number().int().positive().optional(), channel: z.enum(['email', 'linkedin', 'application']).optional(), draftId: z.number().int().positive().optional() });
+const ActionInput = z.object({ action: z.enum(['match', 'draft_outreach', 'approve_match', 'reject_match', 'delete_draft', 'mark_applied', 'update_application']), profileId: z.number().int().positive().optional(), channel: z.enum(['email', 'linkedin', 'application']).optional(), draftId: z.number().int().positive().optional(), status: z.enum(['applied', 'interviewing', 'offer', 'rejected', 'withdrawn', 'no_response']).optional(), notes: z.string().max(4000).optional(), appliedDay: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() });
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   const session = await getSession();
@@ -23,6 +23,27 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       const [deleted] = await db.delete(outreachDrafts).where(and(eq(outreachDrafts.id, parsed.data.draftId), eq(outreachDrafts.opportunityId, opportunityId))).returning({ id: outreachDrafts.id });
       if (!deleted) return NextResponse.json({ error: 'Draft not found.' }, { status: 404 });
       return NextResponse.json({ deleted: true });
+    }
+    if (parsed.data.action === 'mark_applied') {
+      const day = parsed.data.appliedDay ?? new Date().toISOString().slice(0, 10);
+      const [existing] = await db.select().from(trackedApplications).where(eq(trackedApplications.opportunityId, opportunityId)).limit(1);
+      if (existing) return NextResponse.json({ application: existing, alreadyTracked: true });
+      const [opportunity] = await db.select({ id: opportunities.id }).from(opportunities).where(eq(opportunities.id, opportunityId)).limit(1);
+      if (!opportunity) return NextResponse.json({ error: 'Opportunity not found.' }, { status: 404 });
+      const application = await db.transaction(async (tx) => {
+        const [created] = await tx.insert(trackedApplications).values({ opportunityId }).onConflictDoNothing().returning();
+        if (created) await tx.insert(dailyApplicationGoals).values({ day, target: 5, applied: 1 }).onConflictDoUpdate({ target: dailyApplicationGoals.day, set: { applied: sql`${dailyApplicationGoals.applied} + 1`, updatedAt: new Date() } });
+        if (created) return created;
+        const [row] = await tx.select().from(trackedApplications).where(eq(trackedApplications.opportunityId, opportunityId)).limit(1);
+        return row;
+      });
+      return NextResponse.json({ application, alreadyTracked: false }, { status: 201 });
+    }
+    if (parsed.data.action === 'update_application') {
+      if (!parsed.data.status) return NextResponse.json({ error: 'Application status is required.' }, { status: 400 });
+      const [application] = await db.update(trackedApplications).set({ status: parsed.data.status, ...(parsed.data.notes === undefined ? {} : { notes: parsed.data.notes }), updatedAt: new Date() }).where(eq(trackedApplications.opportunityId, opportunityId)).returning();
+      if (!application) return NextResponse.json({ error: 'Track this opportunity as applied before updating its application.' }, { status: 404 });
+      return NextResponse.json({ application });
     }
     if (parsed.data.action === 'match') {
       if (!parsed.data.profileId) return NextResponse.json({ error: 'Save a profile first.' }, { status: 400 });

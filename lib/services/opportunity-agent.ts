@@ -18,27 +18,28 @@ export type OpportunityAnalysis = {
   risks: string[];
 };
 
-function parseJson(text: string): OpportunityAnalysis | null {
+function parseJson(text: string): OpportunityAnalysis[] | null {
   try {
-    const parsed = JSON.parse(text) as Partial<OpportunityAnalysis>;
-    if (!parsed.title || !parsed.description) return null;
-    return {
-      title: parsed.title,
-      company: parsed.company,
-      description: parsed.description,
-      location: parsed.location,
-      workMode: parsed.workMode,
-      employmentType: parsed.employmentType,
-      requiredSkills: Array.isArray(parsed.requiredSkills) ? parsed.requiredSkills.filter((v): v is string => typeof v === 'string') : [],
-      minYearsExperience: typeof parsed.minYearsExperience === 'number' ? parsed.minYearsExperience : undefined,
-      applicationUrl: parsed.applicationUrl,
-      recruitingChannel: parsed.recruitingChannel,
-      whyRelevant: parsed.whyRelevant ?? '',
-      risks: Array.isArray(parsed.risks) ? parsed.risks.filter((v): v is string => typeof v === 'string') : [],
-    };
-  } catch {
-    return null;
-  }
+    const parsed = JSON.parse(text) as { opportunities?: unknown };
+    if (!Array.isArray(parsed.opportunities)) return null;
+    return parsed.opportunities.slice(0, 6).flatMap((item) => {
+      if (!item || typeof item !== 'object') return [];
+      const row = item as Partial<OpportunityAnalysis>;
+      if (typeof row.title !== 'string' || !row.title.trim() || typeof row.description !== 'string' || !row.description.trim()) return [];
+      return [{
+        title: row.title.trim().slice(0, 200), company: typeof row.company === 'string' ? row.company.slice(0, 200) : undefined,
+        description: row.description.slice(0, 5000), location: typeof row.location === 'string' ? row.location.slice(0, 160) : undefined,
+        workMode: typeof row.workMode === 'string' ? row.workMode.slice(0, 80) : undefined,
+        employmentType: typeof row.employmentType === 'string' ? row.employmentType.slice(0, 80) : undefined,
+        requiredSkills: Array.isArray(row.requiredSkills) ? row.requiredSkills.filter((value): value is string => typeof value === 'string').slice(0, 50) : [],
+        minYearsExperience: typeof row.minYearsExperience === 'number' ? row.minYearsExperience : undefined,
+        applicationUrl: typeof row.applicationUrl === 'string' ? row.applicationUrl : undefined,
+        recruitingChannel: typeof row.recruitingChannel === 'string' ? row.recruitingChannel : undefined,
+        whyRelevant: typeof row.whyRelevant === 'string' ? row.whyRelevant : '',
+        risks: Array.isArray(row.risks) ? row.risks.filter((value): value is string => typeof value === 'string').slice(0, 5) : [],
+      }];
+    });
+  } catch { return null; }
 }
 
 function cleanText(value: string) {
@@ -68,7 +69,7 @@ async function readPublicSource(url: string) {
   if (contentType.includes('application/json')) {
     const feedText = feedRecordsText(await response.json());
     if (feedText) return feedText.slice(0, 24000);
-    throw new Error('The source returned JSON, but no readable opportunity records were found.');
+    return ''; // A valid but empty/non-job feed is a normal zero-result outcome.
   }
   if (!contentType.includes('text/html') && !contentType.includes('text/plain')) throw new Error('The source is not a readable public web page.');
   const html = await response.text();
@@ -94,15 +95,16 @@ async function readPublicSource(url: string) {
 
 export async function researchOpportunity(input: { sourceUrl: string; notes?: string }) {
   const sourceText = await readPublicSource(input.sourceUrl);
+  if (!sourceText.trim()) return { analyses: [], excerpt: '' };
   const result = await aiProvider.complete({
     json: true,
     system: 'You are an evidence-first career opportunity researcher. Never invent facts. If a field is not present in the source, use an empty string or empty list. Return JSON only.',
-    prompt: `Extract one software development job, freelance opportunity, or potential client lead from this public source. If it contains multiple job records, choose one complete software-development opportunity supported by the records. Do not use generic site navigation as a job description and do not invent missing details. Return JSON with exactly these keys: title, company, description, location, workMode, employmentType, requiredSkills (array), minYearsExperience (number or null), applicationUrl, recruitingChannel, whyRelevant, risks (array). Keep whyRelevant and risks concise. Source URL: ${input.sourceUrl}\nAdditional user notes: ${input.notes ?? ''}\nSource text:\n${sourceText}`,
+    prompt: `Extract up to 6 distinct software development jobs, freelance opportunities, or potential client leads that are explicitly present in this public source. Return an empty opportunities array when there is no complete opportunity; never turn generic site navigation, company marketing, or unrelated content into a job. Do not invent missing details. Return JSON with exactly one key, opportunities, containing objects with these keys: title, company, description, location, workMode, employmentType, requiredSkills (array), minYearsExperience (number or null), applicationUrl, recruitingChannel, whyRelevant, risks (array). Keep whyRelevant and risks concise. Source URL: ${input.sourceUrl}\nAdditional user notes: ${input.notes ?? ''}\nSource text:\n${sourceText}`,
   });
   if (result.status !== 'ok') throw new Error(result.message);
-  const analysis = parseJson(result.data.text);
-  if (!analysis) throw new Error('The AI provider returned an invalid opportunity analysis.');
-  return { analysis, excerpt: sourceText.slice(0, 1000) };
+  const analyses = parseJson(result.data.text);
+  if (!analyses) throw new Error('The AI provider returned an invalid opportunity analysis.');
+  return { analyses, excerpt: sourceText.slice(0, 1000) };
 }
 
 export { discoverOpportunityRecommendations } from './opportunity-discovery';

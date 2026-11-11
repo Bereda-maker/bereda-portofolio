@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getSession } from '@/lib/auth';
 import { isSameOrigin } from '@/lib/same-origin';
-import { candidateProfiles, opportunityEvidence, opportunityMatches, opportunities, outreachDrafts, researchRuns } from '@/lib/schema';
+import { candidateProfiles, opportunityEvidence, opportunityMatches, opportunities, outreachDrafts, researchRuns, trackedApplications } from '@/lib/schema';
 import { discoverOpportunityRecommendations, researchOpportunity, saveMatch } from '@/lib/services/opportunity-agent';
 
 export const runtime = 'nodejs';
@@ -25,7 +25,8 @@ export async function GET() {
     const matches = await db.select().from(opportunityMatches).where(eq(opportunityMatches.opportunityId, opportunity.id)).orderBy(desc(opportunityMatches.score));
     const evidence = await db.select().from(opportunityEvidence).where(eq(opportunityEvidence.opportunityId, opportunity.id)).orderBy(desc(opportunityEvidence.capturedAt));
     const drafts = await db.select().from(outreachDrafts).where(eq(outreachDrafts.opportunityId, opportunity.id)).orderBy(desc(outreachDrafts.createdAt));
-    return { ...opportunity, matches, evidence, drafts };
+    const [application] = await db.select().from(trackedApplications).where(eq(trackedApplications.opportunityId, opportunity.id)).limit(1);
+    return { ...opportunity, matches, evidence, drafts, trackedApplication: application ?? null };
   }));
   return NextResponse.json({ opportunities: enriched });
 }
@@ -57,11 +58,19 @@ export async function POST(req: NextRequest) {
       const [run] = await db.insert(researchRuns).values({ query: research.data.sourceUrl, status: 'running', provider: process.env.AI_PROVIDER ?? 'openai' }).returning();
       try {
         const result = await researchOpportunity(research.data);
-        const [opportunity] = await db.insert(opportunities).values({ title: result.analysis.title, slug: slugify(result.analysis.title), description: result.analysis.description, location: result.analysis.location, workMode: result.analysis.workMode, employmentType: result.analysis.employmentType, requiredSkills: result.analysis.requiredSkills, minYearsExperience: result.analysis.minYearsExperience ?? null }).returning();
-        await db.insert(opportunityEvidence).values({ opportunityId: opportunity.id, sourceUrl: research.data.sourceUrl, sourceTitle: result.analysis.title, publisher: result.analysis.company, excerpt: result.excerpt });
-        await db.update(researchRuns).set({ status: 'completed', resultCount: 1 }).where(eq(researchRuns.id, run.id));
-        const match = research.data.profileId ? await saveMatch(opportunity.id, research.data.profileId, result.analysis.whyRelevant) : null;
-        return NextResponse.json({ opportunity, match }, { status: 201 });
+        if (!result.analyses.length) {
+          await db.update(researchRuns).set({ status: 'completed', resultCount: 0 }).where(eq(researchRuns.id, run.id));
+          return NextResponse.json({ opportunities: [], count: 0, sourceUrl: research.data.sourceUrl }, { status: 200 });
+        }
+        const saved = [];
+        for (const [index, analysis] of result.analyses.entries()) {
+          const [opportunity] = await db.insert(opportunities).values({ title: analysis.title, slug: slugify(`${analysis.title}-${index + 1}`), description: analysis.description, location: analysis.location, workMode: analysis.workMode, employmentType: analysis.employmentType, requiredSkills: analysis.requiredSkills, minYearsExperience: analysis.minYearsExperience ?? null }).returning();
+          await db.insert(opportunityEvidence).values({ opportunityId: opportunity.id, sourceUrl: research.data.sourceUrl, sourceTitle: analysis.title, publisher: analysis.company, excerpt: result.excerpt });
+          const match = research.data.profileId ? await saveMatch(opportunity.id, research.data.profileId, analysis.whyRelevant) : null;
+          saved.push({ opportunity, match, analysis: { whyRelevant: analysis.whyRelevant, risks: analysis.risks, applicationUrl: analysis.applicationUrl, recruitingChannel: analysis.recruitingChannel } });
+        }
+        await db.update(researchRuns).set({ status: 'completed', resultCount: saved.length }).where(eq(researchRuns.id, run.id));
+        return NextResponse.json({ opportunities: saved, count: saved.length, sourceUrl: research.data.sourceUrl }, { status: 201 });
       } catch (error) {
         await db.update(researchRuns).set({ status: 'failed', error: error instanceof Error ? error.message : 'Research failed' }).where(eq(researchRuns.id, run.id));
         return NextResponse.json({ error: error instanceof Error ? error.message : 'Research failed.' }, { status: 422 });
