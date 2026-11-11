@@ -21,14 +21,22 @@ export async function GET() {
   if (!(await admin())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const { db } = await import('@/lib/db');
   const rows = await db.select().from(opportunities).orderBy(desc(opportunities.createdAt));
+  let applicationTrackingAvailable = true;
   const enriched = await Promise.all(rows.map(async (opportunity) => {
     const matches = await db.select().from(opportunityMatches).where(eq(opportunityMatches.opportunityId, opportunity.id)).orderBy(desc(opportunityMatches.score));
     const evidence = await db.select().from(opportunityEvidence).where(eq(opportunityEvidence.opportunityId, opportunity.id)).orderBy(desc(opportunityEvidence.capturedAt));
     const drafts = await db.select().from(outreachDrafts).where(eq(outreachDrafts.opportunityId, opportunity.id)).orderBy(desc(outreachDrafts.createdAt));
-    const [application] = await db.select().from(trackedApplications).where(eq(trackedApplications.opportunityId, opportunity.id)).limit(1);
+    let application: typeof trackedApplications.$inferSelect | null = null;
+    try {
+      const trackedRows = await db.select().from(trackedApplications).where(eq(trackedApplications.opportunityId, opportunity.id)).limit(1);
+      application = trackedRows[0] ?? null;
+    } catch (error) {
+      applicationTrackingAvailable = false;
+      console.error('[admin/opportunities GET] Application tracker table unavailable:', error instanceof Error ? error.message : error);
+    }
     return { ...opportunity, matches, evidence, drafts, trackedApplication: application ?? null };
   }));
-  return NextResponse.json({ opportunities: enriched });
+  return NextResponse.json({ opportunities: enriched, applicationTrackingAvailable });
 }
 
 export async function POST(req: NextRequest) {
