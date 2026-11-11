@@ -125,11 +125,21 @@ export async function draftOutreach(opportunityId: number, profileId: number, ch
   const [opportunity] = await db.select().from(opportunities).where(eq(opportunities.id, opportunityId)).limit(1);
   const [profile] = await db.select().from(candidateProfiles).where(eq(candidateProfiles.id, profileId)).limit(1);
   if (!opportunity || !profile) throw new Error('Opportunity or profile not found.');
+  const [evidence] = await db.select({ publisher: opportunityEvidence.publisher }).from(opportunityEvidence).where(eq(opportunityEvidence.opportunityId, opportunityId)).limit(1);
+  const channelGuidance = channel === 'email'
+    ? 'Write a concise, warm email to the hiring team. Return a specific, non-generic subject and a 3–5 short paragraph body with a natural greeting, one concrete profile-to-role connection, a brief evidence-backed example, and a polite next step. No markdown headings or fake contact names.'
+    : channel === 'linkedin'
+      ? 'Write a natural LinkedIn message, not an email. Keep it under 100 words, conversational and specific; open with why this role/person is relevant, connect one verified profile detail, and end with a low-pressure question. Do not include a subject, greeting like “Dear Hiring Manager”, formal sign-off, or unsupported assumptions about the recipient.'
+      : 'Write a tailored application cover letter of 180–260 words with readable short paragraphs. Lead with the role and a genuine reason for interest, connect two or fewer verified skills/projects to explicit role needs, and close with a confident but modest next step. No invented metrics or claims.';
   const result = await aiProvider.complete({
-    system: 'You write concise, honest, personalized application or outreach drafts. Never claim experience not present in the profile. Return plain text only.',
-    prompt: `Write a draft ${channel} message for this opportunity. It must be clearly labeled as a draft and must not imply it was sent. Mention only relevant skills and projects from the profile. Opportunity: ${opportunity.title}\n${opportunity.description ?? ''}\nRequired skills: ${opportunity.requiredSkills.join(', ')}\nProfile: ${profile.name}; ${profile.headline ?? ''}; skills ${profile.skills.join(', ')}; projects ${profile.projectsSummary ?? ''}`,
+    json: true,
+    system: 'You are a thoughtful career-writing partner. Produce natural, specific writing that sounds like a real person, not an AI template. Never invent experience, achievements, metrics, motivation, recipient identity, or company facts. Use only evidence in the supplied profile and opportunity. Avoid clichés such as “I am writing to express my interest”, “passionate”, “perfect fit”, and “leverage”. Return only valid JSON with string keys subject and body; subject may be empty for channels that do not use one.',
+    prompt: `${channelGuidance}\n\nDo not label the copy as a draft; the interface labels it. Make the wording distinct from generic templates and grounded in the candidate’s actual profile. If evidence is thin, keep the message simpler rather than filling gaps.\n\nOPPORTUNITY\nRole: ${opportunity.title}\nCompany: ${evidence?.publisher ?? 'Not provided'}\nDescription: ${opportunity.description ?? ''}\nRequired skills: ${opportunity.requiredSkills.join(', ') || 'Not specified'}\nLocation/work mode: ${opportunity.location ?? 'Not specified'} / ${opportunity.workMode ?? 'Not specified'}\n\nCANDIDATE PROFILE\nName: ${profile.name}\nHeadline: ${profile.headline ?? 'Not provided'}\nSkills: ${profile.skills.join(', ') || 'Not provided'}\nExperience: ${profile.yearsExperience ?? 'Not provided'} years\nProjects and proof: ${profile.projectsSummary ?? 'Not provided'}\nPortfolio: ${profile.portfolioUrl ?? 'Not provided'}\nGitHub: ${profile.githubUrl ?? 'Not provided'}\nPreferences/boundaries: ${profile.preferences ?? 'Not provided'}`,
   });
   if (result.status !== 'ok') throw new Error(result.message);
-  const [draft] = await db.insert(outreachDrafts).values({ opportunityId, channel, subject: `Draft for ${opportunity.title}`, body: result.data.text, status: 'draft' }).returning();
+  let content: { subject?: string; body?: string };
+  try { content = JSON.parse(result.data.text) as { subject?: string; body?: string }; } catch { throw new Error('The AI provider returned an invalid message draft. Please try again.'); }
+  if (typeof content.body !== 'string' || !content.body.trim()) throw new Error('The AI provider returned an empty message draft. Please try again.');
+  const [draft] = await db.insert(outreachDrafts).values({ opportunityId, channel, subject: content.subject?.trim() || null, body: content.body.trim(), status: 'draft' }).returning();
   return draft;
 }

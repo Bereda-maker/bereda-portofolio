@@ -64,6 +64,13 @@
       "when": 1793869581751,
       "tag": "0008_experience_period",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1794400000000,
+      "tag": "0009_daily_application_goals",
+      "breakpoints": true
     }
   ]
 }
