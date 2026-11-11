@@ -54,6 +54,7 @@ function safeHttpsUrl(value: unknown) {
 
 const allowedListingDomains: Record<string, string[]> = {
   himalayas: ['himalayas.app'],
+  remoteok: ['remoteok.com'],
   weworkremotely: ['weworkremotely.com'],
   remotive: ['remotive.com'],
   trulyremotework: ['trulyremotework.com'],
@@ -236,6 +237,30 @@ function normalizeGreenhouse(data: unknown, source: OpportunitySource): Opportun
   });
 }
 
+
+function normalizeRemoteOk(data: unknown, source: OpportunitySource): OpportunityListing[] {
+  if (!Array.isArray(data)) return [];
+  return data.flatMap((job) => {
+    if (!job || typeof job !== 'object') return [];
+    const row = job as Record<string, unknown>;
+    // The API's first array item contains terms/attribution, not a job.
+    if (row.legal || !row.position) return [];
+    const record = listingFrom(source, {
+      id: row.id,
+      title: row.position,
+      company: row.company,
+      description: row.description,
+      location: row.location,
+      tags: row.tags,
+      sourceUrl: row.url ?? row.apply_url,
+      applyUrl: row.apply_url ?? row.url,
+      publishedAt: row.date ?? row.epoch,
+      employmentType: row.type,
+    });
+    return record ? [record] : [];
+  });
+}
+
 async function fetchResponse(url: string, accept: string, revalidateSeconds: number) {
   const response = await fetch(url, {
     headers: { 'user-agent': 'BeredaOpportunityResearch/1.0', accept },
@@ -271,6 +296,10 @@ async function fetchSourceListings(source: OpportunitySource, profile: Profile):
   if (kind === 'greenhouse') {
     const response = await fetchResponse(source.feedUrl, 'application/json', 3600);
     return normalizeGreenhouse(await response.json(), source);
+  }
+  if (kind === 'remoteok') {
+    const response = await fetchResponse(source.feedUrl, 'application/json', 300);
+    return normalizeRemoteOk(await response.json(), source);
   }
   const response = await fetchResponse(source.feedUrl, 'application/rss+xml, application/xml, text/xml', 3600);
   return parseRssListings(await response.text(), source);

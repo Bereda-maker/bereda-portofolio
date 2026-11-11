@@ -7,7 +7,7 @@ import { candidateProfiles, opportunityEvidence, opportunityMatches, opportuniti
 import { discoverOpportunityRecommendations, researchOpportunity, saveMatch } from '@/lib/services/opportunity-agent';
 
 export const runtime = 'nodejs';
-const OpportunityInput = z.object({ title: z.string().trim().min(1).max(200), description: z.string().trim().min(1).max(5000), company: z.string().trim().max(200).optional(), location: z.string().trim().max(160).optional(), workMode: z.string().trim().max(80).optional(), employmentType: z.string().trim().max(80).optional(), requiredSkills: z.array(z.string().trim().min(1)).max(50), minYearsExperience: z.number().int().min(0).max(80).nullable().optional(), sourceUrl: z.string().trim().url().optional().or(z.literal('')), });
+const OpportunityInput = z.object({ title: z.string().trim().min(1).max(200), description: z.string().trim().min(1).max(5000), company: z.string().trim().max(200).optional(), sourceName: z.string().trim().max(120).optional(), location: z.string().trim().max(160).optional(), workMode: z.string().trim().max(80).optional(), employmentType: z.string().trim().max(80).optional(), requiredSkills: z.array(z.string().trim().min(1)).max(50), minYearsExperience: z.number().int().min(0).max(80).nullable().optional(), sourceUrl: z.string().trim().url().optional().or(z.literal('')), });
 const ResearchInput = z.object({ sourceUrl: z.string().trim().url(), notes: z.string().trim().max(2000).optional(), profileId: z.number().int().positive().optional() });
 const DiscoveryInput = z.object({ action: z.literal('discover'), profileId: z.number().int().positive(), categories: z.array(z.enum(['remote', 'freelance', 'internship', 'cofounder'])).min(1).max(4) });
 
@@ -69,9 +69,9 @@ export async function POST(req: NextRequest) {
     }
     const parsed = OpportunityInput.safeParse(raw);
     if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid opportunity.' }, { status: 400 });
-    const { sourceUrl, company: _company, ...opportunityData } = parsed.data;
+    const { sourceUrl, sourceName, company: _company, ...opportunityData } = parsed.data;
     const [opportunity] = await db.insert(opportunities).values({ ...opportunityData, slug: slugify(parsed.data.title) }).returning();
-    if (sourceUrl) await db.insert(opportunityEvidence).values({ opportunityId: opportunity.id, sourceUrl, sourceTitle: parsed.data.title });
+    if (sourceUrl) await db.insert(opportunityEvidence).values({ opportunityId: opportunity.id, sourceUrl, sourceTitle: parsed.data.title, publisher: sourceName ?? null });
     return NextResponse.json({ opportunity }, { status: 201 });
   } catch (error) {
     console.error('[admin/opportunities POST]', error);

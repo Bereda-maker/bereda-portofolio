@@ -1,5 +1,5 @@
 export type OpportunitySourceGroup = 'Remote & general jobs' | 'Freelance marketplaces' | 'Careers & internships' | 'Open-source programs' | 'Startup & co-founder networks';
-export type OpportunityFeedKind = 'himalayas' | 'rss' | 'trulyremotework' | 'greenhouse';
+export type OpportunityFeedKind = 'himalayas' | 'rss' | 'trulyremotework' | 'greenhouse' | 'remoteok';
 export type OpportunitySourceAccess = 'verified_feed' | 'browse_only' | 'member_only';
 
 export type OpportunitySource = {
@@ -20,7 +20,7 @@ const memberNote = 'Member or sign-in access is required; private profiles and l
 export const OPPORTUNITY_SOURCES: readonly OpportunitySource[] = [
   { id: 'himalayas', name: 'Himalayas', group: 'Remote & general jobs', url: 'https://himalayas.app/jobs', access: 'verified_feed', note: 'Public jobs API; cache results, show source attribution, and link back to the Himalayas listing.', feedKind: 'himalayas', feedUrl: 'https://himalayas.app/jobs/api/search' },
   { id: 'weworkremotely', name: 'We Work Remotely', group: 'Remote & general jobs', url: 'https://weworkremotely.com/', access: 'verified_feed', note: 'Public RSS feed; attribute links back to We Work Remotely.', feedKind: 'rss', feedUrl: 'https://weworkremotely.com/categories/remote-programming-jobs.rss' },
-  { id: 'remoteok', name: 'Remote OK', group: 'Remote & general jobs', url: 'https://remoteok.com/remote-api-jobs', access: 'browse_only', note: 'Manual search only; the API/query paths are disallowed by its robots policy and reuse permission was not verified.' },
+  { id: 'remoteok', name: 'Remote OK', group: 'Remote & general jobs', url: 'https://remoteok.com/remote-api-jobs', access: 'verified_feed', note: 'Official public JSON API; credit Remote OK and link directly to every original job listing.', feedKind: 'remoteok', feedUrl: 'https://remoteok.com/api' },
   { id: 'wellfound', name: 'Wellfound', group: 'Remote & general jobs', url: 'https://wellfound.com/jobs', access: 'browse_only', note: termsNote },
   { id: 'linkedin', name: 'LinkedIn Jobs', group: 'Remote & general jobs', url: 'https://www.linkedin.com/jobs/', access: 'browse_only', note: 'Automated scraping is prohibited; use LinkedIn search directly.' },
   { id: 'remotive', name: 'Remotive', group: 'Remote & general jobs', url: 'https://remotive.com/remote-jobs/software-dev', access: 'verified_feed', note: 'Public software-development RSS feed; identify Remotive and link each listing back to its source.', feedKind: 'rss', feedUrl: 'https://remotive.com/remote-jobs/feed/software-development' },
