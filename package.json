@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test:life-ai-profile": "tsx --test tests/life-ai-profile.test.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node scripts/migrate.mjs",
     "db:seed": "node scripts/seed.mjs",
@@ -38,6 +39,7 @@
     "drizzle-kit": "^0.31.11",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.1",
+    "tsx": "^4.23.15",
     "typescript": "^5.4.5"
   }
 }

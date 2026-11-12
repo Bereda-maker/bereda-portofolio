@@ -92,6 +92,13 @@
       "when": 1794400003000,
       "tag": "0012_your_life_ai_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1794487255578,
+      "tag": "0013_life_ai_profile",
+      "breakpoints": true
     }
   ]
 }

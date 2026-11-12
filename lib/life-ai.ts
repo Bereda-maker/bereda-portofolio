@@ -30,11 +30,11 @@ export async function getContextSettings() {
   return row ?? { ...DEFAULT_CONTEXT, ownerKey: LIFE_AI_OWNER };
 }
 
-export async function getConversation(id: number) {
+export async function getConversation(id: number, includeMessages = true) {
   const db = await getDb();
   const [conversation] = await db.select().from(lifeAiConversations).where(and(eq(lifeAiConversations.id, id), eq(lifeAiConversations.ownerKey, LIFE_AI_OWNER))).limit(1);
   if (!conversation) return null;
-  const messages = await db.select().from(lifeAiMessages).where(eq(lifeAiMessages.conversationId, id)).orderBy(asc(lifeAiMessages.createdAt));
+  const messages = includeMessages ? await db.select().from(lifeAiMessages).where(eq(lifeAiMessages.conversationId, id)).orderBy(asc(lifeAiMessages.createdAt)) : [];
   return { ...conversation, messages };
 }
 
