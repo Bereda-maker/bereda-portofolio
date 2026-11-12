@@ -169,8 +169,14 @@ Typed domain helpers live under `lib/services/` for mentorship pricing/usage led
 
 ### AI Opportunity & Outreach Agent configuration
 
-Apply the generated migration with `npm run db:migrate`, then configure an
-OpenAI-compatible provider in the deployment environment:
+The deployment must have a working `DATABASE_URL` before the first build. The
+Railway configuration runs `npm run db:migrate` in `preDeployCommand`, and the
+Vercel configuration runs the same migration command in `buildCommand`, so the
+`daily_application_goals` and `tracked_applications` tables are installed before
+the admin workspace handles goal or application-tracking requests. For a local
+database, run `npm run db:migrate` manually after setting `DATABASE_URL`.
+
+Then configure an OpenAI-compatible provider in the deployment environment:
 
 ```bash
 AI_PROVIDER=openai
