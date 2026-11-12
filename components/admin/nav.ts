@@ -1,10 +1,11 @@
-import { BookOpen, Briefcase, CalendarDays, FileText, FolderKanban, GraduationCap, LayoutDashboard, Mail, ScrollText, Settings, Video, type LucideIcon } from 'lucide-react';
+import { BookOpen, Brain, Briefcase, CalendarDays, FileText, FolderKanban, GraduationCap, LayoutDashboard, Mail, ScrollText, Settings, Video, type LucideIcon } from 'lucide-react';
 
 export type NavItem = { href: string; label: string; icon: LucideIcon; exact?: boolean; badge?: 'unread'; keywords?: string };
 export type NavGroup = { label: string; items: NavItem[] };
 
 export const NAV_GROUPS: NavGroup[] = [
   { label: 'Overview', items: [{ href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true, keywords: 'home overview stats' }] },
+  { label: 'Personal', items: [{ href: '/admin/life-ai', label: 'Your Life AI', icon: Brain, keywords: 'ai life planning reflection habits journal personal' }] },
   {
     label: 'Content',
     items: [

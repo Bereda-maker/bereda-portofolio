@@ -4,7 +4,8 @@ export type PaymentProvider = { createCheckout(input: { amountCents: number; cur
 export type StorageProvider = { createUpload(input: { filename: string; contentType: string }): Promise<ProviderResult<{ uploadUrl: string; storageKey: string }>> };
 export type EmailProvider = { send(input: { to: string; subject: string; text: string }): Promise<ProviderResult<{ messageId: string }>> };
 export type CalendarProvider = { createEvent(input: { title: string; startsAt: Date; endsAt: Date; attendeeEmail: string }): Promise<ProviderResult<{ eventId: string }>> };
-export type AiProvider = { complete(input: { prompt: string; system?: string; json?: boolean }): Promise<ProviderResult<{ text: string }>> };
+export type AiMessage = { role: 'user' | 'assistant' | 'system'; content: string };
+export type AiProvider = { complete(input: { prompt: string; system?: string; json?: boolean }): Promise<ProviderResult<{ text: string }>>; chat(input: { messages: AiMessage[]; system?: string }): Promise<ProviderResult<{ text: string; inputTokens?: number; outputTokens?: number }>> };
 
 async function providerError(response: Response, provider: string) {
   const raw = await response.text().catch(() => '');
@@ -56,6 +57,28 @@ export const aiProvider: AiProvider = {
       return { status: 'ok', data: { text: data.choices?.[0]?.message?.content ?? '' } };
     } catch (error) {
       console.error('[aiProvider] completion failed:', error instanceof Error ? error.message : error);
+      return { status: 'setup_required', provider, requiredEnvironmentVariables: ['AI_API_KEY'], message: error instanceof Error ? error.message : 'The configured AI provider could not complete the request.' };
+    }
+  },
+  async chat({ messages, system }) {
+    const apiKey = process.env.AI_API_KEY;
+    if (!apiKey) return unconfigured('ai', ['AI_PROVIDER', 'AI_API_KEY']);
+    const provider = process.env.AI_PROVIDER ?? 'openai';
+    const baseUrl = (process.env.AI_BASE_URL ?? (provider === 'anthropic' ? 'https://api.anthropic.com/v1' : 'https://api.openai.com/v1')).replace(/\/$/, '');
+    const model = process.env.AI_MODEL ?? (provider === 'anthropic' ? 'claude-3-5-haiku-latest' : 'gpt-4o-mini');
+    try {
+      if (provider === 'anthropic') {
+        const response = await fetch(`${baseUrl}/messages`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' }, body: JSON.stringify({ model, max_tokens: 1800, system, messages: messages.filter((message) => message.role !== 'system') }) });
+        if (!response.ok) throw await providerError(response, provider);
+        const data = await response.json() as { content?: Array<{ text?: string }>; usage?: { input_tokens?: number; output_tokens?: number } };
+        return { status: 'ok', data: { text: data.content?.map((part) => part.text ?? '').join('') ?? '', inputTokens: data.usage?.input_tokens, outputTokens: data.usage?.output_tokens } };
+      }
+      const response = await fetch(`${baseUrl}/chat/completions`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` }, body: JSON.stringify({ model, temperature: 0.35, max_tokens: 1800, messages: [{ role: 'system', content: system ?? 'You are a careful personal planning assistant.' }, ...messages.filter((message) => message.role !== 'system')] }) });
+      if (!response.ok) throw await providerError(response, provider);
+      const data = await response.json() as { choices?: Array<{ message?: { content?: string } }>; usage?: { prompt_tokens?: number; completion_tokens?: number } };
+      return { status: 'ok', data: { text: data.choices?.[0]?.message?.content ?? '', inputTokens: data.usage?.prompt_tokens, outputTokens: data.usage?.completion_tokens } };
+    } catch (error) {
+      console.error('[aiProvider] chat failed:', error instanceof Error ? error.message : error);
       return { status: 'setup_required', provider, requiredEnvironmentVariables: ['AI_API_KEY'], message: error instanceof Error ? error.message : 'The configured AI provider could not complete the request.' };
     }
   },
