@@ -13,6 +13,8 @@
 - `drizzle/0011_your_life_ai.sql` — forward-only database migration.
 - `YOUR_LIFE_AI_REPORT.md` — this report.
 
+The workspace was subsequently refined with a chat-first visual hierarchy, conversation search, real rename/delete actions, the full set of requested starter prompts, a personalized time-of-day greeting, stop-generation control, and provider-backed server-sent streaming.
+
 ## 2. Files modified
 
 - `components/admin/nav.ts` — adds the single `Your Life AI` item under a `Personal` group using the Lucide Brain icon.
@@ -23,6 +25,8 @@
 - `drizzle/meta/_journal.json` — registers migration `0011_your_life_ai`.
 - `plan.md` — records the implementation and design decisions.
 - `TODO.md` — records the remaining acceptance outcomes.
+
+The provider abstraction now also exposes OpenAI-compatible streaming events. Anthropic remains supported for non-streaming chat; the streaming route returns a clear setup response when the configured provider does not expose the implemented streaming contract.
 
 ## 3. Database changes
 
@@ -80,6 +84,8 @@ Anthropic is supported by setting `AI_PROVIDER=anthropic`, an appropriate `AI_BA
 
 - `npx tsc --noEmit` — passed.
 - `npm run build` — passed, including compilation, lint/type validation, page-data collection, and static generation.
+- Streaming route compilation and client stream consumption — included in the successful typecheck and production build.
+- Conversation rename API and searchable history UI — compiled and wired to protected endpoints.
 - `git diff --check` — passed.
 - Route manifest JSON parsing and `/admin/life-ai` registration — passed.
 - Migration file and required feature artifacts — verified present.
