@@ -1,4 +1,4 @@
-import { and, asc, desc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, lte } from 'drizzle-orm';
 import { calendarTasks, lifeAiContextSettings, lifeAiConversations, lifeAiMessages } from '@/lib/schema';
 
 async function getDb() { return (await import('@/lib/db')).db; }
@@ -43,7 +43,7 @@ export async function getCalendarContext() {
   const now = new Date();
   const until = new Date(now);
   until.setDate(until.getDate() + 14);
-  return db.select({ title: calendarTasks.title, startsAt: calendarTasks.startsAt, endsAt: calendarTasks.endsAt, status: calendarTasks.status, priority: calendarTasks.priority }).from(calendarTasks).where(and(eq(calendarTasks.status, 'planned'))).orderBy(asc(calendarTasks.startsAt)).limit(100);
+  return db.select({ title: calendarTasks.title, startsAt: calendarTasks.startsAt, endsAt: calendarTasks.endsAt, status: calendarTasks.status, priority: calendarTasks.priority }).from(calendarTasks).where(and(eq(calendarTasks.status, 'planned'), gte(calendarTasks.startsAt, now), lte(calendarTasks.startsAt, until))).orderBy(asc(calendarTasks.startsAt)).limit(100);
 }
 
 export async function listConversations() {

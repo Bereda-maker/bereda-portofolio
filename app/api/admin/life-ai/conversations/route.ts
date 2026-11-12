@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { isAdminRequest } from '@/lib/auth';
 import { isSameOrigin } from '@/lib/same-origin';
@@ -33,6 +33,6 @@ export async function DELETE(request: NextRequest) {
   const id = Number(new URL(request.url).searchParams.get('id'));
   if (!Number.isInteger(id)) return NextResponse.json({ error: 'A conversation id is required.' }, { status: 400 });
   const { db } = await import('@/lib/db');
-  await db.delete(lifeAiConversations).where(eq(lifeAiConversations.id, id));
+  await db.delete(lifeAiConversations).where(and(eq(lifeAiConversations.id, id), eq(lifeAiConversations.ownerKey, LIFE_AI_OWNER)));
   return NextResponse.json({ ok: true });
 }

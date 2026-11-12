@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
   await db.insert(lifeAiMessages).values({ conversationId: conversation.id, role: 'user', content: parsed.data.content });
 
   const context = await getContextSettings();
-  const history = [...conversation.messages, { role: 'user' as const, content: parsed.data.content }].slice(-20).map((message) => ({ role: message.role as 'user' | 'assistant', content: message.content }));
+  const history = [...(context.conversations ? conversation.messages : []), { role: 'user' as const, content: parsed.data.content }].slice(-20).map((message) => ({ role: message.role as 'user' | 'assistant', content: message.content }));
   let contextText = `preferences=${context.preferences}, goals=${context.goals}, commitments=${context.commitments}, habits=${context.habits}, journal=${context.journal}, relationships=${context.relationships}, finances=${context.finances}, conversations=${context.conversations}`;
   if (context.commitments) { const tasks = await getCalendarContext(); contextText += `\nRead-only upcoming planned tasks (do not invent or modify): ${JSON.stringify(tasks)}`; }
   const result = await aiProvider.stream({ messages: history, system: LIFE_AI_SYSTEM.replace('{{CONTEXT}}', contextText) });
