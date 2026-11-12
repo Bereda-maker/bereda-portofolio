@@ -13,6 +13,7 @@ The homepage copy lives in `components/sections/*.tsx` and `data/content.ts`. Be
 - Add real `demo` and `repo` URLs to each project (`"#"` means "not published yet" and the link is hidden). Keep `PROJECTS` plain JSON, because `scripts/seed.mjs` parses it.
 - Edit `TECH_GROUPS` so the tool lists match how you actually work.
 - Set `NEXT_PUBLIC_SITE_URL` on your host so canonical, sitemap and social-preview URLs use your real domain.
+- Set `AI_PROVIDER`, `AI_API_KEY`, `AI_BASE_URL`, and `AI_MODEL` on the host to enable Your Life AI. These must be server-side variables; never use a `NEXT_PUBLIC_` prefix for them.
 - The `/admin` area keeps its own dark theme in `app/admin/admin.css`.
 
 ## Local setup
@@ -25,6 +26,12 @@ npm run db:migrate           # applies it to DATABASE_URL
 npm run db:seed              # idempotent: inserts data/content.ts's projects if missing
 npm run dev                  # http://localhost:3000
 ```
+
+### Vercel deployment
+
+Vercel runs `npm run build` only. Database migrations are intentionally not part of the Vercel build command: builds and preview deployments must not mutate a shared database, and a build should not fail only because database credentials are unavailable during compilation. Run `npm run db:migrate` once against the intended Supabase/Postgres `DATABASE_URL` before promoting a deployment, using a protected CI job or a trusted local environment.
+
+At minimum, configure these Vercel environment variables for the relevant environments: `DATABASE_URL`, `SESSION_SECRET`, `ADMIN_PASSWORD_HASH`, and `NEXT_PUBLIC_SITE_URL`. Configure the Google Calendar variables only when calendar integration is enabled, and configure the server-side `AI_*` variables when using Your Life AI.
 
 ### Environment variables (`.env.local`)
 
