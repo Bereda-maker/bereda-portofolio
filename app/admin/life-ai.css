@@ -307,3 +307,20 @@
 .life-memory-category-actions .admin-button-secondary { padding: .38rem .55rem; font-size: .72rem; }
 .life-memory-category-actions .admin-button-quiet-danger:hover:not(:disabled) { border-color: var(--admin-danger); color: var(--admin-danger); }
 @media (max-width: 520px) { .life-memory-category-actions { width: 100%; }.life-memory-category-actions > * { flex: 1; justify-content: center; text-align: center; } }
+
+
+/* Full-width, dashboard-styled chat composer. */
+.life-ai-composer .life-ai-composer-input {
+  display: block;
+  width: 100%;
+  min-height: 6.5rem;
+  max-height: 14rem;
+  box-sizing: border-box;
+  resize: vertical;
+  border-radius: .75rem;
+  background: var(--admin-input-bg);
+  padding: .85rem 1rem;
+  font-family: var(--admin-sans);
+  font-size: .95rem;
+  line-height: 1.55;
+}
