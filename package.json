@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "test:life-ai-profile": "tsx --test tests/life-ai-profile.test.ts",
+    "test:life-ai-hydration": "tsx --tsconfig tsconfig.test.json --test tests/life-ai-hydration.test.tsx",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node scripts/migrate.mjs",
     "db:seed": "node scripts/seed.mjs",

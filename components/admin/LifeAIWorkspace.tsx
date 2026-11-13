@@ -38,10 +38,15 @@ export default function LifeAIWorkspace() {
   const [menuId, setMenuId] = useState<number | null>(null);
   const [renamingId, setRenamingId] = useState<number | null>(null);
   const [renameDraft, setRenameDraft] = useState('');
+  const [greeting, setGreeting] = useState('Welcome back, Bereda.');
   const abortRef = useRef<AbortController | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   async function refreshConversations() { const response = await fetch('/api/admin/life-ai/conversations'); const data = await response.json(); if (response.ok) setConversations(data.conversations); }
+  useEffect(() => {
+    const hour = new Date().getHours();
+    setGreeting(hour < 12 ? 'Good morning, Bereda.' : hour < 18 ? 'Good afternoon, Bereda.' : 'Good evening, Bereda.');
+  }, []);
   useEffect(() => { void Promise.all([refreshConversations(), fetch('/api/admin/life-ai/context').then((response) => response.json()).then((data) => data.context && setContext(data.context))]); }, []);
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, [messages, loading]);
 
@@ -77,8 +82,6 @@ export default function LifeAIWorkspace() {
 
   const filteredConversations = useMemo(() => { const term = historySearch.trim().toLowerCase(); return term ? conversations.filter((item) => item.title.toLowerCase().includes(term)) : conversations; }, [conversations, historySearch]);
   const activeTitle = useMemo(() => conversations.find((item) => item.id === conversationId)?.title, [conversations, conversationId]);
-  const greeting = useMemo(() => { const hour = new Date().getHours(); return hour < 12 ? 'Good morning, Bereda.' : hour < 18 ? 'Good afternoon, Bereda.' : 'Good evening, Bereda.'; }, []);
-
   return <div className="life-ai-page">
     <header className="life-ai-header"><div><div className="life-ai-eyebrow"><span className="life-ai-mark"><Brain size={17} /></span> Private workspace · Your Life AI</div><h1 className="admin-title">A quieter place to think clearly.</h1><p className="admin-description">One central assistant for planning, reflection, growth, and the decisions that connect them.</p></div><button type="button" className="admin-button-secondary life-ai-settings-button" onClick={() => setSettingsOpen(true)}><Settings2 size={16} /> Context access</button></header>
     <div className="life-ai-consent-strip"><Sparkles size={16} /><span>Suggestions use only the context categories you enable. I’ll make suggestions, not assumptions.</span><button type="button" onClick={() => setSettingsOpen(true)}>Review access</button></div>
