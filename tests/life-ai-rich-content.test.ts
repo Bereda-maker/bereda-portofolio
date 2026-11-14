@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { BookRecommendationsBlockSchema, LifeAiRichBlockSchema, OpenLibraryBookSchema } from '../lib/life-ai-rich-content';
-import { searchYouTubeVideos } from '../lib/life-ai-youtube';
+import { appendYouTubeContext, isYouTubeMoreIntent, isYouTubeResourceIntent, resolveYouTubeSearchTarget, searchYouTubeVideos } from '../lib/life-ai-youtube';
 import { parseLifeAiToolPlan } from '../lib/life-ai-tool-plan';
 import { appendBookContext, isBookResourceIntent, searchOpenLibraryBooks } from '../lib/life-ai-books';
 import { detectLearningBlockRequest, generateLearningContentBlock, parseLearningContentBlock } from '../lib/life-ai-learning';
@@ -29,7 +29,30 @@ test('missing YouTube credentials produce an explicit configuration notice', asy
   const result = await searchYouTubeVideos('react state patterns missing key');
   assert.equal(result.status, 'notice');
   assert.equal(result.block.type, 'notice');
-  if (result.block.type === 'notice') assert.match(result.block.message, /YOUTUBE_API_KEY/);
+  if (result.block.type === 'notice') {
+    assert.match(result.block.message, /YOUTUBE_API_KEY/);
+    assert.equal(result.block.action?.label, 'Search YouTube manually');
+    assert.equal(result.block.action?.url, `https://www.youtube.com/results?search_query=${encodeURIComponent('react state patterns missing key')}`);
+    assert.equal(LifeAiRichBlockSchema.safeParse(result.block).success, true);
+    const context = appendYouTubeContext('Base instructions.', result.block);
+    assert.match(context, /Do not name or recommend specific video titles, channels, creators/);
+    assert.match(context, /safe manual-search link displayed/);
+  }
+});
+
+test('explicit video and tutorial requests trigger search but ordinary learning questions do not', () => {
+  assert.equal(isYouTubeResourceIntent('Recommend videos to improve my communication skills.'), true);
+  assert.equal(isYouTubeResourceIntent('Find React tutorials for beginners.'), true);
+  assert.equal(isYouTubeResourceIntent('Find a documentary about habit formation.'), true);
+  assert.equal(isYouTubeResourceIntent('Help me learn React.'), false);
+  assert.equal(isYouTubeMoreIntent('Show me more videos.'), true);
+  assert.equal(isYouTubeMoreIntent('Find similar video recommendations.'), false);
+  assert.equal(isYouTubeMoreIntent('Recommend videos about leadership.'), false);
+  const previous = { type: 'youtube_videos' as const, query: 'communication skills', items: [], nextPageToken: 'page-token-2' };
+  assert.deepEqual(resolveYouTubeSearchTarget('Show me more videos.', previous), { kind: 'search', query: 'communication skills', pageToken: 'page-token-2' });
+  assert.deepEqual(resolveYouTubeSearchTarget('Find related YouTube videos about public speaking', previous), { kind: 'search', query: 'Find related YouTube videos about public speaking' });
+  assert.deepEqual(resolveYouTubeSearchTarget('Show me more videos.'), { kind: 'needs_context' });
+  assert.deepEqual(resolveYouTubeSearchTarget('Show me more videos.', { ...previous, nextPageToken: undefined }), { kind: 'exhausted', query: 'communication skills' });
 });
 
 test('verified YouTube metadata maps to safe cards and duplicate searches use cache', async () => {
@@ -41,13 +64,13 @@ test('verified YouTube metadata maps to safe cards and duplicate searches use ca
     assert.equal(url.searchParams.get('key'), 'server-test-key');
     if (url.pathname.endsWith('/search')) {
       assert.equal(url.searchParams.get('type'), 'video');
-      assert.equal(url.searchParams.get('maxResults'), '6');
+      assert.equal(url.searchParams.get('maxResults'), '5');
       return Response.json({ items: [{ id: { videoId }, snippet }], nextPageToken: 'next-page' });
     }
     assert.ok(url.pathname.endsWith('/videos'));
     assert.equal(url.searchParams.get('id'), videoId);
-    assert.equal(url.searchParams.get('part'), 'snippet,contentDetails');
-    return Response.json({ items: [{ id: videoId, snippet, contentDetails: { duration: 'PT8M12S' } }] });
+    assert.equal(url.searchParams.get('part'), 'snippet,contentDetails,statistics');
+    return Response.json({ items: [{ id: videoId, snippet, contentDetails: { duration: 'PT8M12S' }, statistics: { viewCount: '12500', likeCount: '425' } }] });
   };
 
   const first = await searchYouTubeVideos('React state patterns cache regression');
@@ -61,8 +84,26 @@ test('verified YouTube metadata maps to safe cards and duplicate searches use ca
     assert.equal(first.block.items[0]?.videoUrl, `https://www.youtube.com/watch?v=${videoId}`);
     assert.equal(first.block.items[0]?.embedUrl, `https://www.youtube-nocookie.com/embed/${videoId}`);
     assert.equal(first.block.items[0]?.thumbnailUrl, thumbnailUrl);
+    assert.equal(first.block.items[0]?.viewCount, 12500);
+    assert.equal(first.block.items[0]?.likeCount, 425);
     assert.equal(first.block.nextPageToken, 'next-page');
     assert.equal(LifeAiRichBlockSchema.safeParse(first.block).success, true);
+  }
+});
+
+test('YouTube quota and invalid-key errors return honest notices instead of fabricated cards', async () => {
+  process.env.YOUTUBE_API_KEY = 'server-test-key';
+  globalThis.fetch = async () => Response.json({ error: { errors: [{ reason: 'quotaExceeded' }], message: 'Quota exceeded.' } }, { status: 403 });
+  const quota = await searchYouTubeVideos('quota regression unique');
+  assert.equal(quota.block.type, 'notice');
+  if (quota.block.type === 'notice') assert.match(quota.block.title, /quota/i);
+
+  globalThis.fetch = async () => Response.json({ error: { errors: [{ reason: 'keyInvalid' }], message: 'Invalid key.' } }, { status: 400 });
+  const invalidKey = await searchYouTubeVideos('invalid key regression unique');
+  assert.equal(invalidKey.block.type, 'notice');
+  if (invalidKey.block.type === 'notice') {
+    assert.match(invalidKey.block.message, /server-side YouTube API key is invalid/i);
+    assert.equal('items' in invalidKey.block, false);
   }
 });
 
@@ -75,10 +116,13 @@ test('rich block validation rejects unsafe thumbnails and mismatched watch links
   assert.equal(LifeAiRichBlockSchema.safeParse(valid).success, true);
   assert.equal(LifeAiRichBlockSchema.safeParse({ ...valid, items: [{ ...valid.items[0], thumbnailUrl: 'javascript:alert(1)' }] }).success, false);
   assert.equal(LifeAiRichBlockSchema.safeParse({ ...valid, items: [{ ...valid.items[0], videoUrl: 'https://example.com/fake' }] }).success, false);
+  const fallbackNotice = { type: 'notice', provider: 'youtube', tone: 'warning', title: 'Setup required', message: 'Configure server access.', action: { label: 'Search YouTube manually', url: 'https://www.youtube.com/results?search_query=react' } };
+  assert.equal(LifeAiRichBlockSchema.safeParse(fallbackNotice).success, true);
+  assert.equal(LifeAiRichBlockSchema.safeParse({ ...fallbackNotice, action: { ...fallbackNotice.action, url: 'https://evil.example/phishing' } }).success, false);
 });
 
 test('AI resource tool plans accept only bounded, valid JSON actions', () => {
-  assert.deepEqual(parseLifeAiToolPlan('{"action":"search_youtube","query":"React hooks tutorial"}'), { action: 'search_youtube', query: 'React hooks tutorial' });
+  assert.equal(parseLifeAiToolPlan('{"action":"search_youtube","query":"React hooks tutorial"}'), null);
   assert.deepEqual(parseLifeAiToolPlan('{"action":"search_books","query":"books about attention"}'), { action: 'search_books', query: 'books about attention' });
   assert.deepEqual(parseLifeAiToolPlan('{"action":"none"}'), { action: 'none' });
   assert.equal(parseLifeAiToolPlan('{"action":"search_youtube","query":"x"}'), null);

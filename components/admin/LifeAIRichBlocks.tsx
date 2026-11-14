@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { BookOpen, BookmarkCheck, Check, Heart, Loader2, Play, RotateCcw } from 'lucide-react';
+import { BookOpen, BookmarkCheck, Check, Heart, Loader2, Play, RotateCcw, Search } from 'lucide-react';
 import type { BookRecommendationsBlock, GoalProgressChartBlock, InteractiveChecklistBlock, LearningRoadmapBlock, LifeAiRichBlock, OpenLibraryBook, YouTubeVideo } from '@/lib/life-ai-rich-content';
 
 export type VideoResourceState = { isFavorite: boolean; isWatched: boolean };
@@ -17,10 +17,12 @@ type Props = {
   onBookAction: (book: OpenLibraryBook, action: BookResourceAction) => void;
   onMore: (block: Extract<LifeAiRichBlock, { type: 'youtube_videos' }>) => void;
   onMoreBooks: (block: BookRecommendationsBlock) => void;
+  onRelatedVideos?: (query: string) => void;
   loadingMore?: boolean;
 };
 
 function YouTubeVideoCard({ video, state, onAction }: { video: YouTubeVideo; state: VideoResourceState; onAction: (action: VideoResourceAction) => void }) {
+  const [previewOpen, setPreviewOpen] = useState(false);
   const published = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(video.publishedAt));
   return <article className="life-ai-video-card">
     <a className="life-ai-video-thumb" href={video.videoUrl} target="_blank" rel="noopener noreferrer" aria-label={`Watch ${video.title} on YouTube`}>
@@ -30,14 +32,16 @@ function YouTubeVideoCard({ video, state, onAction }: { video: YouTubeVideo; sta
     </a>
     <div className="life-ai-video-copy">
       <a className="life-ai-video-title" href={video.videoUrl} target="_blank" rel="noopener noreferrer">{video.title}</a>
-      <div className="life-ai-video-meta"><span>{video.channelTitle}</span><span aria-hidden="true">·</span><time dateTime={video.publishedAt}>{published}</time></div>
+      <div className="life-ai-video-meta"><span>{video.channelTitle}</span><span aria-hidden="true">·</span><time dateTime={video.publishedAt}>{published}</time>{video.viewCount !== undefined && <><span aria-hidden="true">·</span><span>{new Intl.NumberFormat('en-US').format(video.viewCount)} views</span></>}{video.likeCount !== undefined && <><span aria-hidden="true">·</span><span>{new Intl.NumberFormat('en-US').format(video.likeCount)} likes</span></>}</div>
       {video.description && <p>{video.description}</p>}
       <div className="life-ai-video-actions">
         <a className="life-ai-video-watch" href={video.videoUrl} target="_blank" rel="noopener noreferrer">Watch on YouTube</a>
+        <button type="button" aria-expanded={previewOpen} onClick={() => setPreviewOpen((open) => !open)}>{previewOpen ? 'Close preview' : 'Preview here'}</button>
         <button type="button" className={state.isFavorite ? 'active' : ''} aria-pressed={state.isFavorite} onClick={() => onAction(state.isFavorite ? 'unfavorite' : 'favorite')}><Heart size={14} fill={state.isFavorite ? 'currentColor' : 'none'} />{state.isFavorite ? 'Saved' : 'Save'}</button>
         <button type="button" className={state.isWatched ? 'active' : ''} aria-pressed={state.isWatched} onClick={() => onAction(state.isWatched ? 'unwatched' : 'watched')}><BookmarkCheck size={14} />{state.isWatched ? 'Watched' : 'Mark watched'}</button>
       </div>
     </div>
+    {previewOpen && <div className="life-ai-video-embed"><iframe src={video.embedUrl} title={`YouTube video: ${video.title}`} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen /></div>}
   </article>;
 }
 
@@ -62,10 +66,10 @@ function OpenLibraryBookCard({ book, state, onAction }: { book: OpenLibraryBook;
   </article>;
 }
 
-export default function LifeAIRichBlockRenderer({ block, states, bookStates, onVideoAction, onBookAction, onMore, onMoreBooks, loadingMore }: Props) {
-  if (block.type === 'notice') return <aside className={`life-ai-rich-notice ${block.tone}`} role="status"><strong>{block.title}</strong><p>{block.message}</p></aside>;
+export default function LifeAIRichBlockRenderer({ block, states, bookStates, onVideoAction, onBookAction, onMore, onMoreBooks, onRelatedVideos, loadingMore }: Props) {
+  if (block.type === 'notice') return <aside className={`life-ai-rich-notice ${block.tone}`} role="status"><strong>{block.title}</strong><p>{block.message}</p>{block.action && <a className="life-ai-rich-notice-action" href={block.action.url} target="_blank" rel="noopener noreferrer">{block.action.label}</a>}</aside>;
   if (block.type === 'youtube_videos') return <section className="life-ai-video-results" aria-label={`YouTube video recommendations for ${block.query}`}>
-    <div className="life-ai-video-results-head"><div><span className="admin-eyebrow">Verified YouTube results</span><h3>{block.query}</h3></div><span>{block.items.length} {block.items.length === 1 ? 'video' : 'videos'}</span></div>
+    <div className="life-ai-video-results-head"><div><span className="admin-eyebrow">Verified YouTube results</span><h3>{block.query}</h3></div><div className="life-ai-video-results-tools">{onRelatedVideos && <button type="button" onClick={() => onRelatedVideos(block.query)}><Search size={14} /> Related videos</button>}<span>{block.items.length} {block.items.length === 1 ? 'video' : 'videos'}</span></div></div>
     {block.items.length ? <div className="life-ai-video-grid">{block.items.map((video) => <YouTubeVideoCard key={video.videoId} video={video} state={states[video.videoId] ?? { isFavorite: false, isWatched: false }} onAction={(action) => onVideoAction(video, action)} />)}</div> : <p className="life-ai-video-empty">No matching videos were returned by YouTube for this search.</p>}
     {block.nextPageToken && <button type="button" className="life-ai-video-more" onClick={() => onMore(block)} disabled={loadingMore}>{loadingMore ? <><Loader2 size={15} className="life-ai-spin" /> Loading more videos…</> : <><RotateCcw size={15} /> More videos</>}</button>}
   </section>;

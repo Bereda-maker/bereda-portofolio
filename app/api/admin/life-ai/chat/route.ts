@@ -7,11 +7,11 @@ import { aiProvider } from '@/lib/services/providers';
 import { aiUsageLogs, lifeAiConversations, lifeAiMessageBlocks, lifeAiMessages } from '@/lib/schema';
 import { getCalendarContext, getContextSettings, getConversation, LIFE_AI_OWNER, LIFE_AI_SYSTEM } from '@/lib/life-ai';
 import { buildAuthorizedProfileContext, buildGoalProgressChart, hasGoalProgressChartIntent } from '@/lib/life-ai-profile';
-import { LifeAiRichBlocksSchema, type LifeAiRichBlock } from '@/lib/life-ai-rich-content';
+import { LifeAiRichBlocksSchema, YouTubeVideosBlockSchema, type LifeAiRichBlock } from '@/lib/life-ai-rich-content';
 import { appendBookContext, isBookResourceIntent, searchOpenLibraryBooks } from '@/lib/life-ai-books';
 import { detectLearningBlockRequest, generateLearningContentBlock } from '@/lib/life-ai-learning';
 import { parseLifeAiToolPlan } from '@/lib/life-ai-tool-plan';
-import { appendYouTubeContext, isYouTubeResourceIntent, searchYouTubeVideos } from '@/lib/life-ai-youtube';
+import { appendYouTubeContext, isYouTubeResourceIntent, resolveYouTubeSearchTarget, searchYouTubeVideos } from '@/lib/life-ai-youtube';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -20,6 +20,18 @@ const recentRequests = new Map<string, number[]>();
 
 function allowed() { const now = Date.now(); const times = (recentRequests.get(LIFE_AI_OWNER) ?? []).filter((time) => now - time < 60_000); if (times.length >= 12) return false; times.push(now); recentRequests.set(LIFE_AI_OWNER, times); return true; }
 function event(payload: Record<string, unknown>) { return `data: ${JSON.stringify(payload)}\n\n`; }
+function latestYouTubeBlock(messages: readonly unknown[]) {
+  for (const message of [...messages].reverse()) {
+    if (!message || typeof message !== 'object') continue;
+    const blocks = (message as { blocks?: unknown }).blocks;
+    if (!Array.isArray(blocks)) continue;
+    for (const block of [...blocks].reverse()) {
+      const parsed = YouTubeVideosBlockSchema.safeParse(block);
+      if (parsed.success) return parsed.data;
+    }
+  }
+  return undefined;
+}
 
 export async function POST(request: NextRequest) {
   if (!(await isAdminRequest())) return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
@@ -52,28 +64,34 @@ export async function POST(request: NextRequest) {
       richBlocks = LifeAiRichBlocksSchema.parse([...richBlocks, block]);
       system = block.type === 'youtube_videos' || (block.type === 'notice' && block.provider === 'youtube') ? appendYouTubeContext(system, block) : appendBookContext(system, block);
     };
-    if (youtubeIntent && !process.env.YOUTUBE_API_KEY) {
-      const result = await searchYouTubeVideos(parsed.data.content);
-      appendBlock(result.block);
+    if (youtubeIntent) {
+      const previousBlock = context.conversations ? latestYouTubeBlock(conversation.messages) : undefined;
+      const target = resolveYouTubeSearchTarget(parsed.data.content, previousBlock);
+      if (target.kind === 'needs_context' && process.env.YOUTUBE_API_KEY) {
+        const notice: LifeAiRichBlock = { type: 'notice', provider: 'youtube', tone: 'info', title: 'No earlier video search in this conversation', message: 'Tell me the topic you want videos about, and I can search for actual YouTube results.' };
+        appendBlock(notice);
+      } else if (target.kind === 'exhausted' && process.env.YOUTUBE_API_KEY) {
+        const notice: LifeAiRichBlock = { type: 'notice', provider: 'youtube', tone: 'info', title: 'No more results available', message: `YouTube has no additional results for “${target.query}”. Try a different topic for another search.` };
+        appendBlock(notice);
+      } else {
+        const query = target.kind === 'search' ? target.query : target.kind === 'exhausted' ? target.query : 'YouTube videos';
+        const pageToken = target.kind === 'search' ? target.pageToken : undefined;
+        const result = await searchYouTubeVideos(query, pageToken);
+        appendBlock(result.block);
+      }
     }
-    const availableTools = [
-      ...(youtubeIntent && process.env.YOUTUBE_API_KEY ? ['search_youtube'] : []),
-      ...(bookIntent ? ['search_books'] : []),
-    ];
+    const availableTools = bookIntent ? ['search_books'] : [];
     if (availableTools.length) {
       try {
         const examples = availableTools.map((tool) => `{"action":"${tool}","query":"short topic"}`).join(' or ');
         const plan = await aiProvider.complete({
-          prompt: `User request: ${parsed.data.content}\n\nChoose one available search tool only if it materially improves the answer. Available tools: ${availableTools.join(', ')}. Return {"action":"none"} or ${examples}. Never return titles, facts, ratings, URLs, or resource details.`,
-          system: `You are a server-side tool planner. Return only one JSON object. The allowed actions are none or one of: ${availableTools.join(', ')}. Use a search tool only for a direct resource request. Query must be concise topic text, not a URL.`,
+          prompt: `User request: ${parsed.data.content}\n\nThe user explicitly requested book recommendations. Choose search_books only when it materially improves this answer; otherwise return {"action":"none"}. Never return titles, facts, ratings, URLs, or resource details.`,
+          system: 'You are a server-side tool planner. Return only one JSON object with action none or search_books and a concise query. Do not decide whether to run YouTube search; explicit video requests are handled deterministically by the server.',
           json: true,
         });
         if (plan.status === 'ok') {
           const toolPlan = parseLifeAiToolPlan(plan.data.text);
-          if (toolPlan?.action === 'search_youtube' && youtubeIntent && process.env.YOUTUBE_API_KEY) {
-            const result = await searchYouTubeVideos(toolPlan.query);
-            appendBlock(result.block);
-          } else if (toolPlan?.action === 'search_books' && bookIntent) {
+          if (toolPlan?.action === 'search_books' && bookIntent) {
             const result = await searchOpenLibraryBooks(toolPlan.query);
             appendBlock(result.block);
           }

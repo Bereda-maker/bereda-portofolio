@@ -435,3 +435,12 @@
 .life-ai-goal-chart-row > b { color: var(--admin-muted); font-size: .7rem; font-variant-numeric: tabular-nums; text-align: right; }
 .life-ai-goal-chart-source { display: block; border-top: 1px solid var(--admin-border); padding: .55rem 1rem; color: var(--admin-faint); font-size: .64rem; }
 @media (max-width: 500px) { .life-ai-goal-chart-rows { padding-inline: .75rem; }.life-ai-goal-chart-row { grid-template-columns: minmax(0, 7rem) minmax(2.5rem, 1fr) 2.2rem; gap: .45rem; } }
+
+.life-ai-rich-notice-action { display: inline-flex; margin-top: .55rem; color: var(--admin-blue); font-size: .76rem; font-weight: 700; text-underline-offset: .16em; }
+
+.life-ai-video-results-tools { display: flex; flex: none; align-items: center; gap: .65rem; }
+.life-ai-video-results-tools button { display: inline-flex; align-items: center; gap: .3rem; border: 1px solid var(--admin-border); border-radius: .45rem; background: var(--admin-surface-raised); color: var(--admin-muted); padding: .32rem .5rem; font: inherit; font-size: .68rem; cursor: pointer; }
+.life-ai-video-results-tools button:hover { border-color: var(--admin-blue); color: var(--admin-blue); }
+.life-ai-video-embed { grid-column: 1 / -1; overflow: hidden; aspect-ratio: 16 / 9; border-radius: .6rem; background: var(--admin-bg-deep); }
+.life-ai-video-embed iframe { display: block; width: 100%; height: 100%; border: 0; }
+@media (max-width: 500px) { .life-ai-video-results-head { align-items: start; }.life-ai-video-results-tools { flex-direction: column-reverse; align-items: end; gap: .25rem; } }

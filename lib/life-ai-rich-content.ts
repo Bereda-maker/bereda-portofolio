@@ -17,6 +17,8 @@ export const YouTubeVideoSchema = z.object({
   durationLabel: z.string().max(32),
   publishedAt: z.string().datetime({ offset: true }),
   description: z.string().max(600),
+  viewCount: z.number().int().nonnegative().optional(),
+  likeCount: z.number().int().nonnegative().optional(),
   videoUrl: z.string().url().max(2048).refine((value) => /^https:\/\/www\.youtube\.com\/watch\?v=[A-Za-z0-9_-]{11}$/.test(value)),
   embedUrl: z.string().url().max(2048).refine((value) => /^https:\/\/www\.youtube-nocookie\.com\/embed\/[A-Za-z0-9_-]{11}$/.test(value)),
 }).strict();
@@ -59,6 +61,13 @@ export const NoticeBlockSchema = z.object({
   tone: z.enum(['info', 'warning', 'error']),
   title: z.string().trim().min(1).max(120),
   message: z.string().trim().min(1).max(500),
+  action: z.object({
+    label: z.string().trim().min(1).max(60),
+    url: z.string().url().max(2048).refine((value) => {
+      try { const url = new URL(value); return url.protocol === 'https:' && url.hostname === 'www.youtube.com' && url.pathname === '/results' && Boolean(url.searchParams.get('search_query')); }
+      catch { return false; }
+    }, 'Fallback link must be a YouTube search URL.'),
+  }).strict().optional(),
 }).strict();
 
 const LearningStepSchema = z.object({

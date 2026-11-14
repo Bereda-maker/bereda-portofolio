@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 const PlanSchema = z.object({
-  action: z.enum(['none', 'search_youtube', 'search_books']),
+  action: z.enum(['none', 'search_books']),
   query: z.string().trim().max(120).optional(),
 }).strict();
 
-export type LifeAiToolPlan = { action: 'none' } | { action: 'search_youtube' | 'search_books'; query: string };
+export type LifeAiToolPlan = { action: 'none' } | { action: 'search_books'; query: string };
 
 export function parseLifeAiToolPlan(raw: string): LifeAiToolPlan | null {
   try {
