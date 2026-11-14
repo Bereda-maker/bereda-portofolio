@@ -324,3 +324,114 @@
   font-size: .95rem;
   line-height: 1.55;
 }
+
+
+/* Verified rich recommendation blocks. */
+.life-ai-rich-notice { margin: .75rem 0; border: 1px solid var(--admin-border); border-left: 3px solid var(--admin-blue); border-radius: .75rem; background: color-mix(in srgb, var(--admin-blue) 7%, var(--admin-surface)); padding: .8rem 1rem; color: var(--admin-ink); }
+.life-ai-rich-notice.warning { border-left-color: var(--admin-gold); }
+.life-ai-rich-notice.error { border-left-color: var(--admin-danger); }
+.life-ai-rich-notice strong { display: block; font-size: .86rem; }
+.life-ai-rich-notice p { margin: .25rem 0 0; color: var(--admin-muted); font-size: .8rem; line-height: 1.55; }
+.life-ai-video-results { min-width: 0; margin: .8rem 0; }
+.life-ai-video-results-head { display: flex; align-items: end; justify-content: space-between; gap: .75rem; margin-bottom: .65rem; }
+.life-ai-video-results-head h3 { margin: .2rem 0 0; color: var(--admin-ink); font-size: 1rem; }
+.life-ai-video-results-head > span { flex: none; color: var(--admin-faint); font-size: .72rem; }
+.life-ai-video-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: .65rem; }
+.life-ai-video-card { display: grid; grid-template-columns: minmax(10rem, 13rem) minmax(0, 1fr); gap: .8rem; min-width: 0; overflow: hidden; border: 1px solid var(--admin-border); border-radius: .8rem; background: color-mix(in srgb, var(--admin-surface-raised) 48%, transparent); padding: .55rem; }
+.life-ai-video-thumb { position: relative; display: block; align-self: start; overflow: hidden; aspect-ratio: 16 / 9; border-radius: .55rem; background: var(--admin-bg-deep); }
+.life-ai-video-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .2s ease; }
+.life-ai-video-thumb:hover img { transform: scale(1.035); }
+.life-ai-video-play { position: absolute; inset: 0; display: grid; place-items: center; color: white; opacity: .9; text-shadow: 0 1px 6px #000; }
+.life-ai-video-play svg { box-sizing: content-box; border-radius: 50%; background: color-mix(in srgb, #000 70%, transparent); padding: .65rem; }
+.life-ai-video-duration { position: absolute; right: .35rem; bottom: .35rem; border-radius: .25rem; background: rgb(0 0 0 / 78%); color: #fff; padding: .15rem .3rem; font-size: .65rem; font-variant-numeric: tabular-nums; }
+.life-ai-video-copy { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; }
+.life-ai-video-title { display: -webkit-box; overflow: hidden; color: var(--admin-ink); font-size: .87rem; font-weight: 700; line-height: 1.35; text-decoration: none; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.life-ai-video-title:hover, .life-ai-video-watch:hover { color: var(--admin-blue); }
+.life-ai-video-meta { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .25rem; color: var(--admin-faint); font-size: .68rem; }
+.life-ai-video-copy p { display: -webkit-box; overflow: hidden; margin: .4rem 0; color: var(--admin-muted); font-size: .74rem; line-height: 1.5; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+.life-ai-video-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .65rem; margin-top: auto; padding-top: .25rem; }
+.life-ai-video-actions a, .life-ai-video-actions button { display: inline-flex; align-items: center; gap: .3rem; border: 0; background: none; color: var(--admin-muted); padding: .2rem 0; font: inherit; font-size: .68rem; text-decoration: none; }
+.life-ai-video-actions .life-ai-video-watch { color: var(--admin-blue); font-weight: 700; }
+.life-ai-video-actions button:hover, .life-ai-video-actions button.active { color: var(--admin-blue); }
+.life-ai-video-empty { margin: .5rem 0; color: var(--admin-faint); font-size: .8rem; }
+.life-ai-video-more { display: inline-flex; align-items: center; gap: .4rem; margin-top: .65rem; border: 1px solid var(--admin-border); border-radius: .55rem; background: var(--admin-surface-raised); color: var(--admin-muted); padding: .45rem .7rem; font: inherit; font-size: .75rem; }
+.life-ai-video-more:hover:not(:disabled) { border-color: var(--admin-blue); color: var(--admin-blue); }
+.life-ai-video-more:disabled { opacity: .6; }
+@media (max-width: 600px) { .life-ai-video-card { grid-template-columns: minmax(0, 1fr); }.life-ai-video-copy p { -webkit-line-clamp: 4; } }
+
+
+.life-ai-saved-toggle { display: inline-flex; align-items: center; gap: .4rem; flex: none; padding: .45rem .65rem; font-size: .72rem; }
+.life-ai-saved-toggle span { display: inline-grid; min-width: 1.2rem; height: 1.2rem; place-items: center; border-radius: 999px; background: color-mix(in srgb, var(--admin-blue) 13%, transparent); color: var(--admin-blue); font-size: .65rem; font-weight: 700; }
+.life-ai-saved-panel { max-height: 45vh; overflow-y: auto; border-bottom: 1px solid var(--admin-border); background: color-mix(in srgb, var(--admin-surface-raised) 35%, var(--admin-surface)); padding: .85rem 1.1rem; }
+.life-ai-saved-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: .65rem; }
+.life-ai-saved-head h2 { margin: .15rem 0 0; color: var(--admin-ink); font-size: 1rem; }
+.life-ai-saved-head p, .life-ai-saved-empty { margin: .2rem 0 0; color: var(--admin-faint); font-size: .75rem; }
+.life-ai-saved-panel .life-ai-video-results { margin: 0; }
+@media (max-width: 600px) { .life-ai-chat-top { gap: .45rem; padding-inline: .65rem; }.life-ai-saved-toggle { padding: .4rem; }.life-ai-saved-toggle span { min-width: 1.1rem; height: 1.1rem; } }
+
+
+/* Open Library book recommendations. */
+.life-ai-book-results { min-width: 0; margin: .8rem 0; }
+.life-ai-book-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: .6rem; }
+.life-ai-book-card { display: grid; grid-template-columns: 6rem minmax(0, 1fr); gap: .8rem; min-width: 0; overflow: hidden; border: 1px solid var(--admin-border); border-radius: .8rem; background: color-mix(in srgb, var(--admin-surface-raised) 48%, transparent); padding: .55rem; }
+.life-ai-book-cover { display: grid; min-height: 8.2rem; place-items: center; overflow: hidden; border: 1px solid var(--admin-border); border-radius: .45rem; background: color-mix(in srgb, var(--admin-blue) 8%, var(--admin-bg-deep)); color: var(--admin-blue); }
+.life-ai-book-cover img { display: block; width: 100%; height: 100%; min-height: 8.2rem; object-fit: cover; }
+.life-ai-book-copy { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; }
+.life-ai-book-title { display: -webkit-box; overflow: hidden; color: var(--admin-ink); font-size: .88rem; font-weight: 700; line-height: 1.35; text-decoration: none; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.life-ai-book-title:hover { color: var(--admin-blue); }
+.life-ai-book-author { margin: .2rem 0 0; color: var(--admin-muted); font-size: .74rem; line-height: 1.4; }
+.life-ai-book-meta { display: flex; flex-wrap: wrap; gap: .35rem .65rem; margin-top: .25rem; color: var(--admin-faint); font-size: .66rem; }
+.life-ai-book-description { display: -webkit-box; overflow: hidden; margin: .35rem 0; color: var(--admin-muted); font-size: .73rem; line-height: 1.5; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+.life-ai-book-subjects { display: flex; flex-wrap: wrap; gap: .28rem; margin: .1rem 0 .3rem; }
+.life-ai-book-subjects span { border: 1px solid var(--admin-border); border-radius: 999px; background: color-mix(in srgb, var(--admin-blue) 6%, transparent); color: var(--admin-faint); padding: .12rem .38rem; font-size: .62rem; }
+.life-ai-book-source { margin: .45rem 0 0; color: var(--admin-faint); font-size: .64rem; }
+@media (max-width: 420px) { .life-ai-book-card { grid-template-columns: 4.7rem minmax(0, 1fr); gap: .6rem; }.life-ai-book-cover, .life-ai-book-cover img { min-height: 6.5rem; } }
+
+
+/* Interactive AI-authored learning and action plans. */
+.life-ai-learning-card { min-width: 0; margin: .8rem 0; overflow: hidden; border: 1px solid var(--admin-border); border-radius: .85rem; background: color-mix(in srgb, var(--admin-surface-raised) 42%, var(--admin-surface)); }
+.life-ai-learning-head { padding: .9rem 1rem .75rem; }
+.life-ai-learning-head .admin-eyebrow { font-size: .66rem; }
+.life-ai-learning-head h3 { margin: .25rem 0 .25rem; color: var(--admin-ink); font-size: 1.05rem; letter-spacing: -.02em; }
+.life-ai-learning-head p { margin: 0; color: var(--admin-muted); font-size: .78rem; line-height: 1.5; }
+.life-ai-learning-progress { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .45rem .8rem; border-top: 1px solid var(--admin-border); border-bottom: 1px solid var(--admin-border); background: color-mix(in srgb, var(--admin-bg-deep) 22%, transparent); padding: .65rem 1rem; }
+.life-ai-learning-progress > div { display: flex; justify-content: space-between; gap: .7rem; color: var(--admin-muted); font-size: .7rem; }
+.life-ai-learning-progress strong { color: var(--admin-ink); font-weight: 650; }
+.life-ai-learning-progress progress { width: 100%; height: .42rem; grid-column: 1; appearance: none; overflow: hidden; border: 0; border-radius: 999px; background: var(--admin-inset); }
+.life-ai-learning-progress progress::-webkit-progress-bar { border-radius: 999px; background: var(--admin-inset); }
+.life-ai-learning-progress progress::-webkit-progress-value { border-radius: 999px; background: var(--admin-blue); transition: width .2s; }
+.life-ai-learning-progress progress::-moz-progress-bar { border-radius: 999px; background: var(--admin-blue); }
+.life-ai-learning-progress > small { grid-column: 2; grid-row: 2; color: var(--admin-faint); font-size: .66rem; }
+.life-ai-roadmap-steps, .life-ai-checklist-items { display: grid; gap: .35rem; margin: 0; padding: .65rem; list-style: none; }
+.life-ai-roadmap-steps > li, .life-ai-checklist-items > li { min-width: 0; border: 1px solid transparent; border-radius: .65rem; }
+.life-ai-roadmap-steps > li:hover, .life-ai-checklist-items > li:hover { border-color: var(--admin-border); background: color-mix(in srgb, var(--admin-surface) 68%, transparent); }
+.life-ai-step-check, .life-ai-checklist-items label { display: flex; min-width: 0; align-items: flex-start; gap: .7rem; padding: .65rem; cursor: pointer; }
+.life-ai-step-check input, .life-ai-checklist-items input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.life-ai-step-number { display: grid; width: 1.55rem; height: 1.55rem; flex: none; place-items: center; border: 1px solid var(--admin-border-strong); border-radius: 50%; color: var(--admin-muted); font-size: .7rem; font-weight: 700; }
+.life-ai-step-check input:checked + .life-ai-step-number { border-color: var(--admin-ok); background: var(--admin-ok); color: var(--admin-on-accent); }
+.life-ai-step-check input:focus-visible + .life-ai-step-number, .life-ai-checklist-items input:focus-visible + span::before { outline: 2px solid var(--admin-focus); outline-offset: 3px; }
+.life-ai-step-copy, .life-ai-checklist-items label > span { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: .15rem; }
+.life-ai-step-copy strong, .life-ai-checklist-items strong { color: var(--admin-ink); font-size: .79rem; line-height: 1.4; }
+.life-ai-step-copy > span, .life-ai-step-copy small, .life-ai-checklist-items small { color: var(--admin-muted); font-size: .72rem; line-height: 1.45; }
+.life-ai-step-copy small, .life-ai-checklist-items small { color: var(--admin-faint); }
+.life-ai-step-time { flex: none; color: var(--admin-faint); font-size: .65rem; white-space: nowrap; }
+.life-ai-roadmap-steps li.is-complete .life-ai-step-copy strong, .life-ai-checklist-items li.is-complete strong { color: var(--admin-faint); text-decoration: line-through; text-decoration-thickness: 1px; }
+.life-ai-checklist-items label > span { position: relative; padding-left: 1.65rem; }
+.life-ai-checklist-items label > span::before { position: absolute; top: .05rem; left: 0; display: grid; width: 1rem; height: 1rem; place-items: center; border: 1px solid var(--admin-border-strong); border-radius: .28rem; color: transparent; content: '✓'; font-size: .7rem; font-weight: 800; }
+.life-ai-checklist-items input:checked + span::before { border-color: var(--admin-ok); background: var(--admin-ok); color: var(--admin-on-accent); }
+@media (max-width: 500px) { .life-ai-learning-head { padding-inline: .75rem; }.life-ai-learning-progress { padding-inline: .75rem; }.life-ai-roadmap-steps, .life-ai-checklist-items { padding: .45rem; }.life-ai-step-check, .life-ai-checklist-items label { gap: .5rem; padding: .55rem; }.life-ai-step-time { font-size: .6rem; } }
+
+
+/* Charts use only validated values from consent-authorized profile data. */
+.life-ai-goal-chart-rows { display: grid; gap: .8rem; padding: .2rem 1rem 1rem; }
+.life-ai-goal-chart-row { display: grid; grid-template-columns: minmax(0, 11rem) minmax(4rem, 1fr) 2.5rem; align-items: center; gap: .65rem; }
+.life-ai-goal-chart-row > div { display: flex; min-width: 0; flex-direction: column; gap: .08rem; }
+.life-ai-goal-chart-row strong { overflow: hidden; color: var(--admin-ink); font-size: .75rem; text-overflow: ellipsis; white-space: nowrap; }
+.life-ai-goal-chart-row > div span { color: var(--admin-faint); font-size: .63rem; text-transform: capitalize; }
+.life-ai-goal-chart-row progress { width: 100%; height: .55rem; appearance: none; overflow: hidden; border: 0; border-radius: 999px; background: var(--admin-inset); }
+.life-ai-goal-chart-row progress::-webkit-progress-bar { border-radius: 999px; background: var(--admin-inset); }
+.life-ai-goal-chart-row progress::-webkit-progress-value { border-radius: 999px; background: linear-gradient(90deg, var(--admin-blue), #9b8cff); }
+.life-ai-goal-chart-row progress::-moz-progress-bar { border-radius: 999px; background: var(--admin-blue); }
+.life-ai-goal-chart-row > b { color: var(--admin-muted); font-size: .7rem; font-variant-numeric: tabular-nums; text-align: right; }
+.life-ai-goal-chart-source { display: block; border-top: 1px solid var(--admin-border); padding: .55rem 1rem; color: var(--admin-faint); font-size: .64rem; }
+@media (max-width: 500px) { .life-ai-goal-chart-rows { padding-inline: .75rem; }.life-ai-goal-chart-row { grid-template-columns: minmax(0, 7rem) minmax(2.5rem, 1fr) 2.2rem; gap: .45rem; } }

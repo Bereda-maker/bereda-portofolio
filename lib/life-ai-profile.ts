@@ -1,7 +1,8 @@
 import { and, eq, inArray } from 'drizzle-orm';
 import { LIFE_AI_OWNER } from '@/lib/life-ai';
 import { lifeAiProfilePermissions, lifeAiProfileSections, lifeAiProfileSettings } from '@/lib/schema';
-import { PROFILE_CATEGORIES, PROFILE_CATEGORY_INFO, type ProfileCategory } from '@/lib/life-ai-profile-contract';
+import { PROFILE_CATEGORIES, PROFILE_CATEGORY_INFO, profileSectionSchemas, type ProfileCategory } from '@/lib/life-ai-profile-contract';
+import type { GoalProgressChartBlock } from '@/lib/life-ai-rich-content';
 
 async function getDb() { return (await import('@/lib/db')).db; }
 
@@ -105,4 +106,27 @@ export async function buildAuthorizedProfileContext(question: string): Promise<s
     bounded.push(item);
   }
   return JSON.stringify(bounded);
+}
+
+export function hasGoalProgressChartIntent(question: string): boolean {
+  return /\b(chart|graph|visuali[sz]e|plot|show my goal progress|show progress on my goals)\b/i.test(question)
+    && /\b(goal|goals|progress)\b/i.test(question);
+}
+
+export function buildGoalProgressChart(authorizedProfileContext: string): GoalProgressChartBlock | null {
+  if (!authorizedProfileContext) return null;
+  try {
+    const context: unknown = JSON.parse(authorizedProfileContext);
+    if (!Array.isArray(context)) return null;
+    const goalRecord = context.find((item) => item && typeof item === 'object' && (item as { category?: unknown }).category === PROFILE_CATEGORY_INFO.goals.label) as { userMaintainedFacts?: unknown } | undefined;
+    if (!goalRecord) return null;
+    const parsed = profileSectionSchemas.goals.safeParse(goalRecord.userMaintainedFacts);
+    if (!parsed.success || !parsed.data.items.length) return null;
+    return {
+      type: 'goal_progress_chart',
+      title: 'Your goal progress',
+      sourceLabel: 'Your My Life Profile',
+      items: parsed.data.items.slice(0, 12).map((goal) => ({ id: goal.id, label: goal.title, progressPercent: goal.progressPercent, status: goal.status })),
+    };
+  } catch { return null; }
 }

@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { EMPTY_PROFILE, PROFILE_CATEGORY_INFO, profileSectionSchemas } from '../lib/life-ai-profile-contract';
-import { allowedProfileCategories, relevantProfileCategories } from '../lib/life-ai-profile';
+import { allowedProfileCategories, buildGoalProgressChart, hasGoalProgressChartIntent, relevantProfileCategories } from '../lib/life-ai-profile';
+import { LifeAiRichBlockSchema } from '../lib/life-ai-rich-content';
 
 const now = new Date('2026-11-12T12:00:00.000Z');
 
@@ -59,4 +60,20 @@ test('global and category permissions fail closed and sensitive categories requi
   assert.deepEqual(allowedProfileCategories(true, [...relevant], permissions), ['wellbeing']);
   assert.equal(PROFILE_CATEGORY_INFO.relationships.sensitive, true);
   assert.equal(PROFILE_CATEGORY_INFO.values.sensitive, false);
+});
+
+test('goal progress charts require an explicit request and use only authorized validated profile values', () => {
+  const authorized = JSON.stringify([{ category: PROFILE_CATEGORY_INFO.goals.label, userMaintainedFacts: { items: [
+    { id: 'goal-1', title: 'Build a reading habit', progressPercent: 45, status: 'in_progress' },
+    { id: 'goal-2', title: 'Learn TypeScript', progressPercent: 10, status: 'paused' },
+  ] } }]);
+  assert.equal(hasGoalProgressChartIntent('Show my goal progress as a chart.'), true);
+  assert.equal(hasGoalProgressChartIntent('How are my goals going?'), false);
+  assert.equal(buildGoalProgressChart(''), null);
+  assert.equal(buildGoalProgressChart(JSON.stringify([{ category: 'Disabled finances', userMaintainedFacts: { items: [{ title: 'Hidden', progressPercent: 100 }] } }])), null);
+  const chart = buildGoalProgressChart(authorized);
+  assert.equal(chart?.type, 'goal_progress_chart');
+  assert.equal(chart?.items[0]?.progressPercent, 45);
+  assert.equal(chart?.items[1]?.label, 'Learn TypeScript');
+  assert.equal(LifeAiRichBlockSchema.safeParse(chart).success, true);
 });

@@ -1,5 +1,5 @@
-import { and, asc, desc, eq, gte, lte } from 'drizzle-orm';
-import { calendarTasks, lifeAiContextSettings, lifeAiConversations, lifeAiMessages } from '@/lib/schema';
+import { and, asc, desc, eq, gte, inArray, lte } from 'drizzle-orm';
+import { calendarTasks, lifeAiContextSettings, lifeAiConversations, lifeAiMessageBlocks, lifeAiMessages } from '@/lib/schema';
 
 async function getDb() { return (await import('@/lib/db')).db; }
 
@@ -18,7 +18,7 @@ export const DEFAULT_CONTEXT = {
 
 export const LIFE_AI_SYSTEM = `You are Your Life AI, one calm, practical assistant for the owner's personal life. You can support wellbeing, journaling, planning, habits, relationships, financial wellbeing, recreation, spiritual growth, learning, mentorship, work-life balance, and life decisions.
 
-Be warm but not clinical. Ask a short clarifying question when needed. Never invent memories, commitments, finances, relationships, or facts. Clearly label assumptions as assumptions. Do not diagnose, provide regulated financial advice, or pretend to have completed an action. This foundation is read-only and suggestion-first: you may draft plans and recommendations, but ask for explicit approval before any consequential action. Respect the enabled context categories below and do not mention disabled categories unless the user brings them up.
+Be warm but not clinical. Ask a short clarifying question when needed. Never invent memories, commitments, finances, relationships, or facts. Never claim an external book, website, product, video, title, URL, or other resource is verified unless it came from an available trusted integration. If a search integration is unavailable, say so and offer general guidance without fabricating links or details. Clearly label assumptions as assumptions. Do not diagnose, provide regulated financial advice, or pretend to have completed an action. This foundation is read-only and suggestion-first: you may draft plans and recommendations, but ask for explicit approval before any consequential action. Respect the enabled context categories below and do not mention disabled categories unless the user brings them up.
 
 Enabled context categories: {{CONTEXT}}
 
@@ -35,7 +35,14 @@ export async function getConversation(id: number, includeMessages = true) {
   const [conversation] = await db.select().from(lifeAiConversations).where(and(eq(lifeAiConversations.id, id), eq(lifeAiConversations.ownerKey, LIFE_AI_OWNER))).limit(1);
   if (!conversation) return null;
   const messages = includeMessages ? await db.select().from(lifeAiMessages).where(eq(lifeAiMessages.conversationId, id)).orderBy(asc(lifeAiMessages.createdAt)) : [];
-  return { ...conversation, messages };
+  let blockRows: Array<{ messageId: number; blocks: unknown[] }> = [];
+  if (messages.length) {
+    try { blockRows = await db.select({ messageId: lifeAiMessageBlocks.messageId, blocks: lifeAiMessageBlocks.blocks }).from(lifeAiMessageBlocks).where(inArray(lifeAiMessageBlocks.messageId, messages.map((message) => message.id))); }
+    catch { /* Keep legacy text conversations readable while the additive migration is pending. */ }
+  }
+  const blocksByMessage = new Map(blockRows.map((row) => [row.messageId, row.blocks]));
+  const messagesWithBlocks = messages.map((message) => ({ ...message, blocks: blocksByMessage.get(message.id) ?? [] }));
+  return { ...conversation, messages: messagesWithBlocks };
 }
 
 export async function getCalendarContext() {
