@@ -1,4 +1,5 @@
 import OpportunitiesWorkspace from '@/components/admin/OpportunitiesWorkspace';
+import OpportunityManagement from '@/components/admin/OpportunityManagement';
 
 export const metadata = { title: 'AI Opportunity Workspace -- Admin' };
 export const dynamic = 'force-dynamic';
@@ -54,10 +55,13 @@ async function loadWorkspace() {
 
 export default async function AdminOpportunitiesPage() {
   const data = await loadWorkspace();
-  return <OpportunitiesWorkspace
+  return <>
+    <OpportunityManagement />
+    <OpportunitiesWorkspace
     initialProfile={data.profile as Parameters<typeof OpportunitiesWorkspace>[0]['initialProfile']}
     initialOpportunities={data.opportunities as Parameters<typeof OpportunitiesWorkspace>[0]['initialOpportunities']}
     initialLoadWarning={data.warning}
     initialApplicationTrackingAvailable={data.applicationTrackingAvailable}
-  />;
+    />
+  </>;
 }

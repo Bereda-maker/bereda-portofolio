@@ -1,6 +1,7 @@
 import { and, eq } from 'drizzle-orm';
 import { candidateProfiles, opportunityEvidence, opportunityMatches, opportunities, outreachDrafts } from '@/lib/schema';
 import { scoreOpportunityMatch } from './opportunities';
+import { fetchPublicHttps } from './opportunity-management';
 import { aiProvider } from './providers';
 
 export type OpportunityAnalysis = {
@@ -11,6 +12,11 @@ export type OpportunityAnalysis = {
   workMode?: string;
   employmentType?: string;
   requiredSkills: string[];
+  requirements?: string;
+  experienceLevel?: string;
+  salaryRange?: string;
+  currency?: string;
+  applicationDeadline?: string;
   minYearsExperience?: number;
   applicationUrl?: string;
   recruitingChannel?: string;
@@ -32,6 +38,11 @@ function parseJson(text: string): OpportunityAnalysis[] | null {
         workMode: typeof row.workMode === 'string' ? row.workMode.slice(0, 80) : undefined,
         employmentType: typeof row.employmentType === 'string' ? row.employmentType.slice(0, 80) : undefined,
         requiredSkills: Array.isArray(row.requiredSkills) ? row.requiredSkills.filter((value): value is string => typeof value === 'string').slice(0, 50) : [],
+        requirements: typeof row.requirements === 'string' ? row.requirements.slice(0, 5000) : undefined,
+        experienceLevel: typeof row.experienceLevel === 'string' ? row.experienceLevel.slice(0, 80) : undefined,
+        salaryRange: typeof row.salaryRange === 'string' ? row.salaryRange.slice(0, 120) : undefined,
+        currency: typeof row.currency === 'string' ? row.currency.slice(0, 12).toUpperCase() : undefined,
+        applicationDeadline: typeof row.applicationDeadline === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(row.applicationDeadline) ? row.applicationDeadline : undefined,
         minYearsExperience: typeof row.minYearsExperience === 'number' ? row.minYearsExperience : undefined,
         applicationUrl: typeof row.applicationUrl === 'string' ? row.applicationUrl : undefined,
         recruitingChannel: typeof row.recruitingChannel === 'string' ? row.recruitingChannel : undefined,
@@ -63,8 +74,7 @@ function feedRecordsText(data: unknown) {
 }
 
 async function readPublicSource(url: string) {
-  const response = await fetch(url, { headers: { 'user-agent': 'BeredaOpportunityResearch/1.0' }, signal: AbortSignal.timeout(12000) });
-  if (!response.ok) throw new Error(`Source returned ${response.status}`);
+  const response = await fetchPublicHttps(url, { headers: { 'user-agent': 'BeredaOpportunityResearch/1.0' }, signal: AbortSignal.timeout(12000) });
   const contentType = response.headers.get('content-type') ?? '';
   if (contentType.includes('application/json')) {
     const feedText = feedRecordsText(await response.json());
@@ -82,9 +92,9 @@ async function readPublicSource(url: string) {
   if (href) {
     const sourceOrigin = new URL(url).origin;
     const feedUrl = new URL(href, url);
-    if (feedUrl.origin === sourceOrigin && (feedUrl.protocol === 'https:' || feedUrl.protocol === 'http:')) {
-      const feedResponse = await fetch(feedUrl, { headers: { 'user-agent': 'BeredaOpportunityResearch/1.0', accept: 'application/json' }, signal: AbortSignal.timeout(12000) });
-      if (feedResponse.ok && (feedResponse.headers.get('content-type') ?? '').includes('application/json')) {
+    if (feedUrl.origin === sourceOrigin && feedUrl.protocol === 'https:') {
+      const feedResponse = await fetchPublicHttps(feedUrl.toString(), { headers: { 'user-agent': 'BeredaOpportunityResearch/1.0', accept: 'application/json' }, signal: AbortSignal.timeout(12000) });
+      if ((feedResponse.headers.get('content-type') ?? '').includes('application/json')) {
         const feedText = feedRecordsText(await feedResponse.json());
         if (feedText) return feedText.slice(0, 24000);
       }
@@ -99,7 +109,7 @@ export async function researchOpportunity(input: { sourceUrl: string; notes?: st
   const result = await aiProvider.complete({
     json: true,
     system: 'You are an evidence-first career opportunity researcher. Never invent facts. If a field is not present in the source, use an empty string or empty list. Return JSON only.',
-    prompt: `Extract up to 6 distinct software development jobs, freelance opportunities, or potential client leads that are explicitly present in this public source. Return an empty opportunities array when there is no complete opportunity; never turn generic site navigation, company marketing, or unrelated content into a job. Do not invent missing details. Return JSON with exactly one key, opportunities, containing objects with these keys: title, company, description, location, workMode, employmentType, requiredSkills (array), minYearsExperience (number or null), applicationUrl, recruitingChannel, whyRelevant, risks (array). Keep whyRelevant and risks concise. Source URL: ${input.sourceUrl}\nAdditional user notes: ${input.notes ?? ''}\nSource text:\n${sourceText}`,
+    prompt: `Extract up to 6 distinct software development jobs, freelance opportunities, or potential client leads that are explicitly present in this public source. Return an empty opportunities array when there is no complete opportunity; never turn generic site navigation, company marketing, or unrelated content into a job. Do not invent missing details. Return JSON with exactly one key, opportunities, containing objects with these keys: title, company, description, requirements, requiredSkills (array), location, workMode, employmentType, experienceLevel, salaryRange, currency, applicationDeadline (YYYY-MM-DD), minYearsExperience (number or null), applicationUrl, recruitingChannel, whyRelevant, risks (array). Use empty values for unknowns. Keep whyRelevant and risks concise. Source URL: ${input.sourceUrl}\nAdditional user notes: ${input.notes ?? ''}\nSource text:\n${sourceText}`,
   });
   if (result.status !== 'ok') throw new Error(result.message);
   const analyses = parseJson(result.data.text);

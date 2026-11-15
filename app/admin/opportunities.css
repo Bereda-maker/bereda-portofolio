@@ -21,3 +21,96 @@
 @media (max-width:900px) { .opp-stat-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.opp-two-col,.opp-detail-layout { grid-template-columns:1fr; }.opp-detail-list { max-height:18rem; overflow:auto; }.opp-detail-list-item { display:inline-grid; width:calc(50% - .35rem); vertical-align:top; }.opp-kanban { grid-template-columns:repeat(4,15rem); }.opp-hero { align-items:flex-start; flex-direction:column; }.opp-human-approval { max-width:none; } }
 @media (max-width:600px) { .opp-stat-grid,.opp-card-grid,.opp-source-grid,.opp-profile .opp-form-grid,.opp-detail-grid { grid-template-columns:1fr; }.opp-profile .full { grid-column:auto; }.opp-research-row { grid-template-columns:1fr; }.opp-recommendation,.opp-outreach-row,.opp-setting-row { align-items:flex-start; flex-direction:column; }.opp-card-actions .admin-button,.opp-card-actions .admin-button-secondary { flex:1; }.opp-hero h1 { font-size:2.2rem; }.opp-panel { padding:.9rem; }.opp-goal-controls { flex-wrap:wrap; }.opp-goal-controls input { flex:1; }.opp-detail-list-item { width:100%; }.opp-score-hero { align-items:flex-start; flex-direction:column; } }
 @media (prefers-reduced-motion:reduce) { .opp-card,.opp-progress span,.opp-progress i { transition:none; } }
+
+/* Unified manual + automated opportunity manager */
+.opp-manager { display:flex; flex-direction:column; gap:.85rem; margin:0 0 2rem; padding:1rem; border:1px solid var(--admin-border); border-radius:var(--r-card); background:linear-gradient(145deg,color-mix(in srgb,var(--admin-blue) 4%,var(--admin-surface)),var(--admin-surface)); box-shadow:0 1rem 3rem color-mix(in srgb,var(--admin-shadow) 25%,transparent); }
+.opp-manager-header,.opp-manager-detail-heading { display:flex; justify-content:space-between; align-items:flex-end; gap:1rem; }
+.opp-manager-header h2 { margin:0; font-size:clamp(1.2rem,2.4vw,1.65rem); letter-spacing:-.035em; }
+.opp-manager-header p:not(.opp-kicker) { max-width:50rem; margin:.35rem 0 0; color:var(--admin-muted); font-size:.82rem; line-height:1.5; }
+.opp-manager-add { flex:none; }
+.opp-manager-stats,.opp-manager-badges { display:flex; flex-wrap:wrap; gap:.4rem; }
+.opp-manager-stats span { display:flex; gap:.35rem; align-items:center; border:1px solid var(--admin-border); border-radius:99px; background:var(--admin-surface); padding:.28rem .65rem; color:var(--admin-muted); font-size:.72rem; }
+.opp-manager-stats strong { color:var(--admin-ink); }
+.opp-manager-filters { display:flex; flex-wrap:wrap; gap:.5rem; }
+.opp-manager-search { position:relative; display:flex; flex:1 1 15rem; align-items:center; }
+.opp-manager-search svg { position:absolute; left:.7rem; color:var(--admin-faint); }
+.opp-manager-search input { width:100%; min-height:2.5rem; border:1px solid var(--admin-border-strong); border-radius:var(--r-ctl); background:var(--admin-input-bg); color:var(--admin-ink); padding:.55rem .7rem .55rem 2rem; font:inherit; font-size:.8rem; }
+.opp-manager-board { display:flex; gap:.6rem; overflow-x:auto; align-items:stretch; padding:.1rem .1rem .55rem; scrollbar-width:thin; }
+.opp-manager-column { display:flex; flex:0 0 14rem; flex-direction:column; min-height:9rem; max-height:28rem; overflow:auto; border:1px solid var(--admin-border); border-radius:var(--r-card); background:color-mix(in srgb,var(--admin-inset) 75%,var(--admin-surface)); padding:.55rem; }
+.opp-manager-column>header { position:sticky; top:-.55rem; z-index:1; display:flex; justify-content:space-between; align-items:center; margin:-.55rem -.55rem .5rem; border-bottom:1px solid var(--admin-border); background:var(--admin-surface); padding:.65rem .6rem; color:var(--admin-muted); font-size:.73rem; font-weight:750; }
+.opp-manager-column>header b { display:grid; place-items:center; min-width:1.45rem; height:1.45rem; border-radius:50%; background:color-mix(in srgb,var(--admin-blue) 12%,transparent); color:var(--admin-blue); }
+.opp-manager-card { display:flex; flex-direction:column; gap:.4rem; margin-bottom:.45rem; border:1px solid var(--admin-border); border-radius:.65rem; background:var(--admin-surface); padding:.6rem; }
+.opp-manager-card.selected { border-color:var(--admin-blue); box-shadow:0 0 0 1px color-mix(in srgb,var(--admin-blue) 25%,transparent); }
+.opp-manager-card-open { display:flex; flex-direction:column; gap:.16rem; border:0; background:transparent; color:var(--admin-ink); padding:0; text-align:left; cursor:pointer; }
+.opp-manager-card-open strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:.78rem; }
+.opp-manager-card-open span,.opp-manager-card-open small { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--admin-muted); font-size:.68rem; }
+.opp-manager-card-open small { color:var(--admin-faint); }
+.opp-manager-badges .opp-pill { font-size:.62rem; }
+.opp-manager-card .admin-select { width:100%; min-height:2.1rem; font-size:.7rem; }
+.opp-manager-column-empty { margin:auto; padding:.8rem .25rem; color:var(--admin-faint); font-size:.73rem; text-align:center; }
+.opp-manager-detail { min-width:0; border:1px solid var(--admin-border); border-radius:var(--r-card); background:var(--admin-surface); padding:1rem; }
+.opp-manager-detail-heading { align-items:flex-start; border-bottom:1px solid var(--admin-border); padding-bottom:.8rem; }
+.opp-manager-detail-heading h3 { margin:0; overflow-wrap:anywhere; font-size:1.2rem; letter-spacing:-.03em; }
+.opp-manager-detail-heading p:not(.opp-kicker) { margin:.2rem 0 .5rem; color:var(--admin-muted); font-size:.78rem; }
+.opp-manager-detail-actions { display:flex; flex-wrap:wrap; gap:.4rem; }
+.opp-manager-info-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.8rem; padding:.9rem 0; }
+.opp-manager-info-grid>div { min-width:0; border:1px solid var(--admin-border); border-radius:.65rem; background:var(--admin-inset); padding:.7rem; }
+.opp-manager-info-grid strong,.opp-manager-app-fields strong { font-size:.74rem; }
+.opp-manager-info-grid p { margin:.35rem 0 0; color:var(--admin-muted); font-size:.76rem; line-height:1.5; overflow-wrap:anywhere; white-space:pre-wrap; }
+.opp-manager-links,.opp-manager-app-fields { display:flex; flex-wrap:wrap; gap:.45rem .9rem; align-items:center; border-top:1px solid var(--admin-border); padding:.7rem 0; color:var(--admin-muted); font-size:.72rem; }
+.opp-manager-links a { display:inline-flex; align-items:center; gap:.25rem; color:var(--admin-blue); font-weight:700; overflow-wrap:anywhere; }
+.opp-manager-app-fields p { flex:0 0 100%; margin:0; }
+.opp-manager-detail-editor { padding:.85rem 0; }
+.opp-manager-detail-grid,.opp-manager-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.65rem; margin-bottom:.75rem; }
+.opp-manager-detail-grid label,.opp-manager-form-grid label,.opp-manager-url-box label { display:flex; min-width:0; flex-direction:column; gap:.28rem; }
+.opp-manager-detail-grid label>span,.opp-manager-form-grid label>span,.opp-manager-url-box label>span { color:var(--admin-muted); font-size:.71rem; font-weight:700; }
+.opp-manager-detail-grid label.wide,.opp-manager-form-grid label.wide { grid-column:1/-1; }
+.opp-manager-form-grid label b { margin-left:.3rem; color:var(--admin-blue); font-size:.62rem; text-transform:uppercase; }
+.opp-manager-detail-grid .fld,.opp-manager-form-grid .fld,.opp-manager-url-box .fld { width:100%; min-width:0; }
+.opp-manager-activity-grid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(15rem,.8fr); gap:1rem; border-top:1px solid var(--admin-border); padding-top:.8rem; }
+.opp-manager-timeline h4,.opp-manager-history h4 { display:flex; align-items:center; gap:.4rem; margin:0 0 .45rem; font-size:.8rem; }
+.opp-manager-timeline h4 svg,.opp-manager-history h4 svg { color:var(--admin-blue); }
+.opp-manager-event { display:flex; gap:.55rem; padding:.45rem 0; }
+.opp-manager-event-dot { flex:none; width:.48rem; height:.48rem; margin:.25rem .1rem 0; border-radius:50%; background:var(--admin-blue); box-shadow:0 0 0 .2rem color-mix(in srgb,var(--admin-blue) 12%,transparent); }
+.opp-manager-event>div { min-width:0; flex:1; border-bottom:1px solid var(--admin-border); padding-bottom:.45rem; }
+.opp-manager-event strong,.opp-manager-history-row strong { display:block; font-size:.74rem; }
+.opp-manager-event small { display:flex; align-items:center; gap:.2rem; margin-top:.18rem; color:var(--admin-faint); font-size:.65rem; }
+.opp-manager-event p,.opp-manager-history-row p { margin:.28rem 0 0; color:var(--admin-muted); font-size:.72rem; white-space:pre-wrap; overflow-wrap:anywhere; }
+.opp-manager-history-row { border-bottom:1px solid var(--admin-border); padding:.45rem 0; }
+.opp-manager-history-row small { display:block; margin-top:.15rem; color:var(--admin-faint); font-size:.65rem; }
+.opp-manager-add-activity { margin:.45rem 0; border:1px solid var(--admin-border); border-radius:.55rem; padding:.55rem; }
+.opp-manager-add-activity summary { cursor:pointer; color:var(--admin-blue); font-size:.73rem; font-weight:700; }
+.opp-manager-activity-form { display:flex; flex-direction:column; gap:.4rem; margin-top:.5rem; }
+.opp-manager-activity-form .admin-select,.opp-manager-activity-form .fld { width:100%; }
+.opp-manager-empty { display:flex; min-height:9rem; flex-direction:column; align-items:center; justify-content:center; gap:.45rem; border:1px dashed var(--admin-border-strong); border-radius:var(--r-card); color:var(--admin-muted); padding:1.1rem; text-align:center; font-size:.8rem; }
+.opp-manager-empty svg { color:var(--admin-blue); }
+.opp-manager-empty strong { color:var(--admin-ink); font-size:.9rem; }
+.opp-manager-notice { margin:0; border:1px solid color-mix(in srgb,var(--admin-blue) 26%,transparent); border-radius:.6rem; background:color-mix(in srgb,var(--admin-blue) 6%,transparent); padding:.55rem .7rem; color:var(--admin-muted); font-size:.74rem; }
+.opp-manager-modal-backdrop { position:fixed; inset:0; z-index:1000; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.58); padding:1rem; }
+.opp-manager-modal { display:flex; width:min(58rem,100%); max-height:min(92dvh,58rem); flex-direction:column; overflow:hidden; border:1px solid var(--admin-border-strong); border-radius:1rem; background:var(--admin-surface); box-shadow:0 2rem 6rem rgba(0,0,0,.35); }
+.opp-manager-modal>header { display:flex; justify-content:space-between; gap:1rem; align-items:flex-start; border-bottom:1px solid var(--admin-border); padding:1rem 1.1rem .8rem; }
+.opp-manager-modal>header h3 { margin:0; font-size:1.25rem; }
+.opp-manager-modal>header p:not(.opp-kicker) { margin:.25rem 0 0; color:var(--admin-muted); font-size:.75rem; }
+.opp-manager-entry-tabs { display:flex; gap:.35rem; overflow-x:auto; border-bottom:1px solid var(--admin-border); padding:.5rem 1rem 0; }
+.opp-manager-entry-tabs button { display:flex; flex:none; align-items:center; gap:.35rem; border:0; border-bottom:2px solid transparent; background:transparent; color:var(--admin-muted); padding:.55rem .55rem .6rem; font:inherit; font-size:.75rem; font-weight:700; }
+.opp-manager-entry-tabs button.active { border-color:var(--admin-blue); color:var(--admin-blue); }
+.opp-manager-url-box { display:flex; flex-direction:column; gap:.5rem; border-bottom:1px solid var(--admin-border); padding:.8rem 1rem; }
+.opp-manager-url-box .admin-button-secondary { align-self:flex-start; }
+.opp-manager-excerpt,.opp-manager-safe-note { color:var(--admin-faint); font-size:.68rem; line-height:1.45; }
+.opp-manager-safe-note { margin:0; color:var(--admin-ok); }
+.opp-manager-preview-picker { display:flex; gap:.35rem; overflow-x:auto; }
+.opp-manager-preview-picker button { flex:none; border:1px solid var(--admin-border); border-radius:.5rem; background:var(--admin-inset); color:var(--admin-muted); padding:.4rem .55rem; font-size:.68rem; }
+.opp-manager-preview-picker button.active { border-color:var(--admin-blue); color:var(--admin-blue); }
+.opp-manager-modal>.opp-manager-form-grid { overflow-y:auto; margin:0; padding:.9rem 1rem; }
+.opp-manager-modal>footer { display:flex; justify-content:flex-end; gap:.5rem; border-top:1px solid var(--admin-border); background:var(--admin-surface); padding:.75rem 1rem; }
+.opp-manager-duplicates { margin:0 1rem .75rem; border:1px solid color-mix(in srgb,var(--admin-gold) 40%,transparent); border-radius:.7rem; background:color-mix(in srgb,var(--admin-gold) 5%,var(--admin-surface)); padding:.7rem; }
+.opp-manager-duplicates h4 { margin:0; font-size:.8rem; }
+.opp-manager-duplicates>p { margin:.25rem 0 .5rem; color:var(--admin-muted); font-size:.7rem; }
+.opp-manager-duplicates article { display:flex; justify-content:space-between; align-items:center; gap:.6rem; border-top:1px solid var(--admin-border); padding:.5rem 0; }
+.opp-manager-duplicates article div { display:flex; min-width:0; flex-direction:column; gap:.15rem; }
+.opp-manager-duplicates article strong { font-size:.73rem; }
+.opp-manager-duplicates article span { color:var(--admin-faint); font-size:.66rem; }
+.opp-manager-dismiss { border:0; background:transparent; color:var(--admin-blue); padding:.45rem 0 0; font:inherit; font-size:.7rem; font-weight:700; cursor:pointer; }
+@media (max-width:800px) { .opp-manager-info-grid { grid-template-columns:1fr 1fr; }.opp-manager-activity-grid { grid-template-columns:1fr; }.opp-manager-column { flex-basis:13.5rem; } }
+@media (max-width:600px) { .opp-manager { padding:.7rem; }.opp-manager-header { align-items:stretch; flex-direction:column; }.opp-manager-add { align-self:flex-start; }.opp-manager-filters { display:grid; grid-template-columns:1fr 1fr; }.opp-manager-search { grid-column:1/-1; }.opp-manager-filters .admin-select { width:100%; min-width:0; }.opp-manager-column { flex-basis:12.5rem; }.opp-manager-detail { padding:.75rem; }.opp-manager-detail-heading { flex-direction:column; }.opp-manager-detail-actions { width:100%; }.opp-manager-detail-actions .admin-select { flex:1; }.opp-manager-info-grid,.opp-manager-detail-grid,.opp-manager-form-grid { grid-template-columns:1fr; }.opp-manager-detail-grid label.wide,.opp-manager-form-grid label.wide { grid-column:auto; }.opp-manager-modal-backdrop { align-items:flex-end; padding:.35rem; }.opp-manager-modal { max-height:95dvh; border-radius:1rem 1rem .75rem .75rem; }.opp-manager-modal>.opp-manager-form-grid { grid-template-columns:1fr; }.opp-manager-duplicates article { align-items:flex-start; flex-direction:column; }.opp-manager-duplicates article .admin-button-secondary { width:100%; }.opp-manager-links { align-items:flex-start; flex-direction:column; gap:.4rem; } }
+@media (prefers-reduced-motion:reduce) { .opp-manager * { scroll-behavior:auto !important; } }
