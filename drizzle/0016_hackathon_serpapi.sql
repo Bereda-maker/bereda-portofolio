@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS "hackathon_search_cache" ("id" serial PRIMARY KEY NOT NULL, "cache_key" text NOT NULL, "source_id" text NOT NULL, "query" text NOT NULL, "context" jsonb DEFAULT '{}'::jsonb NOT NULL, "results" jsonb DEFAULT '[]'::jsonb NOT NULL, "expires_at" timestamptz NOT NULL, "created_at" timestamptz DEFAULT now() NOT NULL, "updated_at" timestamptz DEFAULT now() NOT NULL);
+CREATE UNIQUE INDEX IF NOT EXISTS "hackathon_search_cache_key_unique" ON "hackathon_search_cache" ("cache_key");
+CREATE INDEX IF NOT EXISTS "hackathon_search_cache_expires_idx" ON "hackathon_search_cache" ("expires_at");
+CREATE TABLE IF NOT EXISTS "hackathon_search_usage" ("id" serial PRIMARY KEY NOT NULL, "provider" text DEFAULT 'serpapi' NOT NULL, "status" text NOT NULL, "search_count" integer DEFAULT 0 NOT NULL, "cache_hits" integer DEFAULT 0 NOT NULL, "official_pages_fetched" integer DEFAULT 0 NOT NULL, "lead_count" integer DEFAULT 0 NOT NULL, "error" text, "created_at" timestamptz DEFAULT now() NOT NULL);
+CREATE INDEX IF NOT EXISTS "hackathon_search_usage_created_idx" ON "hackathon_search_usage" ("created_at");
+ALTER TABLE "hackathon_search_usage" ADD COLUMN IF NOT EXISTS "source_statuses" jsonb DEFAULT '[]'::jsonb NOT NULL;
