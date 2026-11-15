@@ -116,3 +116,12 @@ The feature requires a server-side AI provider already supported by `AI_PROVIDER
 ### Delivery and validation
 
 Implementation will preserve the current admin-only session and same-origin protections, add forward-only migrations, and include unit tests for normalization/deduplication, Ethiopia eligibility states, score component calculations, status transitions, and structured AI extraction rejection. After implementation, run the existing tests plus TypeScript, migration generation/checks, and production build. The final report will list modified files, migration details, integrations required, commands/results, and any remaining configuration. Changes will remain local until explicitly asked to push to GitHub.
+
+
+## Opportunities redesign implementation
+
+The protected Opportunities workspace remains backed by the existing profile, opportunity, evidence, match, draft, tracker, and tracked-application APIs. The client now presents a tabbed career command center with Overview, Discover, Pipeline, Intelligence, Application Studio, Outreach, Goals & Analytics, Candidate Profile, and Settings surfaces. All overview and analytics values are derived from the records loaded by the existing page loader; unavailable evidence is labeled rather than inferred. Existing research, discovery, scoring, approval/rejection, draft, copy/delete, application, tracker, profile-save, and delete actions are preserved.
+
+### Opportunities design
+
+Chosen movement: **evidence-led AI operations desk**. It uses compact Linear/Vercel-like density, navy surfaces, blue action accents, green readiness states, and gold attention states. Principles: show the source beside the claim, keep human approval visible, make the next action obvious, and preserve readable responsive behavior. The layout uses a command header, horizontal accessible tabs, metric rail, two-column briefing surfaces, responsive opportunity cards, Kanban-style status columns, and a selected-record detail panel. Motion is limited to small state transitions and includes a reduced-motion fallback. Candidate profile and settings stay deliberately operational; no unsupported provider controls or secret values are exposed.
