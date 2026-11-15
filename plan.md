@@ -48,3 +48,71 @@ Add one protected `/admin/life-ai` workspace and one `Your Life AI` sidebar item
 
 ### Your Life AI design
 The workspace uses the existing dark dashboard design system as a calm “private studio”: a focused conversation column, a quiet history rail, blue action accents, gold attention states, and generous readable message spacing. The single assistant identity is reinforced by a soft gradient brain mark, a compact context-consent strip, and prompt cards grouped by life area without creating separate agents. Motion is limited to message entrance and loading shimmer, with reduced-motion support. Copy is grounded and non-clinical: “Bring me the real shape of your week.” and “I’ll make suggestions, not assumptions.”
+
+
+## Hackathons management implementation plan
+
+### Findings from the repository inspection
+
+The application is a Next.js 14 App Router project with a password-protected single-admin dashboard. `app/admin/(protected)/layout.tsx`, `lib/auth.ts`, and `lib/same-origin.ts` already provide the session and CSRF boundaries to reuse. The admin shell and navigation live in `components/admin/AdminShell.tsx` and `components/admin/nav.ts`; styling is defined by `app/admin/admin.css` with Tailwind utility classes used inside existing workspaces.
+
+The data layer is Drizzle/Postgres (`lib/schema.ts`, `lib/db.ts`, and forward-only SQL files in `drizzle/`). The existing `opportunities` domain is an evidence-first job and outreach workflow backed by candidate profiles, source evidence, match scores, research runs, drafts, and tracked applications. It is useful infrastructure, but its fields and statuses do not represent hackathon dates, prizes, team rules, or eligibility evidence, so hackathons will use dedicated tables rather than overloading job records.
+
+AI calls already go through the server-only `lib/services/providers.ts` abstraction. Your Life AI is implemented as a protected streaming chat at `app/api/admin/life-ai/chat/route.ts`, with deterministic server-side resource tools and persisted conversations. Hackathon actions will follow the same pattern: server-side provider calls, structured Zod validation, bounded requests, persisted evidence, and no claims beyond retrieved source material.
+
+No repository changes have been made for the feature yet, and no GitHub push will be performed without explicit instruction.
+
+### Proposed architecture
+
+1. **Domain schema and persistence**
+   - Add a forward-only migration and Drizzle declarations for `hackathon_profiles`, `hackathon_startup_profiles`, `hackathons`, `hackathon_evidence`, `hackathon_matches`, and `saved_hackathons`.
+   - Store the owner profile as a single admin-owned record with verified skills, proficiency/interest weights, experience level, location/accessibility preferences, and editable matching preferences.
+   - Store the five requested startup profiles as editable seeded records: Deborah School, TenaSew, EthioVista, Negus Gebeya, and Personal / General.
+   - Store normalized opportunity fields separately from evidence: organizer, themes, format, location, country eligibility, deadline, event dates, prize/cost, team requirements, official URL, registration URL, verification timestamp, and an explicit verification state for unavailable fields.
+   - Enforce uniqueness on a normalized canonical URL/source identity so repeated discovery cannot create duplicate saved opportunities. Use a separate saved-record uniqueness constraint for `(owner, hackathon)`.
+   - Store tracking status, notes, application details, project idea, team information, and user-entered deadlines in the saved-hackathon record. Use the requested statuses exactly: Saved, Interested, Preparing, Applied, Accepted, Participating, Completed, Rejected, Expired.
+
+2. **Discovery and evidence-first AI service**
+   - Add `lib/services/hackathon-discovery.ts` and a source registry that distinguishes verified feeds/APIs from manual browse-only sources. The initial automated path will accept approved public source URLs/feeds and an optional configured search integration; it will never scrape sources whose terms or robots policy prohibit automated reuse.
+   - Normalize and deduplicate source records before persistence. Preserve the original official URL and registration URL, capture a bounded excerpt, source title/publisher, and retrieval timestamp.
+   - Use the existing AI provider only to extract and explain facts present in retrieved text. The structured extraction contract will use null/unknown values for missing fields and will reject malformed or unsupported URLs. Every rendered field will retain an evidence/verification state so “not listed” and “not verified” remain visible.
+   - Treat Ethiopia eligibility as a three-state result (`allowed`, `not_allowed`, `unknown`) backed by source evidence; do not infer permission from an online format alone.
+   - Calculate a deterministic 0–100 score in a dedicated scorer with visible components for technical alignment, startup/project relevance, eligibility, experience/difficulty, accessibility, and interests. AI may produce a concise explanation, but it cannot replace the bounded scoring inputs.
+
+3. **Protected API surface**
+   - Add authenticated, same-origin-protected route handlers under `/api/admin/hackathons` for profile/startup-profile CRUD, discovery, list/detail, save/unsave, status updates, notes/tracking updates, and recommendations.
+   - Validate all URL, date, enum, string-length, array, and numeric inputs with Zod. Keep provider keys and fetches server-side. Add rate limiting and usage logging consistent with the existing AI routes.
+   - Add secure assistant actions that query the persisted hackathon tables for saved deadlines, comparisons, application preparation, and project-idea requests. Assistant responses must distinguish retrieved facts, user-entered notes, and suggestions; consequential actions remain approval-first.
+
+4. **Admin interface**
+   - Add a Trophy icon navigation item labelled `Hackathons`, with nested route sections for Discover Hackathons, Saved Hackathons, Applications & Tracking, and AI Recommendations. Keep the existing shell and responsive behavior.
+   - Build a `HackathonsWorkspace` and focused child components rather than one oversized component. Reuse `AdminPageHeader`, `EmptyAdminState`, form classes, notices, buttons, and loading/error patterns already used by the Opportunities workspace.
+   - Discovery controls will select one startup profile or all five, apply filters such as online/hybrid/in-person, free/paid, deadline window, and Ethiopia eligibility, then show source and verification warnings.
+   - Cards will show organizer, themes, selected profile, transparent score breakdown, eligibility/accessibility, deadlines, dates, prizes/costs, team requirements, official links, and last verified timestamp. Actions: save, view details, open registration source.
+   - Saved/tracking views will provide the requested status pipeline, notes, application fields, project ideas, team data, deadline reminders, and empty/failure states. Profile preferences will be editable without changing verified professional source data.
+
+5. **Your Life AI integration**
+   - Extend the existing deterministic tool-planning layer with hackathon intents rather than creating a second assistant. The server will detect or plan only bounded actions such as `discover_hackathons`, `list_saved_hackathons`, `compare_hackathons`, `prepare_application`, and `suggest_project_idea`.
+   - Tool results will be passed to the model as structured, source-backed context. The assistant will not invent links, dates, prizes, eligibility, or registration details and will say when the database or source evidence is unavailable.
+   - Persist only the existing conversation/messages plus usage metadata; hackathon mutations will occur through explicit protected API actions, not arbitrary model-generated SQL or client-side database access.
+
+6. **Notifications and calendar reuse**
+   - First inspect the existing notification/calendar capabilities at implementation time. Reuse `calendar_tasks`/calendar planning if it supports reminders without inventing an email provider. If no suitable reminder execution path exists, expose upcoming-deadline views and document the remaining provider/scheduled-task configuration instead of claiming notifications are active.
+
+### Main files expected to change
+
+- `lib/schema.ts` and a new `drizzle/00xx_hackathons.sql` migration for the dedicated schema.
+- New domain/service modules under `lib/hackathons.ts`, `lib/services/hackathon-discovery.ts`, `lib/services/hackathon-scoring.ts`, and source/validation helpers.
+- New protected pages under `app/admin/(protected)/hackathons/` and API routes under `app/api/admin/hackathons/`.
+- `components/admin/nav.ts` plus new `components/admin/HackathonsWorkspace.tsx` and focused profile, discovery, saved, tracking, and recommendation components.
+- `app/admin/admin.css` only where existing tokens/components are insufficient; prefer existing utility classes and theme variables.
+- `app/api/admin/life-ai/chat/route.ts`, `lib/life-ai-tool-plan.ts`, and related schemas for secure assistant integration.
+- `.env.example`, `README.md`, `TODO.md`, and `public/manus-routes.json` for configuration, operating notes, acceptance status, and route discovery.
+
+### External integrations and configuration boundaries
+
+The feature requires a server-side AI provider already supported by `AI_PROVIDER`, `AI_API_KEY`, `AI_BASE_URL`, and `AI_MODEL`. Automated hackathon discovery additionally needs either an approved public source/feed set implemented in the source registry or a configured search integration whose terms permit server-side retrieval; source URLs alone are not treated as proof. No API key will be exposed to the browser. Calendar/reminder integration will remain explicitly marked as unavailable until an existing configured provider or scheduled execution path is confirmed.
+
+### Delivery and validation
+
+Implementation will preserve the current admin-only session and same-origin protections, add forward-only migrations, and include unit tests for normalization/deduplication, Ethiopia eligibility states, score component calculations, status transitions, and structured AI extraction rejection. After implementation, run the existing tests plus TypeScript, migration generation/checks, and production build. The final report will list modified files, migration details, integrations required, commands/results, and any remaining configuration. Changes will remain local until explicitly asked to push to GitHub.

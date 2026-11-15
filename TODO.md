@@ -21,6 +21,7 @@
 - [x] **Public appointment booking:** expose only the configured 30-minute and 1-hour options, render availability in a grouped day card consistent with the admin open-availability view, show calendar-loading feedback, and provide clickable meeting and calendar-event links after confirmation.
 - [ ] **Your Life AI workspace:** add one protected `/admin/life-ai` navigation item and responsive conversational workspace with history, new conversation, suggested prompts, multiline send behavior, markdown/code rendering, copy, clear confirmation, loading/error states, and no public visitor access.
 - [ ] **Your Life AI foundation:** persist admin-owned conversations/messages, add consent-controlled context settings, reuse the server-side AI provider abstraction, validate and bound requests, enforce same-origin/admin checks, record usage status, keep ordinary logs free of message content, and keep all actions read-only or approval-first.
+- [x] **Hackathons management MVP:** protected `/admin/hackathons` workspace, dedicated migration/schema, five startup profiles, approved-source discovery with evidence and explicit unknown fields, deterministic scoring, saved records, and status tracking; notifications, arbitrary scraping, and automated registration remain unconfigured.
 
 ## Latest Books release verification
 - Commit `49b1e43588641fc00c3a758cfb7df8f2010bf62c` is live on Render (`dep-dbjps6bncjis73dsntl0`) and the Vercel Books route serves the same new catalog.

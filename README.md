@@ -176,6 +176,11 @@ Typed domain helpers live under `lib/services/` for mentorship pricing/usage led
 
 ### AI Opportunity & Outreach Agent configuration
 
+### Hackathons management
+Apply `drizzle/0015_hackathons.sql` with `npm run db:migrate` before opening `/admin/hackathons`. The workspace stores a private owner profile, five editable startup profiles (Deborah School, TenaSew, EthioVista, Negus Gebeya, and Personal / General), source-backed opportunities, evidence excerpts, deterministic 0–100 match components, and Saved → Interested → Preparing → Applied → Accepted → Participating → Completed / Rejected / Expired tracking states. All mutations are admin-session and same-origin protected.
+
+The MVP only fetches URLs in the approved registry in `lib/hackathons.ts` and deliberately leaves dates, prizes, team rules, format, and Ethiopia eligibility unknown when the retrieved source does not state them. It does not claim notifications, calendar reminders, scraping of arbitrary sites, or automated registration. A configured `AI_*` provider supports the existing Life AI; Hackathons discovery does not fabricate results when a public source is unavailable.
+
 The deployment must have a working `DATABASE_URL` before the first build. The
 Railway configuration runs `npm run db:migrate` in `preDeployCommand`, and the
 Vercel configuration runs the same migration command in `buildCommand`, so the
