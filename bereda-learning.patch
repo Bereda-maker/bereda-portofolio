@@ -102,32 +102,108 @@
 [32m+[m[32m.learning-status,.learning-status.completed,.learning-status.confirmed{background:var(--admin-blue);color:var(--admin-on-accent)}.learning-status.cancelled,.learning-status.rejected{background:var(--admin-danger);color:var(--admin-on-accent)}.learning-header .learning-kicker,.learning-date,.learning-stats article{border-color:var(--admin-border)}.learning-stats article{border-top-color:var(--admin-blue)}.learning-form-scroll>h3{color:var(--admin-blue)}[m
 [1mdiff --git a/app/api/admin/learning/[id]/route.ts b/app/api/admin/learning/[id]/route.ts[m
 [1mnew file mode 100644[m
-[1mindex 0000000..d66b73d[m
+[1mindex 0000000..6df738d[m
 [1m--- /dev/null[m
 [1m+++ b/app/api/admin/learning/[id]/route.ts[m
-[36m@@ -0,0 +1,22 @@[m
+[36m@@ -0,0 +1,98 @@[m
 [32m+[m[32mimport { NextRequest, NextResponse } from 'next/server';[m
-[32m+[m[32mimport { and, eq } from 'drizzle-orm';[m
+[32m+[m[32mimport { eq } from 'drizzle-orm';[m
+[32m+[m[32mimport { z } from 'zod';[m
 [32m+[m[32mimport { getSession } from '@/lib/auth';[m
 [32m+[m[32mimport { isSameOrigin } from '@/lib/same-origin';[m
-[32m+[m[32mimport { learningExperiences, learningStatusHistory } from '@/lib/schema';[m
-[32m+[m[32mimport { z } from 'zod';[m
-[32m+[m[32mexport const runtime='nodejs';[m
-[32m+[m[32mconst statuses=['INTERESTED','APPLIED','REGISTERED','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED','REJECTED','DID_NOT_ATTEND'] as const;[m
-[32m+[m[32mconst Patch=z.object({status:z.enum(statuses),note:z.string().trim().max(500).optional()}).strict();[m
+[32m+[m[32mimport { LEARNING_STATUSES, LearningAttachmentInput, LearningExperienceUpdateInput } from '@/lib/learning-validation';[m
+[32m+[m[32mimport { learningAttachments, learningExperiences, learningStatusHistory } from '@/lib/schema';[m
 [32m+[m
-[32m+[m[32mconst safeUrl=z.string().url().max(1000).refine(v=>v.startsWith('https://'),'Links must use HTTPS.').nullable().optional();[m
-[32m+[m[32mconst Edit=z.object({title:z.string().trim().min(1).max(240),category:z.string().trim().min(1).max(100),organizer:z.string().max(240).nullable().optional(),description:z.string().max(5000).nullable().optional(),officialWebsite:safeUrl,registrationUrl:safeUrl,sourceUrl:safeUrl,mode:z.enum(['IN_PERSON','ONLINE','HYBRID']),country:z.string().max(120).nullable().optional(),city:z.string().max(120).nullable().optional(),venue:z.string().max(240).nullable().optional(),meetingUrl:safeUrl,startsAt:z.string().datetime().nullable().optional(),endsAt:z.string().datetime().nullable().optional(),registrationDeadline:z.string().datetime().nullable().optional(),timezone:z.string().min(1).max(100),motivation:z.string().max(3000).nullable().optional(),expectedOutcomes:z.string().max(3000).nullable().optional(),skillsToAcquire:z.array(z.string().max(100)).max(50),personalGoals:z.string().max(3000).nullable().optional(),priority:z.enum(['LOW','MEDIUM','HIGH']),costType:z.enum(['FREE','PAID','UNKNOWN']),feeCents:z.number().int().min(0).nullable().optional(),scholarship:z.string().max(1000).nullable().optional(),otherExpenses:z.string().max(1000).nullable().optional(),learningHours:z.number().int().min(0).nullable().optional(),status:z.enum(statuses)}).strict();[m
+[32m+[m[32mexport const runtime = 'nodejs';[m
+[32m+[m[32mconst Patch = z.object({ status: z.enum(LEARNING_STATUSES), note: z.string().trim().max(500).optional() }).strict();[m
 [32m+[m
-[32m+[m[32mexport async function PATCH(req:NextRequest,{params}:{params:{id:string}}){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});if(!isSameOrigin(req))return NextResponse.json({error:'Forbidden.'},{status:403});const id=Number(params.id);if(!Number.isInteger(id)||id<1)return NextResponse.json({error:'Invalid record.'},{status:400});const parsed=Patch.safeParse(await req.json().catch(()=>null));if(!parsed.success)return NextResponse.json({error:'Invalid status change.'},{status:400});try{const {db}=await import('@/lib/db');const [current]=await db.select().from(learningExperiences).where(eq(learningExperiences.id,id)).limit(1);if(!current)return NextResponse.json({error:'Not found.'},{status:404});if(current.status!==parsed.data.status){await db.transaction(async tx=>{await tx.update(learningExperiences).set({status:parsed.data.status,updatedAt:new Date()}).where(eq(learningExperiences.id,id));await tx.insert(learningStatusHistory).values({experienceId:id,fromStatus:current.status,toStatus:parsed.data.status,note:parsed.data.note??null});});}return NextResponse.json({ok:true});}catch{return NextResponse.json({error:'Could not update status.'},{status:500});}}[m
+[32m+[m[32mtype Context = { params: { id: string } };[m
+[32m+[m[32mfunction parseId(raw: string) { const id = Number(raw); return Number.isInteger(id) && id > 0 ? id : null; }[m
 [32m+[m
+[32m+[m[32mexport async function PATCH(request: NextRequest, { params }: Context) {[m
+[32m+[m[32m  if (!(await getSession()).isAdmin) return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });[m
+[32m+[m[32m  if (!isSameOrigin(request)) return NextResponse.json({ error: 'Forbidden.' }, { status: 403 });[m
+[32m+[m[32m  const id = parseId(params.id);[m
+[32m+[m[32m  if (!id) return NextResponse.json({ error: 'Invalid record.' }, { status: 400 });[m
+[32m+[m[32m  const parsed = Patch.safeParse(await request.json().catch(() => null));[m
+[32m+[m[32m  if (!parsed.success) return NextResponse.json({ error: 'Invalid status change.' }, { status: 400 });[m
+[32m+[m[32m  try {[m
+[32m+[m[32m    const { db } = await import('@/lib/db');[m
+[32m+[m[32m    const [current] = await db.select().from(learningExperiences).where(eq(learningExperiences.id, id)).limit(1);[m
+[32m+[m[32m    if (!current) return NextResponse.json({ error: 'Not found.' }, { status: 404 });[m
+[32m+[m[32m    if (current.status !== parsed.data.status) {[m
+[32m+[m[32m      await db.transaction(async tx => {[m
+[32m+[m[32m        await tx.update(learningExperiences).set({ status: parsed.data.status, updatedAt: new Date() }).where(eq(learningExperiences.id, id));[m
+[32m+[m[32m        await tx.insert(learningStatusHistory).values({ experienceId: id, fromStatus: current.status, toStatus: parsed.data.status, note: parsed.data.note ?? null });[m
+[32m+[m[32m      });[m
+[32m+[m[32m    }[m
+[32m+[m[32m    return NextResponse.json({ ok: true });[m
+[32m+[m[32m  } catch {[m
+[32m+[m[32m    return NextResponse.json({ error: 'Could not update status.' }, { status: 500 });[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
 [32m+[m
-[32m+[m[32mconst AttachmentInput=z.object({label:z.string().trim().min(1).max(160),kind:z.enum(['CONFIRMATION','AGENDA','DOCUMENT','CERTIFICATE','PHOTOGRAPH','OTHER']),url:z.string().url().max(1000).refine(v=>v.startsWith('https://'),'Attachment links must use HTTPS.')}).strict();[m
-[32m+[m[32mexport async function POST(req:NextRequest,{params}:{params:{id:string}}){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});if(!isSameOrigin(req))return NextResponse.json({error:'Forbidden.'},{status:403});const id=Number(params.id);if(!Number.isInteger(id)||id<1)return NextResponse.json({error:'Invalid record.'},{status:400});const parsed=AttachmentInput.safeParse(await req.json().catch(()=>null));if(!parsed.success)return NextResponse.json({error:parsed.error.issues[0]?.message??'Invalid attachment.'},{status:400});try{const {db}=await import('@/lib/db');const {learningAttachments}=await import('@/lib/schema');const [experience]=await db.select({id:learningExperiences.id}).from(learningExperiences).where(eq(learningExperiences.id,id)).limit(1);if(!experience)return NextResponse.json({error:'Not found.'},{status:404});const [attachment]=await db.insert(learningAttachments).values({...parsed.data,experienceId:id}).returning();return NextResponse.json({attachment},{status:201});}catch{return NextResponse.json({error:'Could not save supporting material.'},{status:500});}}[m
+[32m+[m[32mexport async function POST(request: NextRequest, { params }: Context) {[m
+[32m+[m[32m  if (!(await getSession()).isAdmin) return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });[m
+[32m+[m[32m  if (!isSameOrigin(request)) return NextResponse.json({ error: 'Forbidden.' }, { status: 403 });[m
+[32m+[m[32m  const id = parseId(params.id);[m
+[32m+[m[32m  if (!id) return NextResponse.json({ error: 'Invalid record.' }, { status: 400 });[m
+[32m+[m[32m  const parsed = LearningAttachmentInput.safeParse(await request.json().catch(() => null));[m
+[32m+[m[32m  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid attachment.' }, { status: 400 });[m
+[32m+[m[32m  try {[m
+[32m+[m[32m    const { db } = await import('@/lib/db');[m
+[32m+[m[32m    const [experience] = await db.select({ id: learningExperiences.id }).from(learningExperiences).where(eq(learningExperiences.id, id)).limit(1);[m
+[32m+[m[32m    if (!experience) return NextResponse.json({ error: 'Not found.' }, { status: 404 });[m
+[32m+[m[32m    const [attachment] = await db.insert(learningAttachments).values({ ...parsed.data, experienceId: id }).returning();[m
+[32m+[m[32m    return NextResponse.json({ attachment }, { status: 201 });[m
+[32m+[m[32m  } catch {[m
+[32m+[m[32m    return NextResponse.json({ error: 'Could not save supporting material.' }, { status: 500 });[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
 [32m+[m
-[32m+[m[32mexport async function PUT(req:NextRequest,{params}:{params:{id:string}}){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});if(!isSameOrigin(req))return NextResponse.json({error:'Forbidden.'},{status:403});const id=Number(params.id);if(!Number.isInteger(id)||id<1)return NextResponse.json({error:'Invalid record.'},{status:400});const parsed=Edit.safeParse(await req.json().catch(()=>null));if(!parsed.success)return NextResponse.json({error:parsed.error.issues[0]?.message??'Invalid experience.'},{status:400});const d=parsed.data;if(d.startsAt&&d.endsAt&&new Date(d.endsAt)<new Date(d.startsAt))return NextResponse.json({error:'End date must be on or after start date.'},{status:400});try{const {db}=await import('@/lib/db');const [current]=await db.select().from(learningExperiences).where(eq(learningExperiences.id,id)).limit(1);if(!current)return NextResponse.json({error:'Not found.'},{status:404});const {status,...rest}=d;await db.transaction(async tx=>{await tx.update(learningExperiences).set({...rest,startsAt:rest.startsAt?new Date(rest.startsAt):null,endsAt:rest.endsAt?new Date(rest.endsAt):null,registrationDeadline:rest.registrationDeadline?new Date(rest.registrationDeadline):null,status,updatedAt:new Date()}).where(eq(learningExperiences.id,id));if(current.status!==status)await tx.insert(learningStatusHistory).values({experienceId:id,fromStatus:current.status,toStatus:status,note:'Updated from experience editor'});});return NextResponse.json({ok:true});}catch{return NextResponse.json({error:'Could not update the experience.'},{status:500});}}[m
+[32m+[m[32mexport async function PUT(request: NextRequest, { params }: Context) {[m
+[32m+[m[32m  if (!(await getSession()).isAdmin) return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });[m
+[32m+[m[32m  if (!isSameOrigin(request)) return NextResponse.json({ error: 'Forbidden.' }, { status: 403 });[m
+[32m+[m[32m  const id = parseId(params.id);[m
+[32m+[m[32m  if (!id) return NextResponse.json({ error: 'Invalid record.' }, { status: 400 });[m
+[32m+[m[32m  const parsed = LearningExperienceUpdateInput.safeParse(await request.json().catch(() => null));[m
+[32m+[m[32m  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid experience.' }, { status: 400 });[m
+[32m+[m[32m  try {[m
+[32m+[m[32m    const { db } = await import('@/lib/db');[m
+[32m+[m[32m    const [current] = await db.select().from(learningExperiences).where(eq(learningExperiences.id, id)).limit(1);[m
+[32m+[m[32m    if (!current) return NextResponse.json({ error: 'Not found.' }, { status: 404 });[m
+[32m+[m[32m    const { attachments, status, ...data } = parsed.data;[m
+[32m+[m[32m    await db.transaction(async tx => {[m
+[32m+[m[32m      await tx.update(learningExperiences).set({[m
+[32m+[m[32m        ...data,[m
+[32m+[m[32m        startsAt: data.startsAt ? new Date(data.startsAt) : null,[m
+[32m+[m[32m        endsAt: data.endsAt ? new Date(data.endsAt) : null,[m
+[32m+[m[32m        registrationDeadline: data.registrationDeadline ? new Date(data.registrationDeadline) : null,[m
+[32m+[m[32m        status,[m
+[32m+[m[32m        updatedAt: new Date(),[m
+[32m+[m[32m      }).where(eq(learningExperiences.id, id));[m
+[32m+[m[32m      if (current.status !== status) await tx.insert(learningStatusHistory).values({ experienceId: id, fromStatus: current.status, toStatus: status, note: 'Updated from experience editor' });[m
+[32m+[m[32m      if (attachments.length) await tx.insert(learningAttachments).values(attachments.map(attachment => ({ ...attachment, experienceId: id })));[m
+[32m+[m[32m    });[m
+[32m+[m[32m    return NextResponse.json({ ok: true });[m
+[32m+[m[32m  } catch {[m
+[32m+[m[32m    return NextResponse.json({ error: 'Could not update the experience.' }, { status: 500 });[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
 [32m+[m
-[32m+[m[32mexport async function DELETE(req:NextRequest,{params}:{params:{id:string}}){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});if(!isSameOrigin(req))return NextResponse.json({error:'Forbidden.'},{status:403});const id=Number(params.id);if(!Number.isInteger(id)||id<1)return NextResponse.json({error:'Invalid record.'},{status:400});try{const {db}=await import('@/lib/db');await db.delete(learningExperiences).where(eq(learningExperiences.id,id));return NextResponse.json({ok:true});}catch{return NextResponse.json({error:'Could not delete the record.'},{status:500});}}[m
+[32m+[m[32mexport async function DELETE(request: NextRequest, { params }: Context) {[m
+[32m+[m[32m  if (!(await getSession()).isAdmin) return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });[m
+[32m+[m[32m  if (!isSameOrigin(request)) return NextResponse.json({ error: 'Forbidden.' }, { status: 403 });[m
+[32m+[m[32m  const id = parseId(params.id);[m
+[32m+[m[32m  if (!id) return NextResponse.json({ error: 'Invalid record.' }, { status: 400 });[m
+[32m+[m[32m  try {[m
+[32m+[m[32m    const { db } = await import('@/lib/db');[m
+[32m+[m[32m    await db.delete(learningExperiences).where(eq(learningExperiences.id, id));[m
+[32m+[m[32m    return NextResponse.json({ ok: true });[m
+[32m+[m[32m  } catch {[m
+[32m+[m[32m    return NextResponse.json({ error: 'Could not delete the record.' }, { status: 500 });[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
 [1mdiff --git a/app/api/admin/learning/ai/route.ts b/app/api/admin/learning/ai/route.ts[m
 [1mnew file mode 100644[m
 [1mindex 0000000..351efc0[m
@@ -141,71 +217,145 @@
 [32m+[m[32mexport async function POST(req:NextRequest){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});if(!isSameOrigin(req))return NextResponse.json({error:'Forbidden.'},{status:403});const p=Input.safeParse(await req.json().catch(()=>null));if(!p.success)return NextResponse.json({error:'Provide text and an analysis type.'},{status:400});try{const result=await aiProvider.complete({system:`You are an optional learning assistant. Never invent experiences, achievements, acquired skills, people, dates, or personal facts. Use only the user-supplied text. For conclusions that go beyond explicit text, label them as suggestions or hypotheses. Do not write in the user's first-person voice. The requested task: ${prompts[p.data.action]}`,prompt: await (async()=>{let projectContext='';if(p.data.action==='project_connections'){try{const {db}=await import('@/lib/db');const {projects}=await import('@/lib/schema');const rows=await db.select({title:projects.title,description:projects.description,stack:projects.stack}).from(projects).limit(100);projectContext=`\n\nExisting portfolio projects (authoritative records; do not invent): ${JSON.stringify(rows)}`;}catch{projectContext='\n\nNo portfolio project records are available; do not name or invent any projects.';}}return `Analyze the following user-provided learning notes. Return concise, editable suggestions and state that they require user review.\n\n${p.data.text}${projectContext}`})(),json:false});if(result.status!=='ok')return NextResponse.json({error:result.message||'AI is unavailable.'},{status:503});return NextResponse.json({suggestion:result.data.text,source:'AI suggestion — review and edit before using.'});}catch{return NextResponse.json({error:'AI assistance is unavailable.'},{status:503});}}[m
 [1mdiff --git a/app/api/admin/learning/reflection/route.ts b/app/api/admin/learning/reflection/route.ts[m
 [1mnew file mode 100644[m
-[1mindex 0000000..4266d88[m
+[1mindex 0000000..f24a8f7[m
 [1m--- /dev/null[m
 [1m+++ b/app/api/admin/learning/reflection/route.ts[m
-[36m@@ -0,0 +1,4 @@[m
-[32m+[m[32mimport { NextRequest,NextResponse } from 'next/server';import { eq } from 'drizzle-orm';import { z } from 'zod';import {getSession} from '@/lib/auth';import {isSameOrigin} from '@/lib/same-origin';import {learningExperiences,learningReflections,learningSkills,learningExperienceSkills} from '@/lib/schema';[m
-[32m+[m[32mexport const runtime='nodejs';[m
-[32m+[m[32mconst Input=z.object({experienceId:z.number().int().positive(),learned:z.string().max(8000).optional().default(''),technicalKnowledge:z.string().max(5000).optional().default(''),softSkills:z.string().max(5000).optional().default(''),takeaways:z.string().max(5000).optional().default(''),challenges:z.string().max(5000).optional().default(''),peopleMet:z.string().max(3000).optional().default(''),ideas:z.string().max(5000).optional().default(''),applicationPlan:z.string().max(5000).optional().default(''),actionItems:z.string().max(5000).optional().default(''),rating:z.number().int().min(1).max(5).nullable().optional(),notes:z.string().max(10000).optional().default(''),draft:z.boolean().default(true)}).strict();[m
-[32m+[m[32mexport async function POST(req:NextRequest){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});if(!isSameOrigin(req))return NextResponse.json({error:'Forbidden.'},{status:403});const parsed=Input.safeParse(await req.json().catch(()=>null));if(!parsed.success)return NextResponse.json({error:parsed.error.issues[0]?.message??'Invalid reflection.'},{status:400});try{const {db}=await import('@/lib/db');const d=parsed.data;const [exp]=await db.select().from(learningExperiences).where(eq(learningExperiences.id,d.experienceId)).limit(1);if(!exp)return NextResponse.json({error:'Learning experience not found.'},{status:404});if(exp.status!=='COMPLETED')return NextResponse.json({error:'Reflections are available after participation is marked completed.'},{status:409});const {experienceId,...values}=d;const [reflection]=await db.insert(learningReflections).values({...values,experienceId,updatedAt:new Date()}).onConflictDoUpdate({target:learningReflections.experienceId,set:{...values,updatedAt:new Date()}}).returning();const names=[...new Set(`${d.technicalKnowledge},${d.softSkills}`.split(/[,;\n]/).map(s=>s.trim()).filter(s=>s.length>1&&s.length<=100))];for(const name of names){const normalizedName=name.toLowerCase();await db.insert(learningSkills).values({name,normalizedName}).onConflictDoNothing();const [skill]=await db.select().from(learningSkills).where(eq(learningSkills.normalizedName,normalizedName)).limit(1);if(skill)await db.insert(learningExperienceSkills).values({experienceId,skillId:skill.id}).onConflictDoNothing();}return NextResponse.json({reflection});}catch{return NextResponse.json({error:'Could not save reflection. Apply the Learning migration if needed.'},{status:500});}}[m
-[1mdiff --git a/app/api/admin/learning/route.ts b/app/api/admin/learning/route.ts[m
-[1mnew file mode 100644[m
-[1mindex 0000000..c6089f0[m
-[1m--- /dev/null[m
-[1m+++ b/app/api/admin/learning/route.ts[m
-[36m@@ -0,0 +1,16 @@[m
+[36m@@ -0,0 +1,37 @@[m
 [32m+[m[32mimport { NextRequest, NextResponse } from 'next/server';[m
-[32m+[m[32mimport { asc } from 'drizzle-orm';[m
-[32m+[m[32mimport { z } from 'zod';[m
+[32m+[m[32mimport { eq } from 'drizzle-orm';[m
 [32m+[m[32mimport { getSession } from '@/lib/auth';[m
 [32m+[m[32mimport { isSameOrigin } from '@/lib/same-origin';[m
-[32m+[m[32mimport { learningExperiences, learningStatusHistory, learningReflections, learningAttachments } from '@/lib/schema';[m
+[32m+[m[32mimport { LearningReflectionInput } from '@/lib/learning-validation';[m
+[32m+[m[32mimport { learningExperiences, learningExperienceSkills, learningReflections, learningSkills } from '@/lib/schema';[m
+[32m+[m
 [32m+[m[32mexport const runtime = 'nodejs';[m
-[32m+[m[32mconst statuses = ['INTERESTED','APPLIED','REGISTERED','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED','REJECTED','DID_NOT_ATTEND'] as const;[m
-[32m+[m[32mconst url = z.string().trim().max(1000).refine(v => !v || /^https:\/\//i.test(v), 'Links must use HTTPS.').optional().nullable();[m
-[32m+[m[32mconst Input = z.object({[m
-[32m+[m[32m title:z.string().trim().min(1).max(240),category:z.string().trim().min(1).max(100),organizer:z.string().trim().max(240).optional().nullable(),description:z.string().max(5000).optional().nullable(),officialWebsite:url,registrationUrl:url,sourceUrl:url,[m
-[32m+[m[32m mode:z.enum(['IN_PERSON','ONLINE','HYBRID']).default('ONLINE'),country:z.string().trim().max(120).optional().nullable(),city:z.string().trim().max(120).optional().nullable(),venue:z.string().trim().max(240).optional().nullable(),meetingUrl:url,[m
-[32m+[m[32m startsAt:z.string().datetime().optional().nullable(),endsAt:z.string().datetime().optional().nullable(),registrationDeadline:z.string().datetime().optional().nullable(),timezone:z.string().trim().min(1).max(100).default('UTC'),motivation:z.string().max(3000).optional().nullable(),expectedOutcomes:z.string().max(3000).optional().nullable(),skillsToAcquire:z.array(z.string().trim().min(1).max(100)).max(50).default([]),personalGoals:z.string().max(3000).optional().nullable(),priority:z.enum(['LOW','MEDIUM','HIGH']).default('MEDIUM'),costType:z.enum(['FREE','PAID','UNKNOWN']).default('UNKNOWN'),feeCents:z.number().int().min(0).max(100000000).optional().nullable(),scholarship:z.string().max(1000).optional().nullable(),otherExpenses:z.string().max(1000).optional().nullable(),learningHours:z.number().int().min(0).max(10000).optional().nullable(),status:z.enum(statuses).default('INTERESTED'),attachments:z.array(z.object({label:z.string().trim().min(1).max(160),kind:z.enum(['CONFIRMATION','AGENDA','DOCUMENT','CERTIFICATE','PHOTOGRAPH','OTHER']),url:z.string().url().max(1000).refine(v => v.startsWith('https://'),'Attachment links must use HTTPS.')})).max(30).default([])[m
-[32m+[m[32m}).strict().refine(d => !d.startsAt || !d.endsAt || new Date(d.endsAt) >= new Date(d.startsAt), {message:'End date must be on or after start date.',path:['endsAt']});[m
-[32m+[m[32mexport async function GET(){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});try{const {db}=await import('@/lib/db');const [experiences,reflections,attachments,history]=await Promise.all([db.select().from(learningExperiences).orderBy(asc(learningExperiences.startsAt)),db.select().from(learningReflections),db.select().from(learningAttachments),db.select().from(learningStatusHistory).orderBy(asc(learningStatusHistory.changedAt))]);return NextResponse.json({experiences:experiences.map(e=>({...e,reflection:reflections.find(r=>r.experienceId===e.id)??null,attachments:attachments.filter(a=>a.experienceId===e.id),statusHistory:history.filter(h=>h.experienceId===e.id)}))});}catch{return NextResponse.json({error:'Learning records could not be loaded. Apply the learning database migration if this is a fresh deployment.'},{status:503});}}[m
-[32m+[m[32mexport async function POST(req:NextRequest){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});if(!isSameOrigin(req))return NextResponse.json({error:'Forbidden.'},{status:403});const parsed=Input.safeParse(await req.json().catch(()=>null));if(!parsed.success)return NextResponse.json({error:parsed.error.issues[0]?.message??'Invalid learning experience.'},{status:400});try{const {db}=await import('@/lib/db');const {attachments,...data}=parsed.data;const [created]=await db.insert(learningExperiences).values({...data,startsAt:data.startsAt?new Date(data.startsAt):null,endsAt:data.endsAt?new Date(data.endsAt):null,registrationDeadline:data.registrationDeadline?new Date(data.registrationDeadline):null}).returning();await db.insert(learningStatusHistory).values({experienceId:created.id,toStatus:created.status,note:'Initial status'});if(attachments.length)await db.insert(learningAttachments).values(attachments.map(a=>({...a,experienceId:created.id})));return NextResponse.json({experience:created},{status:201});}catch{return NextResponse.json({error:'Could not save the learning experience.'},{status:500});}}[m
+[32m+[m
+[32m+[m[32mexport async function POST(request: NextRequest) {[m
+[32m+[m[32m  if (!(await getSession()).isAdmin) return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });[m
+[32m+[m[32m  if (!isSameOrigin(request)) return NextResponse.json({ error: 'Forbidden.' }, { status: 403 });[m
+[32m+[m[32m  const parsed = LearningReflectionInput.safeParse(await request.json().catch(() => null));[m
+[32m+[m[32m  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid reflection.' }, { status: 400 });[m
+[32m+[m[32m  try {[m
+[32m+[m[32m    const { db } = await import('@/lib/db');[m
+[32m+[m[32m    const data = parsed.data;[m
+[32m+[m[32m    const [experience] = await db.select().from(learningExperiences).where(eq(learningExperiences.id, data.experienceId)).limit(1);[m
+[32m+[m[32m    if (!experience) return NextResponse.json({ error: 'Learning experience not found.' }, { status: 404 });[m
+[32m+[m[32m    if (experience.status !== 'COMPLETED') return NextResponse.json({ error: 'Reflections are available after participation is marked completed.' }, { status: 409 });[m
+[32m+[m
+[32m+[m[32m    const { experienceId, ...values } = data;[m
+[32m+[m[32m    const [reflection] = await db.insert(learningReflections).values({ ...values, experienceId, updatedAt: new Date() })[m
+[32m+[m[32m      .onConflictDoUpdate({ target: learningReflections.experienceId, set: { ...values, updatedAt: new Date() } }).returning();[m
+[32m+[m
+[32m+[m[32m    const names = [...new Set(`${data.technicalKnowledge},${data.softSkills}`.split(/[,;\n]/).map(name => name.trim()).filter(name => name.length > 1 && name.length <= 100))];[m
+[32m+[m[32m    for (const name of names) {[m
+[32m+[m[32m      const normalizedName = name.toLowerCase();[m
+[32m+[m[32m      await db.insert(learningSkills).values({ name, normalizedName }).onConflictDoNothing();[m
+[32m+[m[32m      const [skill] = await db.select().from(learningSkills).where(eq(learningSkills.normalizedName, normalizedName)).limit(1);[m
+[32m+[m[32m      if (skill) await db.insert(learningExperienceSkills).values({ experienceId, skillId: skill.id }).onConflictDoNothing();[m
+[32m+[m[32m    }[m
+[32m+[m[32m    return NextResponse.json({ reflection });[m
+[32m+[m[32m  } catch {[m
+[32m+[m[32m    return NextResponse.json({ error: 'Could not save reflection. Apply the Learning migration if needed.' }, { status: 500 });[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/api/admin/learning/route.ts b/app/api/admin/learning/route.ts[m
+[1mnew file mode 100644[m
+[1mindex 0000000..df831ef[m
+[1m--- /dev/null[m
+[1m+++ b/app/api/admin/learning/route.ts[m
+[36m@@ -0,0 +1,55 @@[m
+[32m+[m[32mimport { NextRequest, NextResponse } from 'next/server';[m
+[32m+[m[32mimport { asc } from 'drizzle-orm';[m
+[32m+[m[32mimport { getSession } from '@/lib/auth';[m
+[32m+[m[32mimport { isSameOrigin } from '@/lib/same-origin';[m
+[32m+[m[32mimport { LearningExperienceCreateInput } from '@/lib/learning-validation';[m
+[32m+[m[32mimport { learningAttachments, learningExperiences, learningReflections, learningStatusHistory } from '@/lib/schema';[m
+[32m+[m
+[32m+[m[32mexport const runtime = 'nodejs';[m
+[32m+[m
+[32m+[m[32mexport async function GET() {[m
+[32m+[m[32m  if (!(await getSession()).isAdmin) return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });[m
+[32m+[m[32m  try {[m
+[32m+[m[32m    const { db } = await import('@/lib/db');[m
+[32m+[m[32m    const [experiences, reflections, attachments, history] = await Promise.all([[m
+[32m+[m[32m      db.select().from(learningExperiences).orderBy(asc(learningExperiences.startsAt)),[m
+[32m+[m[32m      db.select().from(learningReflections),[m
+[32m+[m[32m      db.select().from(learningAttachments),[m
+[32m+[m[32m      db.select().from(learningStatusHistory).orderBy(asc(learningStatusHistory.changedAt)),[m
+[32m+[m[32m    ]);[m
+[32m+[m[32m    return NextResponse.json({ experiences: experiences.map(experience => ({[m
+[32m+[m[32m      ...experience,[m
+[32m+[m[32m      reflection: reflections.find(reflection => reflection.experienceId === experience.id) ?? null,[m
+[32m+[m[32m      attachments: attachments.filter(attachment => attachment.experienceId === experience.id),[m
+[32m+[m[32m      statusHistory: history.filter(entry => entry.experienceId === experience.id),[m
+[32m+[m[32m    })) });[m
+[32m+[m[32m  } catch {[m
+[32m+[m[32m    return NextResponse.json({ error: 'Learning records could not be loaded. Apply the learning database migration if this is a fresh deployment.' }, { status: 503 });[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mexport async function POST(request: NextRequest) {[m
+[32m+[m[32m  if (!(await getSession()).isAdmin) return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });[m
+[32m+[m[32m  if (!isSameOrigin(request)) return NextResponse.json({ error: 'Forbidden.' }, { status: 403 });[m
+[32m+[m[32m  const parsed = LearningExperienceCreateInput.safeParse(await request.json().catch(() => null));[m
+[32m+[m[32m  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid learning experience.' }, { status: 400 });[m
+[32m+[m
+[32m+[m[32m  try {[m
+[32m+[m[32m    const { db } = await import('@/lib/db');[m
+[32m+[m[32m    const { attachments, ...data } = parsed.data;[m
+[32m+[m[32m    const experience = await db.transaction(async tx => {[m
+[32m+[m[32m      const [created] = await tx.insert(learningExperiences).values({[m
+[32m+[m[32m        ...data,[m
+[32m+[m[32m        startsAt: data.startsAt ? new Date(data.startsAt) : null,[m
+[32m+[m[32m        endsAt: data.endsAt ? new Date(data.endsAt) : null,[m
+[32m+[m[32m        registrationDeadline: data.registrationDeadline ? new Date(data.registrationDeadline) : null,[m
+[32m+[m[32m      }).returning();[m
+[32m+[m[32m      await tx.insert(learningStatusHistory).values({ experienceId: created.id, toStatus: created.status, note: 'Initial status' });[m
+[32m+[m[32m      if (attachments.length) await tx.insert(learningAttachments).values(attachments.map(attachment => ({ ...attachment, experienceId: created.id })));[m
+[32m+[m[32m      return created;[m
+[32m+[m[32m    });[m
+[32m+[m[32m    return NextResponse.json({ experience }, { status: 201 });[m
+[32m+[m[32m  } catch {[m
+[32m+[m[32m    return NextResponse.json({ error: 'Could not save the learning experience.' }, { status: 500 });[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
 [1mdiff --git a/components/admin/LearningWorkspace.tsx b/components/admin/LearningWorkspace.tsx[m
 [1mnew file mode 100644[m
-[1mindex 0000000..75e6898[m
+[1mindex 0000000..6768d96[m
 [1m--- /dev/null[m
 [1m+++ b/components/admin/LearningWorkspace.tsx[m
-[36m@@ -0,0 +1,64 @@[m
+[36m@@ -0,0 +1,66 @@[m
 [32m+[m[32m'use client';[m
 [32m+[m[32mimport Link from 'next/link';[m
 [32m+[m[32mimport { useCallback, useEffect, useMemo, useState } from 'react';[m
 [32m+[m[32mimport { BookOpen, CalendarDays, Check, ChevronRight, GraduationCap, Plus, Search, Sparkles, Trash2 } from 'lucide-react';[m
 [32m+[m[32mimport { useToast } from './AdminUI';[m
+[32m+[m[32mimport type { LearningAttachmentRequest } from '@/lib/learning-validation';[m
+[32m+[m[32mimport { buildLearningExperiencePayload, type LearningFormValues } from '@/lib/learning-form-payload';[m
 [32m+[m[32mimport '../../app/admin/learning.css';[m
 [32m+[m
 [32m+[m[32mtype View='overview'|'all'|'calendar'|'reflections'|'skills'|'certificates'|'analytics';[m
-[32m+[m[32mtype Attachment={id?:number;label:string;kind:string;url:string};[m
+[32m+[m[32mtype Attachment=LearningAttachmentRequest & {id?:number};[m
 [32m+[m[32mtype Reflection={learned:string|null;technicalKnowledge:string|null;softSkills:string|null;takeaways:string|null;challenges:string|null;peopleMet:string|null;ideas:string|null;applicationPlan:string|null;actionItems:string|null;rating:number|null;notes:string|null;draft:boolean};[m
-[32m+[m[32mtype Experience={id:number;title:string;category:string;organizer:string|null;description:string|null;officialWebsite:string|null;registrationUrl:string|null;sourceUrl:string|null;mode:string;country:string|null;city:string|null;venue:string|null;meetingUrl:string|null;startsAt:string|null;endsAt:string|null;registrationDeadline:string|null;timezone:string;motivation:string|null;expectedOutcomes:string|null;skillsToAcquire:string[];personalGoals:string|null;priority:string;costType:string;feeCents:number|null;scholarship:string|null;otherExpenses:string|null;learningHours:number|null;status:string;reflection:Reflection|null;attachments:Attachment[];statusHistory:{id:number;fromStatus:string|null;toStatus:string;note:string|null;changedAt:string}[]};[m
+[32m+[m[32mtype Experience={id:number;title:string;category:string;organizer:string|null;description:string|null;officialWebsite:string|null;registrationUrl:string|null;sourceUrl:string|null;mode:string;country:string|null;city:string|null;venue:string|null;meetingUrl:string|null;startsAt:string|null;endsAt:string|null;registrationDeadline:string|null;timezone:string;motivation:string|null;expectedOutcomes:string|null;skillsToAcquire:string[];personalGoals:string|null;priority:string;costType:string;feeCents:number|null;currency:string|null;paymentNotes:string|null;scholarship:string|null;otherExpenses:string|null;learningHours:number|null;status:string;reflection:Reflection|null;attachments:Attachment[];statusHistory:{id:number;fromStatus:string|null;toStatus:string;note:string|null;changedAt:string}[]};[m
 [32m+[m[32mconst STATUSES=['INTERESTED','APPLIED','REGISTERED','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED','REJECTED','DID_NOT_ATTEND'];[m
 [32m+[m[32mconst CATEGORIES=['Course','Workshop','Summer Program / Summer Campaign','Conference','Meetup','Seminar','Webinar','Bootcamp','Mentorship Program','Professional Meeting','Networking Event','Other Learning Experience'];[m
 [32m+[m[32mconst SECTIONS:[View,string][]=[['overview','Overview'],['all','All Learning'],['calendar','Calendar'],['reflections','My Reflections'],['skills','Skills Growth'],['certificates','Certificates'],['analytics','Analytics']];[m
-[32m+[m[32mconst emptyForm=()=>({title:'',category:'Course',organizer:'',description:'',officialWebsite:'',registrationUrl:'',sourceUrl:'',mode:'ONLINE',country:'',city:'',venue:'',meetingUrl:'',startsAt:'',endsAt:'',registrationDeadline:'',timezone:'UTC',motivation:'',expectedOutcomes:'',skillsToAcquire:'',personalGoals:'',priority:'MEDIUM',costType:'UNKNOWN',fee:'',scholarship:'',otherExpenses:'',learningHours:'',status:'INTERESTED',attachmentLabel:'',attachmentKind:'DOCUMENT',attachmentUrl:''});[m
+[32m+[m[32mconst emptyForm=():LearningFormValues=>({title:'',category:'Course',organizer:'',description:'',officialWebsite:'',registrationUrl:'',sourceUrl:'',mode:'ONLINE',country:'',city:'',venue:'',meetingUrl:'',startsAt:'',endsAt:'',registrationDeadline:'',timezone:'UTC',motivation:'',expectedOutcomes:'',skillsToAcquire:'',personalGoals:'',priority:'MEDIUM',costType:'UNKNOWN',fee:'',currency:'',paymentNotes:'',scholarship:'',otherExpenses:'',learningHours:'',status:'INTERESTED',attachmentLabel:'',attachmentKind:'DOCUMENT',attachmentUrl:''});[m
 [32m+[m[32mconst emptyReflection=()=>({learned:'',technicalKnowledge:'',softSkills:'',takeaways:'',challenges:'',peopleMet:'',ideas:'',applicationPlan:'',actionItems:'',rating:'',notes:'',draft:true});[m
 [32m+[m[32mconst fmtDate=(v:string|null)=>v?new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',year:'numeric'}).format(new Date(v)):'Date not set';[m
 [32m+[m[32mfunction dateValue(v:string|null){if(!v)return '';const d=new Date(v);return Number.isNaN(+d)?'':d.toISOString().slice(0,10)}[m
-[32m+[m[32mfunction asIso(v:string){return v?new Date(`${v}T12:00:00`).toISOString():null}[m
 [32m+[m[32mfunction location(e:Experience){return [e.city,e.country].filter(Boolean).join(', ')||e.mode.replace('_',' ').toLowerCase()}[m
 [32m+[m[32mfunction field(label:string,key:string,value:string|number,onChange:(v:string)=>void,props:Record<string,string>={}){return <label className="learning-field" key={key}><span>{label}</span><input value={value} onChange={e=>onChange(e.target.value)} {...props}/></label>}[m
 [32m+[m[32mfunction textarea(label:string,key:string,value:string,onChange:(v:string)=>void){return <label className="learning-field learning-field-wide" key={key}><span>{label}</span><textarea rows={3} value={value} onChange={e=>onChange(e.target.value)}/></label>}[m
 [32m+[m[32mexport default function LearningWorkspace({view}:{view:View}){[m
-[32m+[m[32m const toast=useToast();const [items,setItems]=useState<Experience[]>([]);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const [search,setSearch]=useState('');const [status,setStatus]=useState('ALL');const [dialog,setDialog]=useState(false);const [editing,setEditing]=useState<Experience|null>(null);const [form,setForm]=useState(emptyForm());const [busy,setBusy]=useState(false);const [reflecting,setReflecting]=useState<number|null>(null);const [reflection,setReflection]=useState(emptyReflection());const [ai,setAi]=useState('');const [aiBusy,setAiBusy]=useState(false);[m
+[32m+[m[32m const toast=useToast();const [items,setItems]=useState<Experience[]>([]);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const [search,setSearch]=useState('');const [status,setStatus]=useState('ALL');const [dialog,setDialog]=useState(false);const [editing,setEditing]=useState<Experience|null>(null);const [form,setForm]=useState(emptyForm());const [stagedAttachments,setStagedAttachments]=useState<LearningAttachmentRequest[]>([]);const [busy,setBusy]=useState(false);const [reflecting,setReflecting]=useState<number|null>(null);const [reflection,setReflection]=useState(emptyReflection());const [ai,setAi]=useState('');const [aiBusy,setAiBusy]=useState(false);[m
 [32m+[m[32m const load=useCallback(async()=>{setLoading(true);try{const r=await fetch('/api/admin/learning',{cache:'no-store'});const d=await r.json();if(!r.ok)throw new Error(d.error||'Unable to load learning records.');setItems(d.experiences??[]);setError('');}catch(e){setError(e instanceof Error?e.message:'Unable to load records.');}finally{setLoading(false);}},[]);[m
 [32m+[m[32m useEffect(()=>{void load()},[load]);[m
-[32m+[m[32m const openForm=(entry?:Experience)=>{setEditing(entry??null);if(entry)setForm({title:entry.title,category:entry.category,organizer:entry.organizer??'',description:entry.description??'',officialWebsite:entry.officialWebsite??'',registrationUrl:entry.registrationUrl??'',sourceUrl:entry.sourceUrl??'',mode:entry.mode,country:entry.country??'',city:entry.city??'',venue:entry.venue??'',meetingUrl:entry.meetingUrl??'',startsAt:dateValue(entry.startsAt),endsAt:dateValue(entry.endsAt),registrationDeadline:dateValue(entry.registrationDeadline),timezone:entry.timezone,motivation:entry.motivation??'',expectedOutcomes:entry.expectedOutcomes??'',skillsToAcquire:entry.skillsToAcquire.join(', '),personalGoals:entry.personalGoals??'',priority:entry.priority,costType:entry.costType,fee:entry.feeCents==null?'':String(entry.feeCents/100),scholarship:entry.scholarship??'',otherExpenses:entry.otherExpenses??'',learningHours:entry.learningHours==null?'':String(entry.learningHours),status:entry.status,attachmentLabel:'',attachmentKind:'DOCUMENT',attachmentUrl:''});else setForm(emptyForm());setDialog(true)};[m
+[32m+[m[32m const openForm=(entry?:Experience)=>{setEditing(entry??null);setStagedAttachments([]);if(entry)setForm({title:entry.title,category:entry.category,organizer:entry.organizer??'',description:entry.description??'',officialWebsite:entry.officialWebsite??'',registrationUrl:entry.registrationUrl??'',sourceUrl:entry.sourceUrl??'',mode:entry.mode,country:entry.country??'',city:entry.city??'',venue:entry.venue??'',meetingUrl:entry.meetingUrl??'',startsAt:dateValue(entry.startsAt),endsAt:dateValue(entry.endsAt),registrationDeadline:dateValue(entry.registrationDeadline),timezone:entry.timezone,motivation:entry.motivation??'',expectedOutcomes:entry.expectedOutcomes??'',skillsToAcquire:entry.skillsToAcquire.join(', '),personalGoals:entry.personalGoals??'',priority:entry.priority,costType:entry.costType,fee:entry.feeCents==null?'':String(entry.feeCents/100),currency:entry.currency??'',paymentNotes:entry.paymentNotes??'',scholarship:entry.scholarship??'',otherExpenses:entry.otherExpenses??'',learningHours:entry.learningHours==null?'':String(entry.learningHours),status:entry.status,attachmentLabel:'',attachmentKind:'DOCUMENT',attachmentUrl:''});else setForm(emptyForm());setDialog(true)};[m
 [32m+[m[32m const changeForm=(key:string,value:string)=>setForm(f=>({...f,[key]:value}));[m
-[32m+[m[32m const save=async(e:React.FormEvent)=>{e.preventDefault();setBusy(true);try{const payload={...form,officialWebsite:form.officialWebsite||null,registrationUrl:form.registrationUrl||null,sourceUrl:form.sourceUrl||null,meetingUrl:form.meetingUrl||null,startsAt:asIso(form.startsAt),endsAt:asIso(form.endsAt),registrationDeadline:asIso(form.registrationDeadline),skillsToAcquire:form.skillsToAcquire.split(',').map(s=>s.trim()).filter(Boolean),feeCents:form.fee?Math.round(Number(form.fee)*100):null,learningHours:form.learningHours?Number(form.learningHours):null,attachments:form.attachmentUrl?[{label:form.attachmentLabel||'Supporting material',kind:form.attachmentKind,url:form.attachmentUrl}]:[]};let response;if(editing){const {attachments,...updates}=payload;response=await fetch(`/api/admin/learning/${editing.id}`,{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify(updates)});if(response.ok&&attachments.length){const attachResponse=await fetch(`/api/admin/learning/${editing.id}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(attachments[0])});if(!attachResponse.ok)throw new Error((await attachResponse.json()).error||'Experience saved, but the attachment could not be added.');}}else response=await fetch('/api/admin/learning',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok)throw new Error(data.error||'Could not save.');toast.success(editing?'Experience updated.':'Learning experience added.');setDialog(false);await load();}catch(err){toast.error(err instanceof Error?err.message:'Could not save.');}finally{setBusy(false)}};[m
+[32m+[m[32m const save=async(e:React.FormEvent)=>{e.preventDefault();setBusy(true);try{const payload=buildLearningExperiencePayload(form,stagedAttachments);const response=editing?await fetch(`/api/admin/learning/${editing.id}`,{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}):await fetch('/api/admin/learning',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok)throw new Error(data.error||'Could not save.');toast.success(editing?'Experience updated.':'Learning experience added.');setDialog(false);await load()}catch(err){toast.error(err instanceof Error?err.message:'Could not save.')}finally{setBusy(false)}};[m
+[32m+[m[32m const stageAttachment=()=>{if(!form.attachmentUrl.trim()){toast.info('Enter an attachment URL or storage reference first.');return}setStagedAttachments(items=>[...items,{label:form.attachmentLabel.trim()||'Supporting material',kind:form.attachmentKind as LearningAttachmentRequest['kind'],url:form.attachmentUrl.trim()}]);setForm(f=>({...f,attachmentLabel:'',attachmentUrl:''}))};[m
 [32m+[m[32m const remove=async(e:Experience)=>{if(!window.confirm(`Delete “${e.title}” and its reflection/history?`))return;const r=await fetch(`/api/admin/learning/${e.id}`,{method:'DELETE'});if(r.ok){toast.success('Learning record deleted.');await load()}else toast.error('Could not delete this record.')};[m
 [32m+[m[32m const updateStatus=async(e:Experience,next:string)=>{const r=await fetch(`/api/admin/learning/${e.id}`,{method:'PATCH',headers:{'content-type':'application/json'},body:JSON.stringify({status:next})});if(r.ok)await load();else toast.error('Could not update status.')};[m
 [32m+[m[32m const saveReflection=async(draft:boolean)=>{if(!reflecting)return;setBusy(true);try{const r=await fetch('/api/admin/learning/reflection',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...reflection,experienceId:reflecting,draft,rating:reflection.rating?Number(reflection.rating):null})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Could not save reflection.');toast.success(draft?'Reflection draft saved.':'Reflection marked complete.');setReflecting(null);await load()}catch(e){toast.error(e instanceof Error?e.message:'Could not save reflection.')}finally{setBusy(false)}};[m
@@ -233,8 +383,8 @@
 [32m+[m[32m <h3>Basic information</h3><div className="learning-form-grid">{field('Program title *','title',form.title,v=>changeForm('title',v),{required:'true',placeholder:'e.g. Product design workshop'})}{field('Category *','category',form.category,v=>changeForm('category',v),{list:'learning-categories',required:'true'})}<datalist id="learning-categories">{CATEGORIES.map(c=><option key={c}/>)}</datalist>{field('Organizer / Institution','organizer',form.organizer,v=>changeForm('organizer',v))}{field('Official website','officialWebsite',form.officialWebsite,v=>changeForm('officialWebsite',v),{type:'url'})}{field('Registration URL','registrationUrl',form.registrationUrl,v=>changeForm('registrationUrl',v),{type:'url'})}{field('Source URL','sourceUrl',form.sourceUrl,v=>changeForm('sourceUrl',v),{type:'url'})}{textarea('Description','description',form.description,v=>changeForm('description',v))}</div>[m
 [32m+[m[32m <h3>Participation</h3><div className="learning-form-grid"><label className="learning-field"><span>Mode</span><select value={form.mode} onChange={e=>changeForm('mode',e.target.value)}><option value="IN_PERSON">Physical / In-person</option><option value="ONLINE">Online / Virtual</option><option value="HYBRID">Hybrid</option></select></label>{field('Country','country',form.country,v=>changeForm('country',v))}{field('City','city',form.city,v=>changeForm('city',v))}{field('Venue','venue',form.venue,v=>changeForm('venue',v))}{field('Meeting URL','meetingUrl',form.meetingUrl,v=>changeForm('meetingUrl',v),{type:'url'})}{field('Start date','startsAt',form.startsAt,v=>changeForm('startsAt',v),{type:'date'})}{field('End date','endsAt',form.endsAt,v=>changeForm('endsAt',v),{type:'date'})}{field('Registration deadline','registrationDeadline',form.registrationDeadline,v=>changeForm('registrationDeadline',v),{type:'date'})}{field('Timezone','timezone',form.timezone,v=>changeForm('timezone',v))}</div>[m
 [32m+[m[32m <h3>Personal goals</h3><div className="learning-form-grid">{textarea('Why I want to participate','motivation',form.motivation,v=>changeForm('motivation',v))}{textarea('Expected learning outcomes','expectedOutcomes',form.expectedOutcomes,v=>changeForm('expectedOutcomes',v))}{field('Skills I want to acquire (comma-separated)','skillsToAcquire',form.skillsToAcquire,v=>changeForm('skillsToAcquire',v))}{textarea('Personal goals','personalGoals',form.personalGoals,v=>changeForm('personalGoals',v))}<label className="learning-field"><span>Priority</span><select value={form.priority} onChange={e=>changeForm('priority',e.target.value)}><option>LOW</option><option>MEDIUM</option><option>HIGH</option></select></label><label className="learning-field"><span>Status</span><select value={form.status} onChange={e=>changeForm('status',e.target.value)}>{STATUSES.map(s=><option key={s}>{s}</option>)}</select></label></div>[m
-[32m+[m[32m <h3>Cost & time</h3><div className="learning-form-grid"><label className="learning-field"><span>Cost</span><select value={form.costType} onChange={e=>changeForm('costType',e.target.value)}><option value="UNKNOWN">Not specified</option><option value="FREE">Free</option><option value="PAID">Paid</option></select></label>{field('Registration fee','fee',form.fee,v=>changeForm('fee',v),{type:'number',min:'0',step:'0.01'})}{field('Learning hours (optional)','learningHours',form.learningHours,v=>changeForm('learningHours',v),{type:'number',min:'0'})}{field('Scholarship / sponsorship','scholarship',form.scholarship,v=>changeForm('scholarship',v))}{field('Other expenses','otherExpenses',form.otherExpenses,v=>changeForm('otherExpenses',v))}</div>[m
-[32m+[m[32m <h3>Supporting material URL</h3>{editing?.attachments.map(a=><p className="learning-existing-file" key={a.id}><a href={a.url} target="_blank" rel="noreferrer">{a.kind}: {a.label}</a></p>)}<div className="learning-form-grid"><label className="learning-field"><span>Material type</span><select value={form.attachmentKind} onChange={e=>changeForm('attachmentKind',e.target.value)}>{['CONFIRMATION','AGENDA','DOCUMENT','CERTIFICATE','PHOTOGRAPH','OTHER'].map(v=><option key={v}>{v}</option>)}</select></label>{field('Label','attachmentLabel',form.attachmentLabel,v=>changeForm('attachmentLabel',v))}{field('HTTPS URL (file uploads are not configured)','attachmentUrl',form.attachmentUrl,v=>changeForm('attachmentUrl',v),{type:'url'})}</div>[m
+[32m+[m[32m <h3>Cost & time</h3><div className="learning-form-grid"><label className="learning-field"><span>Cost</span><select value={form.costType} onChange={e=>changeForm('costType',e.target.value)}><option value="UNKNOWN">Not specified</option><option value="FREE">Free</option><option value="PAID">Paid</option></select></label>{field('Registration fee amount','fee',form.fee,v=>changeForm('fee',v),{type:'number',min:'0',step:'0.01'})}{field('Currency (ISO 4217)','currency',form.currency,v=>changeForm('currency',v.toUpperCase()),{maxLength:'3',placeholder:'USD'})}{textarea('Payment notes (optional)','paymentNotes',form.paymentNotes,v=>changeForm('paymentNotes',v))}{field('Learning hours (optional)','learningHours',form.learningHours,v=>changeForm('learningHours',v),{type:'number',min:'0'})}{field('Scholarship / sponsorship','scholarship',form.scholarship,v=>changeForm('scholarship',v))}{field('Other expenses','otherExpenses',form.otherExpenses,v=>changeForm('otherExpenses',v))}</div>[m
+[32m+[m[32m <h3>Supporting materials</h3>{editing?.attachments.map(a=><p className="learning-existing-file" key={a.id}><a href={a.url} target="_blank" rel="noreferrer">{a.kind}: {a.label}</a></p>)}{stagedAttachments.map((a,i)=><div className="learning-staged-file" key={`${a.url}-${i}`}><span>{a.kind} · {a.label} · {a.url}</span><button type="button" onClick={()=>setStagedAttachments(xs=>xs.filter((_,j)=>j!==i))} aria-label={`Remove ${a.label}`}>Remove</button></div>)}<div className="learning-form-grid"><label className="learning-field"><span>Material type</span><select value={form.attachmentKind} onChange={e=>changeForm('attachmentKind',e.target.value)}>{['CERTIFICATE','DOCUMENT','IMAGE','PRESENTATION','OTHER','CONFIRMATION','AGENDA','PHOTOGRAPH'].map(v=><option key={v}>{v}</option>)}</select></label>{field('Label','attachmentLabel',form.attachmentLabel,v=>changeForm('attachmentLabel',v))}{field('HTTPS URL or storage reference','attachmentUrl',form.attachmentUrl,v=>changeForm('attachmentUrl',v),{placeholder:'https://… or /manus-storage/…'})}<button type="button" className="learning-cancel" onClick={stageAttachment}>Add another material</button></div>[m
 [32m+[m[32m </div><footer><button type="button" className="learning-cancel" onClick={()=>setDialog(false)}>Cancel</button><button type="submit" className="learning-add" disabled={busy}>{busy?'Saving…':editing?'Save changes':'Save experience'}</button></footer></form></div>}[m
 [32m+[m[32m {reflecting!==null&&<div className="learning-overlay" onMouseDown={e=>{if(e.target===e.currentTarget)setReflecting(null)}}><section className="learning-dialog reflection-dialog"><div className="learning-dialog-head"><div><span>COMPLETED EXPERIENCE</span><h2>Learning reflection</h2></div><button type="button" onClick={()=>setReflecting(null)} aria-label="Close">×</button></div><div className="learning-form-scroll"><p className="learning-note">Your words stay separate from optional AI suggestions. Saving a draft does not mark the reflection complete.</p><div className="learning-form-grid">{textarea('What did I learn?','learned',reflection.learned,v=>setReflection(r=>({...r,learned:v})))}{textarea('New technical knowledge','technicalKnowledge',reflection.technicalKnowledge,v=>setReflection(r=>({...r,technicalKnowledge:v})))}{textarea('New soft skills','softSkills',reflection.softSkills,v=>setReflection(r=>({...r,softSkills:v})))}{textarea('Biggest takeaways','takeaways',reflection.takeaways,v=>setReflection(r=>({...r,takeaways:v})))}{textarea('Challenges encountered','challenges',reflection.challenges,v=>setReflection(r=>({...r,challenges:v})))}{textarea('Important people I met','peopleMet',reflection.peopleMet,v=>setReflection(r=>({...r,peopleMet:v})))}{textarea('Ideas and opportunities discovered','ideas',reflection.ideas,v=>setReflection(r=>({...r,ideas:v})))}{textarea('How I will apply this','applicationPlan',reflection.applicationPlan,v=>setReflection(r=>({...r,applicationPlan:v})))}{textarea('Action items','actionItems',reflection.actionItems,v=>setReflection(r=>({...r,actionItems:v})))}{textarea('Additional notes','notes',reflection.notes,v=>setReflection(r=>({...r,notes:v})))}<label className="learning-field"><span>Personal assessment (1–5)</span><select value={reflection.rating} onChange={e=>setReflection(r=>({...r,rating:e.target.value}))}><option value="">Not rated</option>{[1,2,3,4,5].map(x=><option key={x}>{x}</option>)}</select></label></div><div className="learning-ai-tools"><h3><Sparkles size={16}/> Optional AI companion</h3><p>Suggestions are derived only from the text above. Review and edit them; nothing is added to your reflection automatically.</p><div>{(['summary','skills','gaps','action_plan','next_steps','themes','project_connections'] as const).map((a)=><button key={a} type="button" disabled={aiBusy} onClick={()=>void askAI(a)}>{a.replaceAll('_',' ')}</button>)}</div>{ai&&<div className="learning-ai-output"><b>AI suggestion · editable</b><textarea value={ai} onChange={e=>setAi(e.target.value)} rows={6}/><button type="button" onClick={()=>setReflection(r=>({...r,notes:[r.notes,`AI suggestion (reviewed):\n${ai}`].filter(Boolean).join('\n\n')}))}>Append reviewed suggestion to notes</button></div>}</div></div><footer><button className="learning-cancel" onClick={()=>setReflecting(null)}>Cancel</button><button className="learning-cancel" disabled={busy} onClick={()=>void saveReflection(true)}>Save draft</button><button className="learning-add" disabled={busy} onClick={()=>void saveReflection(false)}><Check size={16}/> Mark reflection complete</button></footer></section></div>}[m
 [32m+[m[32m </div>[m
@@ -300,10 +450,10 @@
 [32m+[m[32m);[m
 [32m+[m[32mCREATE INDEX IF NOT EXISTS "learning_attachments_experience_idx" ON "learning_attachments" ("experience_id");[m
 [1mdiff --git a/drizzle/meta/_journal.json b/drizzle/meta/_journal.json[m
-[1mindex 3f74930..af72545 100644[m
+[1mindex 3f74930..d862f4f 100644[m
 [1m--- a/drizzle/meta/_journal.json[m
 [1m+++ b/drizzle/meta/_journal.json[m
-[36m@@ -141,6 +141,13 @@[m
+[36m@@ -141,6 +141,20 @@[m
        "when": 1794570004000,[m
        "tag": "0019_remove_hackathon_search_provider",[m
        "breakpoints": true[m
@@ -314,11 +464,18 @@
 [32m+[m[32m      "when": 1794827276400,[m
 [32m+[m[32m      "tag": "0020_learning",[m
 [32m+[m[32m      "breakpoints": true[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "idx": 21,[m
+[32m+[m[32m      "version": "7",[m
+[32m+[m[32m      "when": 1794828226503,[m
+[32m+[m[32m      "tag": "0021_learning_financials",[m
+[32m+[m[32m      "breakpoints": true[m
      }[m
    ][m
  }[m
 [1mdiff --git a/lib/schema.ts b/lib/schema.ts[m
-[1mindex 1cedb36..35d83dd 100644[m
+[1mindex 1cedb36..31f24d0 100644[m
 [1m--- a/lib/schema.ts[m
 [1m+++ b/lib/schema.ts[m
 [36m@@ -66,3 +66,13 @@[m [mexport const hackathonEvidence = pgTable('hackathon_evidence', { id: serial('id'[m
@@ -327,7 +484,7 @@
  export type HackathonProfileRow = typeof hackathonProfiles.$inferSelect; export type HackathonStartupProfileRow = typeof hackathonStartupProfiles.$inferSelect; export type HackathonRow = typeof hackathons.$inferSelect; export type HackathonEvidenceRow = typeof hackathonEvidence.$inferSelect; export type HackathonMatchRow = typeof hackathonMatches.$inferSelect; export type SavedHackathonRow = typeof savedHackathons.$inferSelect;[m
 [32m+[m
 [32m+[m[32mexport const learningExperiences = pgTable('learning_experiences', {[m
-[32m+[m[32m  id: serial('id').primaryKey(), title: text('title').notNull(), category: text('category').notNull(), organizer: text('organizer'), description: text('description'), officialWebsite: text('official_website'), registrationUrl: text('registration_url'), sourceUrl: text('source_url'), mode: text('mode').notNull().default('ONLINE'), country: text('country'), city: text('city'), venue: text('venue'), meetingUrl: text('meeting_url'), startsAt: timestamp('starts_at', { withTimezone: true }), endsAt: timestamp('ends_at', { withTimezone: true }), registrationDeadline: timestamp('registration_deadline', { withTimezone: true }), timezone: text('timezone').notNull().default('UTC'), motivation: text('motivation'), expectedOutcomes: text('expected_outcomes'), skillsToAcquire: text('skills_to_acquire').array().notNull().default([]), personalGoals: text('personal_goals'), priority: text('priority').notNull().default('MEDIUM'), costType: text('cost_type').notNull().default('UNKNOWN'), feeCents: integer('fee_cents'), scholarship: text('scholarship'), otherExpenses: text('other_expenses'), learningHours: integer('learning_hours'), status: text('status').notNull().default('INTERESTED'), createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow()[m
+[32m+[m[32m  id: serial('id').primaryKey(), title: text('title').notNull(), category: text('category').notNull(), organizer: text('organizer'), description: text('description'), officialWebsite: text('official_website'), registrationUrl: text('registration_url'), sourceUrl: text('source_url'), mode: text('mode').notNull().default('ONLINE'), country: text('country'), city: text('city'), venue: text('venue'), meetingUrl: text('meeting_url'), startsAt: timestamp('starts_at', { withTimezone: true }), endsAt: timestamp('ends_at', { withTimezone: true }), registrationDeadline: timestamp('registration_deadline', { withTimezone: true }), timezone: text('timezone').notNull().default('UTC'), motivation: text('motivation'), expectedOutcomes: text('expected_outcomes'), skillsToAcquire: text('skills_to_acquire').array().notNull().default([]), personalGoals: text('personal_goals'), priority: text('priority').notNull().default('MEDIUM'), costType: text('cost_type').notNull().default('UNKNOWN'), feeCents: integer('fee_cents'), currency: text('currency'), paymentNotes: text('payment_notes'), scholarship: text('scholarship'), otherExpenses: text('other_expenses'), learningHours: integer('learning_hours'), status: text('status').notNull().default('INTERESTED'), createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow()[m
 [32m+[m[32m}, t => ({ statusIndex: index('learning_experiences_status_idx').on(t.status), datesIndex: index('learning_experiences_dates_idx').on(t.startsAt), categoryIndex: index('learning_experiences_category_idx').on(t.category) }));[m
 [32m+[m[32mexport const learningStatusHistory = pgTable('learning_status_history', { id: serial('id').primaryKey(), experienceId: integer('experience_id').notNull().references(() => learningExperiences.id, { onDelete: 'cascade' }), fromStatus: text('from_status'), toStatus: text('to_status').notNull(), note: text('note'), changedAt: timestamp('changed_at', { withTimezone: true }).notNull().defaultNow() }, t => ({ experienceChangedIndex: index('learning_status_history_experience_changed_idx').on(t.experienceId, t.changedAt) }));[m
 [32m+[m[32mexport const learningReflections = pgTable('learning_reflections', { id: serial('id').primaryKey(), experienceId: integer('experience_id').notNull().references(() => learningExperiences.id, { onDelete: 'cascade' }), learned: text('learned'), technicalKnowledge: text('technical_knowledge'), softSkills: text('soft_skills'), takeaways: text('takeaways'), challenges: text('challenges'), peopleMet: text('people_met'), ideas: text('ideas'), applicationPlan: text('application_plan'), actionItems: text('action_items'), rating: integer('rating'), notes: text('notes'), draft: boolean('draft').notNull().default(true), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow() }, t => ({ experienceUnique: uniqueIndex('learning_reflections_experience_unique').on(t.experienceId) }));[m
@@ -335,6 +492,20 @@
 [32m+[m[32mexport const learningExperienceSkills = pgTable('learning_experience_skills', { id: serial('id').primaryKey(), experienceId: integer('experience_id').notNull().references(() => learningExperiences.id, { onDelete: 'cascade' }), skillId: integer('skill_id').notNull().references(() => learningSkills.id, { onDelete: 'cascade' }), createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow() }, t => ({ relationUnique: uniqueIndex('learning_experience_skills_unique').on(t.experienceId, t.skillId) }));[m
 [32m+[m[32mexport const learningAttachments = pgTable('learning_attachments', { id: serial('id').primaryKey(), experienceId: integer('experience_id').notNull().references(() => learningExperiences.id, { onDelete: 'cascade' }), label: text('label').notNull(), kind: text('kind').notNull().default('DOCUMENT'), url: text('url').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow() }, t => ({ experienceIndex: index('learning_attachments_experience_idx').on(t.experienceId) }));[m
 [32m+[m[32mexport type LearningExperienceRow = typeof learningExperiences.$inferSelect;[m
+[1mdiff --git a/package.json b/package.json[m
+[1mindex 47bb09a..bd18ac0 100644[m
+[1m--- a/package.json[m
+[1m+++ b/package.json[m
+[36m@@ -14,7 +14,8 @@[m
+     "db:generate": "drizzle-kit generate",[m
+     "db:migrate": "node scripts/migrate.mjs",[m
+     "db:seed": "node scripts/seed.mjs",[m
+[31m-    "db:studio": "drizzle-kit studio"[m
+[32m+[m[32m    "db:studio": "drizzle-kit studio",[m
+[32m+[m[32m    "test:learning-validation": "tsx --test tests/learning-validation.test.ts"[m
+   },[m
+   "dependencies": {[m
+     "@fontsource-variable/bricolage-grotesque": "^5.3.0",[m
 [1mdiff --git a/plan.md b/plan.md[m
 [1mindex 0d8763b..8f2f98f 100644[m
 [1m--- a/plan.md[m

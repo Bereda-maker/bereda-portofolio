@@ -148,6 +148,13 @@
       "when": 1794827276400,
       "tag": "0020_learning",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1794828226503,
+      "tag": "0021_learning_financials",
+      "breakpoints": true
     }
   ]
 }
