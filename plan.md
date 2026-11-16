@@ -125,3 +125,13 @@ The protected Opportunities workspace remains backed by the existing profile, op
 ### Opportunities design
 
 Chosen movement: **evidence-led AI operations desk**. It uses compact Linear/Vercel-like density, navy surfaces, blue action accents, green readiness states, and gold attention states. Principles: show the source beside the claim, keep human approval visible, make the next action obvious, and preserve readable responsive behavior. The layout uses a command header, horizontal accessible tabs, metric rail, two-column briefing surfaces, responsive opportunity cards, Kanban-style status columns, and a selected-record detail panel. Motion is limited to small state transitions and includes a reduced-motion fallback. Candidate profile and settings stay deliberately operational; no unsupported provider controls or secret values are exposed.
+
+# Learning & Growth Management (2026-11)
+
+## Implementation and structure
+
+Add a separate protected `/admin/learning` workspace to this Next.js App Router application. Reuse the admin shell, `getSession`/`isAdminRequest`, same-origin write protections, PostgreSQL/Drizzle, and the existing server AI provider. Keep Learning separate from Experiences, Hackathons, Opportunities and Life AI. The workspace exposes Overview, All Learning, Calendar, My Reflections, Skills Growth, Certificates and Analytics routes.
+
+Add normalized tables for learning experiences, participation status history, reflections, reusable skills, experience-skill relationships and labeled attachment references. The repository has no general authenticated binary-upload API; supporting materials therefore use validated external/document URL references until storage upload infrastructure is explicitly available. Add schema definitions in `lib/schema.ts`, additive SQL migration `drizzle/0020_learning.sql`, protected and Zod-validated API handlers in `app/api/admin/learning`, route pages in `app/admin/(protected)/learning`, a focused workspace in `components/admin/LearningWorkspace.tsx`, and feature styling in `app/admin/learning.css`. Update navigation and `public/manus-routes.json`.
+
+Follow existing admin controls and responsive conventions with the requested Learning colors as feature-scoped accents and Fraunces/Inter font stacks. All analytics derive only from saved records; no fabricated or seeded statistics. Calendar uses recorded event dates. Optional AI analyses only user-entered content, prohibits inventing achievements or personal facts, and labels all generated text as editable suggestions separate from reflection fields.

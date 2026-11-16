@@ -1,0 +1,506 @@
+[1mdiff --git a/TODO.md b/TODO.md[m
+[1mindex 7acda5d..7efe635 100644[m
+[1m--- a/TODO.md[m
+[1m+++ b/TODO.md[m
+[36m@@ -30,3 +30,12 @@[m
+ - `/books` returns HTTP 200 with the expected empty-catalog state on both hosts; the database-backed route reports no connection/migration error.[m
+ - `GET /api/admin/books` returns HTTP 401 without a session on both hosts, confirming the admin endpoint is not public.[m
+ - No actual book records were added; the owner can add real titles from `/admin/books`.[m
+[32m+[m
+[32m+[m
+[32m+[m[32m## Learning & Growth Management[m
+[32m+[m[32m- [ ] **Learning navigation and views:** Add a separate protected Learning navigation item using a GraduationCap or BookOpen icon, following existing admin routing. Provide Overview, All Learning, Calendar, My Reflections, Skills Growth, Certificates and Analytics pages/views. Keep Learning independent of Hackathons, Projects, Experiences and Career Opportunities; provide responsive search, filtering, sorting and pagination where appropriate.[m
+[32m+[m[32m- [ ] **Learning registration and lifecycle:** Administrator can register an experience with required program title and category; organizer/institution, description, official website, registration URL and source URL; participation mode (physical/in-person, online/virtual or hybrid), country, city, venue, meeting URL, start/end dates, deadline and timezone; motivation, expected outcomes, skills to acquire, goals and priority; free/paid, fee, scholarship/sponsorship and optional other expenses. Include Courses, Workshops, Summer Programs/Campaigns, Conferences, Meetups, Seminars, Webinars, Bootcamps, Mentorship Programs, Professional Meetings, Networking Events and Other Learning Experiences, and allow custom categories. Support INTERESTED, APPLIED, REGISTERED, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED, REJECTED and DID_NOT_ATTEND; status changes preserve history. Completed status enables a separate reflection workflow; reflection completion is tracked independently from participation status.[m
+[32m+[m[32m- [ ] **Learning reflections, skills and attachments:** Administrator can create/edit/save reflection drafts for completed experiences with what was learned, technical knowledge, soft skills, takeaways, challenges, people met, ideas/opportunities, application plan, action items, personal assessment/rating and additional notes. Track acquired skills across experiences; display certificates and other supporting materials. Registration confirmations, agendas, documents, certificates and photographs can be referenced as attachments. Preserve personal reflection text distinctly from optional AI suggestions.[m
+[32m+[m[32m- [ ] **Learning dashboard and analytics:** Show total registered, completed, upcoming and active experiences; total learning hours only where recorded; skills acquired, completed reflections and certificates collected. Include upcoming programs, recently completed experiences, recent reflections, activity timeline and progress analytics. All totals/analytics derive only from stored records; do not invent sample data or fabricated statistics. Calendar displays upcoming stored programs.[m
+[32m+[m[32m- [ ] **Optional AI Learning Companion:** Integrate the existing central AI assistant optionally for summarizing reflections, extracting acquired skills, identifying knowledge gaps, generating action plans, recommending relevant next learning opportunities, connecting experiences to portfolio projects, identifying recurring themes, and generating monthly/yearly learning reports. AI must not fabricate learning achievements or personal experiences; generated insights remain editable, visibly AI-generated and separate from personal reflections.[m
+[32m+[m[32m- [ ] **Learning data security and integrity:** Use a normalized data model for learning experiences, reflections, skills, attachments and status history where appropriate. Implement admin-only CRUD; validate all inputs on the server; preserve relational integrity; reuse existing storage where available; avoid duplicating other admin modules or interfering with existing features. Verify new routes, schema and API behavior without mutating the shared managed database.[m
+[1mdiff --git a/app/admin/(protected)/learning/all/page.tsx b/app/admin/(protected)/learning/all/page.tsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..09502d2[m
+[1m--- /dev/null[m
+[1m+++ b/app/admin/(protected)/learning/all/page.tsx[m
+[36m@@ -0,0 +1,4 @@[m
+[32m+[m[32mimport LearningWorkspace from '@/components/admin/LearningWorkspace';[m
+[32m+[m[32mexport const metadata = { title: 'All Learning — Admin' };[m
+[32m+[m[32mexport const dynamic = 'force-dynamic';[m
+[32m+[m[32mexport default function LearningPage() { return <LearningWorkspace view="all" />; }[m
+[1mdiff --git a/app/admin/(protected)/learning/analytics/page.tsx b/app/admin/(protected)/learning/analytics/page.tsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..f95bb7c[m
+[1m--- /dev/null[m
+[1m+++ b/app/admin/(protected)/learning/analytics/page.tsx[m
+[36m@@ -0,0 +1,4 @@[m
+[32m+[m[32mimport LearningWorkspace from '@/components/admin/LearningWorkspace';[m
+[32m+[m[32mexport const metadata = { title: 'Learning Analytics — Admin' };[m
+[32m+[m[32mexport const dynamic = 'force-dynamic';[m
+[32m+[m[32mexport default function LearningPage() { return <LearningWorkspace view="analytics" />; }[m
+[1mdiff --git a/app/admin/(protected)/learning/calendar/page.tsx b/app/admin/(protected)/learning/calendar/page.tsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..1d23bf5[m
+[1m--- /dev/null[m
+[1m+++ b/app/admin/(protected)/learning/calendar/page.tsx[m
+[36m@@ -0,0 +1,4 @@[m
+[32m+[m[32mimport LearningWorkspace from '@/components/admin/LearningWorkspace';[m
+[32m+[m[32mexport const metadata = { title: 'Learning Calendar — Admin' };[m
+[32m+[m[32mexport const dynamic = 'force-dynamic';[m
+[32m+[m[32mexport default function LearningPage() { return <LearningWorkspace view="calendar" />; }[m
+[1mdiff --git a/app/admin/(protected)/learning/certificates/page.tsx b/app/admin/(protected)/learning/certificates/page.tsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..ee022ef[m
+[1m--- /dev/null[m
+[1m+++ b/app/admin/(protected)/learning/certificates/page.tsx[m
+[36m@@ -0,0 +1,4 @@[m
+[32m+[m[32mimport LearningWorkspace from '@/components/admin/LearningWorkspace';[m
+[32m+[m[32mexport const metadata = { title: 'Certificates — Admin' };[m
+[32m+[m[32mexport const dynamic = 'force-dynamic';[m
+[32m+[m[32mexport default function LearningPage() { return <LearningWorkspace view="certificates" />; }[m
+[1mdiff --git a/app/admin/(protected)/learning/page.tsx b/app/admin/(protected)/learning/page.tsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..b06fa3f[m
+[1m--- /dev/null[m
+[1m+++ b/app/admin/(protected)/learning/page.tsx[m
+[36m@@ -0,0 +1,4 @@[m
+[32m+[m[32mimport LearningWorkspace from '@/components/admin/LearningWorkspace';[m
+[32m+[m[32mexport const metadata = { title: 'Learning — Admin' };[m
+[32m+[m[32mexport const dynamic = 'force-dynamic';[m
+[32m+[m[32mexport default function LearningPage() { return <LearningWorkspace view="overview" />; }[m
+[1mdiff --git a/app/admin/(protected)/learning/reflections/page.tsx b/app/admin/(protected)/learning/reflections/page.tsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..4a777ab[m
+[1m--- /dev/null[m
+[1m+++ b/app/admin/(protected)/learning/reflections/page.tsx[m
+[36m@@ -0,0 +1,4 @@[m
+[32m+[m[32mimport LearningWorkspace from '@/components/admin/LearningWorkspace';[m
+[32m+[m[32mexport const metadata = { title: 'My Reflections — Admin' };[m
+[32m+[m[32mexport const dynamic = 'force-dynamic';[m
+[32m+[m[32mexport default function LearningPage() { return <LearningWorkspace view="reflections" />; }[m
+[1mdiff --git a/app/admin/(protected)/learning/skills/page.tsx b/app/admin/(protected)/learning/skills/page.tsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..89f575a[m
+[1m--- /dev/null[m
+[1m+++ b/app/admin/(protected)/learning/skills/page.tsx[m
+[36m@@ -0,0 +1,4 @@[m
+[32m+[m[32mimport LearningWorkspace from '@/components/admin/LearningWorkspace';[m
+[32m+[m[32mexport const metadata = { title: 'Skills Growth — Admin' };[m
+[32m+[m[32mexport const dynamic = 'force-dynamic';[m
+[32m+[m[32mexport default function LearningPage() { return <LearningWorkspace view="skills" />; }[m
+[1mdiff --git a/app/admin/learning.css b/app/admin/learning.css[m
+[1mnew file mode 100644[m
+[1mindex 0000000..197af8b[m
+[1m--- /dev/null[m
+[1m+++ b/app/admin/learning.css[m
+[36m@@ -0,0 +1,6 @@[m
+[32m+[m[32m.learning-root{--learn-green:#1B4332;--learn-forest:#2D6A4F;--learn-gold:#D4A437;--learn-terra:#C1693C;--learn-cream:#FAF6EC;--learn-ink:var(--admin-ink);--learn-muted:var(--admin-muted);font-family:Inter,'Bricolage Grotesque Variable',sans-serif;color:var(--learn-ink)}[m
+[32m+[m[32m.learning-root h1,.learning-root h2,.learning-root h3{font-family:Fraunces,'Newsreader Variable',Georgia,serif;letter-spacing:-.025em}.learning-header{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:1.35rem}.learning-header h1{font-size:clamp(2rem,4vw,3rem);margin:.1rem 0;color:var(--learn-ink)}.learning-header p{margin:.3rem 0;color:var(--learn-muted)}.learning-kicker{display:flex!important;align-items:center;gap:.45rem;color:var(--learn-gold)!important;font:700 .72rem Inter,sans-serif!important;letter-spacing:.12em;margin:0!important}.learning-add{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;padding:.7rem 1rem;border:0;border-radius:.6rem;background:var(--learn-forest);color:#fff;font:600 .88rem Inter,sans-serif;cursor:pointer}.learning-add:hover{background:var(--learn-green)}.learning-add:disabled{opacity:.55}.learning-tabs{display:flex;gap:.3rem;overflow-x:auto;border-bottom:1px solid var(--admin-border);margin-bottom:1.3rem;scrollbar-width:thin}.learning-tabs a{flex:none;color:var(--learn-muted);text-decoration:none;padding:.65rem .85rem;border-bottom:2px solid transparent;font-size:.86rem}.learning-tabs a:hover,.learning-tabs a.active{color:var(--learn-ink);border-color:var(--learn-gold)}.learning-error{display:flex;justify-content:space-between;gap:1rem;padding:.9rem;border:1px solid var(--admin-danger);border-radius:.7rem;color:var(--admin-danger-text)}.learning-error button{border:0;background:transparent;color:inherit;text-decoration:underline}.learning-loading,.learning-empty{padding:1.8rem;border:1px dashed var(--admin-border-strong);border-radius:.9rem;color:var(--learn-muted);text-align:center}.learning-empty svg{color:var(--learn-gold)}.learning-empty p{margin:.5rem auto 0;max-width:32rem}.learning-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.7rem;margin:1.2rem 0}.learning-stats article{padding:1rem 1.05rem;border:1px solid var(--admin-border);border-top:2px solid var(--learn-forest);border-radius:.75rem;background:var(--admin-surface)}.learning-stats span,.learning-stats small{display:block;color:var(--learn-muted);font-size:.8rem}.learning-stats strong{display:block;font-size:1.85rem;line-height:1.25;font-variant-numeric:tabular-nums}.learning-stats small{font-size:.73rem;margin-top:.2rem}.learning-columns{display:grid;grid-template-columns:1.2fr .8fr;gap:1rem}.learning-panel,.learning-list-wrap{padding:1.15rem;border:1px solid var(--admin-border);border-radius:.9rem;background:var(--admin-surface)}.learning-panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:.8rem;margin-bottom:.6rem}.learning-panel-head h2{font-size:1.2rem;margin:0}.learning-panel-head p{margin:.2rem 0;color:var(--learn-muted);font-size:.83rem}.learning-panel-head a{display:flex;align-items:center;white-space:nowrap;color:var(--learn-gold);font-size:.8rem;text-decoration:none}.learning-item{display:flex;gap:.85rem;padding:1rem .25rem;border-top:1px solid var(--admin-border)}.learning-date{display:flex;flex:none;align-items:flex-start;gap:.35rem;color:var(--learn-gold);font-size:.75rem;padding-top:.2rem}.learning-date svg{flex:none}.learning-item-main{flex:1;min-width:0}.learning-item-title{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem}.learning-item-title h3{margin:0;font:600 1.03rem Inter,sans-serif}.learning-item-main>p{color:var(--learn-muted);font-size:.82rem;margin:.28rem 0}.learning-item-desc{max-width:52rem}.learning-status{display:inline-flex;padding:.16rem .5rem;border-radius:999px;background:color-mix(in srgb,var(--learn-forest) 20%,transparent);color:var(--learn-forest);font-size:.66rem;font-weight:700;letter-spacing:.03em}.learning-status.completed,.learning-status.confirmed{background:color-mix(in srgb,var(--learn-forest) 24%,transparent);color:var(--learn-forest)}.learning-status.cancelled,.learning-status.rejected{background:color-mix(in srgb,var(--learn-terra) 20%,transparent);color:var(--learn-terra)}.learning-item-bottom,.learning-item-actions{display:flex;align-items:center;flex-wrap:wrap;gap:.65rem;margin-top:.55rem;color:var(--learn-muted);font-size:.74rem}.learning-reflection-done{color:var(--learn-forest);font-weight:700}.learning-item-actions{margin-top:.7rem}.learning-item-actions button,.learning-item-actions select,.learning-item-actions label{border:1px solid var(--admin-border-strong);border-radius:.45rem;padding:.28rem .48rem;background:var(--admin-input-bg);color:var(--learn-muted);font:inherit}.learning-item-actions label{border:0;padding:0}.learning-item-actions button{cursor:pointer}.learning-item-actions button:hover{color:var(--learn-gold)}.learning-controls{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.6rem}.learning-controls>span{margin-left:auto;color:var(--learn-muted);font-size:.8rem}.learning-controls select,.learning-search input{border:1px solid var(--admin-border-strong);border-radius:.5rem;background:var(--admin-input-bg);color:var(--learn-ink);padding:.55rem .65rem;font:inherit;font-size:.84rem}.learning-search{position:relative;display:flex;align-items:center;flex:1 1 15rem}.learning-search svg{position:absolute;left:.65rem;color:var(--learn-muted)}.learning-search input{width:100%;padding-left:2rem}.learning-skill-list{display:flex;flex-wrap:wrap;gap:.6rem;padding:.65rem 0}.learning-skill-list span{display:flex;align-items:center;gap:.7rem;border:1px solid color-mix(in srgb,var(--learn-forest) 40%,var(--admin-border));border-radius:99px;padding:.55rem .8rem;background:color-mix(in srgb,var(--learn-forest) 9%,transparent);font-size:.84rem}.learning-skill-list b{color:var(--learn-gold);font-size:.72rem}.learning-cert-list{display:grid;gap:.55rem}.learning-cert-list a{display:flex;align-items:center;gap:.7rem;padding:.8rem;border:1px solid var(--admin-border);border-radius:.65rem;color:var(--learn-ink);text-decoration:none}.learning-cert-list a>svg:first-child{color:var(--learn-gold)}.learning-cert-list a>svg:last-child{margin-left:auto}.learning-cert-list span{display:grid;gap:.1rem}.learning-cert-list small{color:var(--learn-muted)}.learning-bars{display:grid;gap:.7rem;padding:.6rem 0}.learning-bar-row{display:grid;grid-template-columns:9rem 1fr 1.5rem;align-items:center;gap:.6rem;font-size:.72rem}.learning-bar-row>span{color:var(--learn-muted)}.learning-bar-row>div{height:.55rem;background:var(--admin-inset);border-radius:1rem;overflow:hidden}.learning-bar-row i{display:block;height:100%;border-radius:inherit;background:var(--learn-forest)}.learning-bar-row b{text-align:right}.learning-overlay{position:fixed;z-index:90;inset:0;display:flex;align-items:center;justify-content:center;padding:1rem;background:rgba(0,0,0,.65)}.learning-dialog{display:flex;flex-direction:column;width:min(100%,56rem);max-height:min(94vh,60rem);background:var(--admin-surface);border:1px solid var(--admin-border-strong);border-radius:1rem;box-shadow:0 1rem 5rem rgba(0,0,0,.4);overflow:hidden}.learning-dialog-head{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1px solid var(--admin-border);padding:1.05rem 1.3rem}.learning-dialog-head span{color:var(--learn-gold);font-size:.65rem;font-weight:800;letter-spacing:.12em}.learning-dialog-head h2{margin:.2rem 0 0;font-size:1.35rem}.learning-dialog-head>button{border:0;background:none;color:var(--learn-muted);font-size:1.7rem;cursor:pointer}.learning-form-scroll{overflow:auto;padding:1.1rem 1.3rem;display:grid;gap:.8rem}.learning-form-scroll>h3,.learning-ai-tools h3{margin:.6rem 0 0;color:var(--learn-forest);font:700 .76rem Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase}.learning-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}.learning-field{display:grid;gap:.32rem;min-width:0}.learning-field>span{color:var(--learn-muted);font-size:.75rem;font-weight:600}.learning-field input,.learning-field textarea,.learning-field select,.learning-ai-output textarea{width:100%;border:1px solid var(--admin-border-strong);border-radius:.5rem;background:var(--admin-input-bg);color:var(--learn-ink);padding:.62rem .7rem;font:inherit;font-size:.84rem}.learning-field textarea{resize:vertical;line-height:1.5}.learning-field-wide{grid-column:1/-1}.learning-dialog>footer{display:flex;justify-content:flex-end;gap:.55rem;border-top:1px solid var(--admin-border);padding:.8rem 1.2rem}.learning-cancel{padding:.65rem .9rem;border:1px solid var(--admin-border-strong);border-radius:.55rem;background:transparent;color:var(--learn-ink);font:600 .82rem Inter,sans-serif;cursor:pointer}.learning-note{margin:0;color:var(--learn-muted);font-size:.82rem}.learning-ai-tools{padding:.85rem;border:1px solid color-mix(in srgb,var(--learn-gold) 45%,var(--admin-border));border-radius:.75rem;background:color-mix(in srgb,var(--learn-gold) 6%,transparent)}.learning-ai-tools h3{display:flex;align-items:center;gap:.4rem;color:var(--learn-gold);margin:0}.learning-ai-tools p{font-size:.78rem;color:var(--learn-muted)}.learning-ai-tools>div:first-of-type{display:flex;flex-wrap:wrap;gap:.4rem}.learning-ai-tools button,.learning-ai-output button{border:1px solid var(--admin-border-strong);border-radius:.45rem;background:transparent;color:var(--learn-ink);padding:.35rem .55rem;font-size:.74rem;cursor:pointer}.learning-ai-output{display:grid;gap:.45rem;margin-top:.75rem}.learning-ai-output>b{color:var(--learn-gold);font-size:.76rem}.reflection-dialog{width:min(100%,48rem)}[m
+[32m+[m[32m@media(max-width:900px){.learning-columns{grid-template-columns:1fr}.learning-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-header{align-items:flex-start}.learning-header>.learning-add{margin-top:1.5rem}}[m
+[32m+[m[32m@media(max-width:580px){.learning-root{margin-inline:-.25rem}.learning-header{flex-direction:column;align-items:stretch}.learning-header>.learning-add{margin-top:0;align-self:flex-start}.learning-tabs a{padding:.6rem .65rem}.learning-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}.learning-stats article{padding:.8rem}.learning-stats strong{font-size:1.55rem}.learning-panel,.learning-list-wrap{padding:.8rem}.learning-item{display:block}.learning-date{margin-bottom:.25rem}.learning-form-grid{grid-template-columns:1fr}.learning-field-wide{grid-column:auto}.learning-dialog{max-height:96vh}.learning-dialog>footer{flex-wrap:wrap}.learning-controls select{flex:1}.learning-bar-row{grid-template-columns:6.8rem 1fr 1.2rem}}[m
+[32m+[m[32m.learning-existing-file{margin:0;color:var(--learn-muted);font-size:.8rem}.learning-existing-file a{color:var(--learn-gold)}.learning-history{margin-top:.55rem;color:var(--learn-muted);font-size:.75rem}.learning-history summary{cursor:pointer}.learning-history ol{margin:.35rem 0;padding-left:1.3rem}.learning-history li+li{margin-top:.2rem}.learning-history small{color:var(--learn-gold)}.learning-insight-panel{margin-top:1rem}.learning-insight-panel .learning-panel-head h2{display:flex;align-items:center;gap:.45rem}[m
+[32m+[m[32m.learning-status{background:var(--learn-forest);color:var(--learn-cream)}.learning-status.cancelled,.learning-status.rejected{background:var(--learn-terra);color:var(--learn-cream)}.learning-reflection-done{color:var(--learn-gold)}.learning-skill-list span{color:var(--learn-ink)}html[data-admin-theme="dark"] .learning-root .learning-form-scroll>h3{color:var(--learn-gold)}html[data-admin-theme="light"] .learning-root .learning-form-scroll>h3{color:var(--learn-green)}[m
+[1mdiff --git a/app/api/admin/learning/[id]/route.ts b/app/api/admin/learning/[id]/route.ts[m
+[1mnew file mode 100644[m
+[1mindex 0000000..d66b73d[m
+[1m--- /dev/null[m
+[1m+++ b/app/api/admin/learning/[id]/route.ts[m
+[36m@@ -0,0 +1,22 @@[m
+[32m+[m[32mimport { NextRequest, NextResponse } from 'next/server';[m
+[32m+[m[32mimport { and, eq } from 'drizzle-orm';[m
+[32m+[m[32mimport { getSession } from '@/lib/auth';[m
+[32m+[m[32mimport { isSameOrigin } from '@/lib/same-origin';[m
+[32m+[m[32mimport { learningExperiences, learningStatusHistory } from '@/lib/schema';[m
+[32m+[m[32mimport { z } from 'zod';[m
+[32m+[m[32mexport const runtime='nodejs';[m
+[32m+[m[32mconst statuses=['INTERESTED','APPLIED','REGISTERED','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED','REJECTED','DID_NOT_ATTEND'] as const;[m
+[32m+[m[32mconst Patch=z.object({status:z.enum(statuses),note:z.string().trim().max(500).optional()}).strict();[m
+[32m+[m
+[32m+[m[32mconst safeUrl=z.string().url().max(1000).refine(v=>v.startsWith('https://'),'Links must use HTTPS.').nullable().optional();[m
+[32m+[m[32mconst Edit=z.object({title:z.string().trim().min(1).max(240),category:z.string().trim().min(1).max(100),organizer:z.string().max(240).nullable().optional(),description:z.string().max(5000).nullable().optional(),officialWebsite:safeUrl,registrationUrl:safeUrl,sourceUrl:safeUrl,mode:z.enum(['IN_PERSON','ONLINE','HYBRID']),country:z.string().max(120).nullable().optional(),city:z.string().max(120).nullable().optional(),venue:z.string().max(240).nullable().optional(),meetingUrl:safeUrl,startsAt:z.string().datetime().nullable().optional(),endsAt:z.string().datetime().nullable().optional(),registrationDeadline:z.string().datetime().nullable().optional(),timezone:z.string().min(1).max(100),motivation:z.string().max(3000).nullable().optional(),expectedOutcomes:z.string().max(3000).nullable().optional(),skillsToAcquire:z.array(z.string().max(100)).max(50),personalGoals:z.string().max(3000).nullable().optional(),priority:z.enum(['LOW','MEDIUM','HIGH']),costType:z.enum(['FREE','PAID','UNKNOWN']),feeCents:z.number().int().min(0).nullable().optional(),scholarship:z.string().max(1000).nullable().optional(),otherExpenses:z.string().max(1000).nullable().optional(),learningHours:z.number().int().min(0).nullable().optional(),status:z.enum(statuses)}).strict();[m
+[32m+[m
+[32m+[m[32mexport async function PATCH(req:NextRequest,{params}:{params:{id:string}}){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});if(!isSameOrigin(req))return NextResponse.json({error:'Forbidden.'},{status:403});const id=Number(params.id);if(!Number.isInteger(id)||id<1)return NextResponse.json({error:'Invalid record.'},{status:400});const parsed=Patch.safeParse(await req.json().catch(()=>null));if(!parsed.success)return NextResponse.json({error:'Invalid status change.'},{status:400});try{const {db}=await import('@/lib/db');const [current]=await db.select().from(learningExperiences).where(eq(learningExperiences.id,id)).limit(1);if(!current)return NextResponse.json({error:'Not found.'},{status:404});if(current.status!==parsed.data.status){await db.transaction(async tx=>{await tx.update(learningExperiences).set({status:parsed.data.status,updatedAt:new Date()}).where(eq(learningExperiences.id,id));await tx.insert(learningStatusHistory).values({experienceId:id,fromStatus:current.status,toStatus:parsed.data.status,note:parsed.data.note??null});});}return NextResponse.json({ok:true});}catch{return NextResponse.json({error:'Could not update status.'},{status:500});}}[m
+[32m+[m
+[32m+[m
+[32m+[m[32mconst AttachmentInput=z.object({label:z.string().trim().min(1).max(160),kind:z.enum(['CONFIRMATION','AGENDA','DOCUMENT','CERTIFICATE','PHOTOGRAPH','OTHER']),url:z.string().url().max(1000).refine(v=>v.startsWith('https://'),'Attachment links must use HTTPS.')}).strict();[m
+[32m+[m[32mexport async function POST(req:NextRequest,{params}:{params:{id:string}}){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});if(!isSameOrigin(req))return NextResponse.json({error:'Forbidden.'},{status:403});const id=Number(params.id);if(!Number.isInteger(id)||id<1)return NextResponse.json({error:'Invalid record.'},{status:400});const parsed=AttachmentInput.safeParse(await req.json().catch(()=>null));if(!parsed.success)return NextResponse.json({error:parsed.error.issues[0]?.message??'Invalid attachment.'},{status:400});try{const {db}=await import('@/lib/db');const {learningAttachments}=await import('@/lib/schema');const [experience]=await db.select({id:learningExperiences.id}).from(learningExperiences).where(eq(learningExperiences.id,id)).limit(1);if(!experience)return NextResponse.json({error:'Not found.'},{status:404});const [attachment]=await db.insert(learningAttachments).values({...parsed.data,experienceId:id}).returning();return NextResponse.json({attachment},{status:201});}catch{return NextResponse.json({error:'Could not save supporting material.'},{status:500});}}[m
+[32m+[m
+[32m+[m[32mexport async function PUT(req:NextRequest,{params}:{params:{id:string}}){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});if(!isSameOrigin(req))return NextResponse.json({error:'Forbidden.'},{status:403});const id=Number(params.id);if(!Number.isInteger(id)||id<1)return NextResponse.json({error:'Invalid record.'},{status:400});const parsed=Edit.safeParse(await req.json().catch(()=>null));if(!parsed.success)return NextResponse.json({error:parsed.error.issues[0]?.message??'Invalid experience.'},{status:400});const d=parsed.data;if(d.startsAt&&d.endsAt&&new Date(d.endsAt)<new Date(d.startsAt))return NextResponse.json({error:'End date must be on or after start date.'},{status:400});try{const {db}=await import('@/lib/db');const [current]=await db.select().from(learningExperiences).where(eq(learningExperiences.id,id)).limit(1);if(!current)return NextResponse.json({error:'Not found.'},{status:404});const {status,...rest}=d;await db.transaction(async tx=>{await tx.update(learningExperiences).set({...rest,startsAt:rest.startsAt?new Date(rest.startsAt):null,endsAt:rest.endsAt?new Date(rest.endsAt):null,registrationDeadline:rest.registrationDeadline?new Date(rest.registrationDeadline):null,status,updatedAt:new Date()}).where(eq(learningExperiences.id,id));if(current.status!==status)await tx.insert(learningStatusHistory).values({experienceId:id,fromStatus:current.status,toStatus:status,note:'Updated from experience editor'});});return NextResponse.json({ok:true});}catch{return NextResponse.json({error:'Could not update the experience.'},{status:500});}}[m
+[32m+[m
+[32m+[m[32mexport async function DELETE(req:NextRequest,{params}:{params:{id:string}}){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});if(!isSameOrigin(req))return NextResponse.json({error:'Forbidden.'},{status:403});const id=Number(params.id);if(!Number.isInteger(id)||id<1)return NextResponse.json({error:'Invalid record.'},{status:400});try{const {db}=await import('@/lib/db');await db.delete(learningExperiences).where(eq(learningExperiences.id,id));return NextResponse.json({ok:true});}catch{return NextResponse.json({error:'Could not delete the record.'},{status:500});}}[m
+[1mdiff --git a/app/api/admin/learning/ai/route.ts b/app/api/admin/learning/ai/route.ts[m
+[1mnew file mode 100644[m
+[1mindex 0000000..351efc0[m
+[1m--- /dev/null[m
+[1m+++ b/app/api/admin/learning/ai/route.ts[m
+[36m@@ -0,0 +1,5 @@[m
+[32m+[m[32mimport {NextRequest,NextResponse} from 'next/server';import {z} from 'zod';import {getSession} from '@/lib/auth';import {isSameOrigin} from '@/lib/same-origin';import {aiProvider} from '@/lib/services/providers';[m
+[32m+[m[32mexport const runtime='nodejs';export const dynamic='force-dynamic';[m
+[32m+[m[32mconst Input=z.object({action:z.enum(['summary','skills','gaps','action_plan','next_steps','themes','report','project_connections']),text:z.string().trim().min(20).max(12000)}).strict();[m
+[32m+[m[32mconst prompts={summary:'Summarize only the facts the user states.',skills:'List skills explicitly evidenced by the user text. Separate direct evidence from possible skills to develop.',gaps:'Suggest possible knowledge gaps to explore, clearly mark them as hypotheses, and do not claim the user lacks skills.',action_plan:'Create a practical next-step plan grounded only in stated goals and evidence.',next_steps:'Suggest relevant kinds of next learning opportunities using only the stated interests; do not invent specific available programs.',themes:'Identify recurring themes in the supplied text only.',report:'Write a concise learning report using only the supplied records and mark any interpretations as suggestions.',project_connections:'Compare the learning notes with only the actual portfolio project records supplied in the context. Suggest plausible connections and explain the text evidence for each; say no match when none is supported.'};[m
+[32m+[m[32mexport async function POST(req:NextRequest){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});if(!isSameOrigin(req))return NextResponse.json({error:'Forbidden.'},{status:403});const p=Input.safeParse(await req.json().catch(()=>null));if(!p.success)return NextResponse.json({error:'Provide text and an analysis type.'},{status:400});try{const result=await aiProvider.complete({system:`You are an optional learning assistant. Never invent experiences, achievements, acquired skills, people, dates, or personal facts. Use only the user-supplied text. For conclusions that go beyond explicit text, label them as suggestions or hypotheses. Do not write in the user's first-person voice. The requested task: ${prompts[p.data.action]}`,prompt: await (async()=>{let projectContext='';if(p.data.action==='project_connections'){try{const {db}=await import('@/lib/db');const {projects}=await import('@/lib/schema');const rows=await db.select({title:projects.title,description:projects.description,stack:projects.stack}).from(projects).limit(100);projectContext=`\n\nExisting portfolio projects (authoritative records; do not invent): ${JSON.stringify(rows)}`;}catch{projectContext='\n\nNo portfolio project records are available; do not name or invent any projects.';}}return `Analyze the following user-provided learning notes. Return concise, editable suggestions and state that they require user review.\n\n${p.data.text}${projectContext}`})(),json:false});if(result.status!=='ok')return NextResponse.json({error:result.message||'AI is unavailable.'},{status:503});return NextResponse.json({suggestion:result.data.text,source:'AI suggestion — review and edit before using.'});}catch{return NextResponse.json({error:'AI assistance is unavailable.'},{status:503});}}[m
+[1mdiff --git a/app/api/admin/learning/reflection/route.ts b/app/api/admin/learning/reflection/route.ts[m
+[1mnew file mode 100644[m
+[1mindex 0000000..4266d88[m
+[1m--- /dev/null[m
+[1m+++ b/app/api/admin/learning/reflection/route.ts[m
+[36m@@ -0,0 +1,4 @@[m
+[32m+[m[32mimport { NextRequest,NextResponse } from 'next/server';import { eq } from 'drizzle-orm';import { z } from 'zod';import {getSession} from '@/lib/auth';import {isSameOrigin} from '@/lib/same-origin';import {learningExperiences,learningReflections,learningSkills,learningExperienceSkills} from '@/lib/schema';[m
+[32m+[m[32mexport const runtime='nodejs';[m
+[32m+[m[32mconst Input=z.object({experienceId:z.number().int().positive(),learned:z.string().max(8000).optional().default(''),technicalKnowledge:z.string().max(5000).optional().default(''),softSkills:z.string().max(5000).optional().default(''),takeaways:z.string().max(5000).optional().default(''),challenges:z.string().max(5000).optional().default(''),peopleMet:z.string().max(3000).optional().default(''),ideas:z.string().max(5000).optional().default(''),applicationPlan:z.string().max(5000).optional().default(''),actionItems:z.string().max(5000).optional().default(''),rating:z.number().int().min(1).max(5).nullable().optional(),notes:z.string().max(10000).optional().default(''),draft:z.boolean().default(true)}).strict();[m
+[32m+[m[32mexport async function POST(req:NextRequest){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});if(!isSameOrigin(req))return NextResponse.json({error:'Forbidden.'},{status:403});const parsed=Input.safeParse(await req.json().catch(()=>null));if(!parsed.success)return NextResponse.json({error:parsed.error.issues[0]?.message??'Invalid reflection.'},{status:400});try{const {db}=await import('@/lib/db');const d=parsed.data;const [exp]=await db.select().from(learningExperiences).where(eq(learningExperiences.id,d.experienceId)).limit(1);if(!exp)return NextResponse.json({error:'Learning experience not found.'},{status:404});if(exp.status!=='COMPLETED')return NextResponse.json({error:'Reflections are available after participation is marked completed.'},{status:409});const {experienceId,...values}=d;const [reflection]=await db.insert(learningReflections).values({...values,experienceId,updatedAt:new Date()}).onConflictDoUpdate({target:learningReflections.experienceId,set:{...values,updatedAt:new Date()}}).returning();const names=[...new Set(`${d.technicalKnowledge},${d.softSkills}`.split(/[,;\n]/).map(s=>s.trim()).filter(s=>s.length>1&&s.length<=100))];for(const name of names){const normalizedName=name.toLowerCase();await db.insert(learningSkills).values({name,normalizedName}).onConflictDoNothing();const [skill]=await db.select().from(learningSkills).where(eq(learningSkills.normalizedName,normalizedName)).limit(1);if(skill)await db.insert(learningExperienceSkills).values({experienceId,skillId:skill.id}).onConflictDoNothing();}return NextResponse.json({reflection});}catch{return NextResponse.json({error:'Could not save reflection. Apply the Learning migration if needed.'},{status:500});}}[m
+[1mdiff --git a/app/api/admin/learning/route.ts b/app/api/admin/learning/route.ts[m
+[1mnew file mode 100644[m
+[1mindex 0000000..c6089f0[m
+[1m--- /dev/null[m
+[1m+++ b/app/api/admin/learning/route.ts[m
+[36m@@ -0,0 +1,16 @@[m
+[32m+[m[32mimport { NextRequest, NextResponse } from 'next/server';[m
+[32m+[m[32mimport { asc } from 'drizzle-orm';[m
+[32m+[m[32mimport { z } from 'zod';[m
+[32m+[m[32mimport { getSession } from '@/lib/auth';[m
+[32m+[m[32mimport { isSameOrigin } from '@/lib/same-origin';[m
+[32m+[m[32mimport { learningExperiences, learningStatusHistory, learningReflections, learningAttachments } from '@/lib/schema';[m
+[32m+[m[32mexport const runtime = 'nodejs';[m
+[32m+[m[32mconst statuses = ['INTERESTED','APPLIED','REGISTERED','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED','REJECTED','DID_NOT_ATTEND'] as const;[m
+[32m+[m[32mconst url = z.string().trim().max(1000).refine(v => !v || /^https:\/\//i.test(v), 'Links must use HTTPS.').optional().nullable();[m
+[32m+[m[32mconst Input = z.object({[m
+[32m+[m[32m title:z.string().trim().min(1).max(240),category:z.string().trim().min(1).max(100),organizer:z.string().trim().max(240).optional().nullable(),description:z.string().max(5000).optional().nullable(),officialWebsite:url,registrationUrl:url,sourceUrl:url,[m
+[32m+[m[32m mode:z.enum(['IN_PERSON','ONLINE','HYBRID']).default('ONLINE'),country:z.string().trim().max(120).optional().nullable(),city:z.string().trim().max(120).optional().nullable(),venue:z.string().trim().max(240).optional().nullable(),meetingUrl:url,[m
+[32m+[m[32m startsAt:z.string().datetime().optional().nullable(),endsAt:z.string().datetime().optional().nullable(),registrationDeadline:z.string().datetime().optional().nullable(),timezone:z.string().trim().min(1).max(100).default('UTC'),motivation:z.string().max(3000).optional().nullable(),expectedOutcomes:z.string().max(3000).optional().nullable(),skillsToAcquire:z.array(z.string().trim().min(1).max(100)).max(50).default([]),personalGoals:z.string().max(3000).optional().nullable(),priority:z.enum(['LOW','MEDIUM','HIGH']).default('MEDIUM'),costType:z.enum(['FREE','PAID','UNKNOWN']).default('UNKNOWN'),feeCents:z.number().int().min(0).max(100000000).optional().nullable(),scholarship:z.string().max(1000).optional().nullable(),otherExpenses:z.string().max(1000).optional().nullable(),learningHours:z.number().int().min(0).max(10000).optional().nullable(),status:z.enum(statuses).default('INTERESTED'),attachments:z.array(z.object({label:z.string().trim().min(1).max(160),kind:z.enum(['CONFIRMATION','AGENDA','DOCUMENT','CERTIFICATE','PHOTOGRAPH','OTHER']),url:z.string().url().max(1000).refine(v => v.startsWith('https://'),'Attachment links must use HTTPS.')})).max(30).default([])[m
+[32m+[m[32m}).strict().refine(d => !d.startsAt || !d.endsAt || new Date(d.endsAt) >= new Date(d.startsAt), {message:'End date must be on or after start date.',path:['endsAt']});[m
+[32m+[m[32mexport async function GET(){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});try{const {db}=await import('@/lib/db');const [experiences,reflections,attachments,history]=await Promise.all([db.select().from(learningExperiences).orderBy(asc(learningExperiences.startsAt)),db.select().from(learningReflections),db.select().from(learningAttachments),db.select().from(learningStatusHistory).orderBy(asc(learningStatusHistory.changedAt))]);return NextResponse.json({experiences:experiences.map(e=>({...e,reflection:reflections.find(r=>r.experienceId===e.id)??null,attachments:attachments.filter(a=>a.experienceId===e.id),statusHistory:history.filter(h=>h.experienceId===e.id)}))});}catch{return NextResponse.json({error:'Learning records could not be loaded. Apply the learning database migration if this is a fresh deployment.'},{status:503});}}[m
+[32m+[m[32mexport async function POST(req:NextRequest){if(!(await getSession()).isAdmin)return NextResponse.json({error:'Unauthorized.'},{status:401});if(!isSameOrigin(req))return NextResponse.json({error:'Forbidden.'},{status:403});const parsed=Input.safeParse(await req.json().catch(()=>null));if(!parsed.success)return NextResponse.json({error:parsed.error.issues[0]?.message??'Invalid learning experience.'},{status:400});try{const {db}=await import('@/lib/db');const {attachments,...data}=parsed.data;const [created]=await db.insert(learningExperiences).values({...data,startsAt:data.startsAt?new Date(data.startsAt):null,endsAt:data.endsAt?new Date(data.endsAt):null,registrationDeadline:data.registrationDeadline?new Date(data.registrationDeadline):null}).returning();await db.insert(learningStatusHistory).values({experienceId:created.id,toStatus:created.status,note:'Initial status'});if(attachments.length)await db.insert(learningAttachments).values(attachments.map(a=>({...a,experienceId:created.id})));return NextResponse.json({experience:created},{status:201});}catch{return NextResponse.json({error:'Could not save the learning experience.'},{status:500});}}[m
+[1mdiff --git a/components/admin/LearningWorkspace.tsx b/components/admin/LearningWorkspace.tsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..75e6898[m
+[1m--- /dev/null[m
+[1m+++ b/components/admin/LearningWorkspace.tsx[m
+[36m@@ -0,0 +1,64 @@[m
+[32m+[m[32m'use client';[m
+[32m+[m[32mimport Link from 'next/link';[m
+[32m+[m[32mimport { useCallback, useEffect, useMemo, useState } from 'react';[m
+[32m+[m[32mimport { BookOpen, CalendarDays, Check, ChevronRight, GraduationCap, Plus, Search, Sparkles, Trash2 } from 'lucide-react';[m
+[32m+[m[32mimport { useToast } from './AdminUI';[m
+[32m+[m[32mimport '../../app/admin/learning.css';[m
+[32m+[m
+[32m+[m[32mtype View='overview'|'all'|'calendar'|'reflections'|'skills'|'certificates'|'analytics';[m
+[32m+[m[32mtype Attachment={id?:number;label:string;kind:string;url:string};[m
+[32m+[m[32mtype Reflection={learned:string|null;technicalKnowledge:string|null;softSkills:string|null;takeaways:string|null;challenges:string|null;peopleMet:string|null;ideas:string|null;applicationPlan:string|null;actionItems:string|null;rating:number|null;notes:string|null;draft:boolean};[m
+[32m+[m[32mtype Experience={id:number;title:string;category:string;organizer:string|null;description:string|null;officialWebsite:string|null;registrationUrl:string|null;sourceUrl:string|null;mode:string;country:string|null;city:string|null;venue:string|null;meetingUrl:string|null;startsAt:string|null;endsAt:string|null;registrationDeadline:string|null;timezone:string;motivation:string|null;expectedOutcomes:string|null;skillsToAcquire:string[];personalGoals:string|null;priority:string;costType:string;feeCents:number|null;scholarship:string|null;otherExpenses:string|null;learningHours:number|null;status:string;reflection:Reflection|null;attachments:Attachment[];statusHistory:{id:number;fromStatus:string|null;toStatus:string;note:string|null;changedAt:string}[]};[m
+[32m+[m[32mconst STATUSES=['INTERESTED','APPLIED','REGISTERED','CONFIRMED','IN_PROGRESS','COMPLETED','CANCELLED','REJECTED','DID_NOT_ATTEND'];[m
+[32m+[m[32mconst CATEGORIES=['Course','Workshop','Summer Program / Summer Campaign','Conference','Meetup','Seminar','Webinar','Bootcamp','Mentorship Program','Professional Meeting','Networking Event','Other Learning Experience'];[m
+[32m+[m[32mconst SECTIONS:[View,string][]=[['overview','Overview'],['all','All Learning'],['calendar','Calendar'],['reflections','My Reflections'],['skills','Skills Growth'],['certificates','Certificates'],['analytics','Analytics']];[m
+[32m+[m[32mconst emptyForm=()=>({title:'',category:'Course',organizer:'',description:'',officialWebsite:'',registrationUrl:'',sourceUrl:'',mode:'ONLINE',country:'',city:'',venue:'',meetingUrl:'',startsAt:'',endsAt:'',registrationDeadline:'',timezone:'UTC',motivation:'',expectedOutcomes:'',skillsToAcquire:'',personalGoals:'',priority:'MEDIUM',costType:'UNKNOWN',fee:'',scholarship:'',otherExpenses:'',learningHours:'',status:'INTERESTED',attachmentLabel:'',attachmentKind:'DOCUMENT',attachmentUrl:''});[m
+[32m+[m[32mconst emptyReflection=()=>({learned:'',technicalKnowledge:'',softSkills:'',takeaways:'',challenges:'',peopleMet:'',ideas:'',applicationPlan:'',actionItems:'',rating:'',notes:'',draft:true});[m
+[32m+[m[32mconst fmtDate=(v:string|null)=>v?new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',year:'numeric'}).format(new Date(v)):'Date not set';[m
+[32m+[m[32mfunction dateValue(v:string|null){if(!v)return '';const d=new Date(v);return Number.isNaN(+d)?'':d.toISOString().slice(0,10)}[m
+[32m+[m[32mfunction asIso(v:string){return v?new Date(`${v}T12:00:00`).toISOString():null}[m
+[32m+[m[32mfunction location(e:Experience){return [e.city,e.country].filter(Boolean).join(', ')||e.mode.replace('_',' ').toLowerCase()}[m
+[32m+[m[32mfunction field(label:string,key:string,value:string|number,onChange:(v:string)=>void,props:Record<string,string>={}){return <label className="learning-field" key={key}><span>{label}</span><input value={value} onChange={e=>onChange(e.target.value)} {...props}/></label>}[m
+[32m+[m[32mfunction textarea(label:string,key:string,value:string,onChange:(v:string)=>void){return <label className="learning-field learning-field-wide" key={key}><span>{label}</span><textarea rows={3} value={value} onChange={e=>onChange(e.target.value)}/></label>}[m
+[32m+[m[32mexport default function LearningWorkspace({view}:{view:View}){[m
+[32m+[m[32m const toast=useToast();const [items,setItems]=useState<Experience[]>([]);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const [search,setSearch]=useState('');const [status,setStatus]=useState('ALL');const [dialog,setDialog]=useState(false);const [editing,setEditing]=useState<Experience|null>(null);const [form,setForm]=useState(emptyForm());const [busy,setBusy]=useState(false);const [reflecting,setReflecting]=useState<number|null>(null);const [reflection,setReflection]=useState(emptyReflection());const [ai,setAi]=useState('');const [aiBusy,setAiBusy]=useState(false);[m
+[32m+[m[32m const load=useCallback(async()=>{setLoading(true);try{const r=await fetch('/api/admin/learning',{cache:'no-store'});const d=await r.json();if(!r.ok)throw new Error(d.error||'Unable to load learning records.');setItems(d.experiences??[]);setError('');}catch(e){setError(e instanceof Error?e.message:'Unable to load records.');}finally{setLoading(false);}},[]);[m
+[32m+[m[32m useEffect(()=>{void load()},[load]);[m
+[32m+[m[32m const openForm=(entry?:Experience)=>{setEditing(entry??null);if(entry)setForm({title:entry.title,category:entry.category,organizer:entry.organizer??'',description:entry.description??'',officialWebsite:entry.officialWebsite??'',registrationUrl:entry.registrationUrl??'',sourceUrl:entry.sourceUrl??'',mode:entry.mode,country:entry.country??'',city:entry.city??'',venue:entry.venue??'',meetingUrl:entry.meetingUrl??'',startsAt:dateValue(entry.startsAt),endsAt:dateValue(entry.endsAt),registrationDeadline:dateValue(entry.registrationDeadline),timezone:entry.timezone,motivation:entry.motivation??'',expectedOutcomes:entry.expectedOutcomes??'',skillsToAcquire:entry.skillsToAcquire.join(', '),personalGoals:entry.personalGoals??'',priority:entry.priority,costType:entry.costType,fee:entry.feeCents==null?'':String(entry.feeCents/100),scholarship:entry.scholarship??'',otherExpenses:entry.otherExpenses??'',learningHours:entry.learningHours==null?'':String(entry.learningHours),status:entry.status,attachmentLabel:'',attachmentKind:'DOCUMENT',attachmentUrl:''});else setForm(emptyForm());setDialog(true)};[m
+[32m+[m[32m const changeForm=(key:string,value:string)=>setForm(f=>({...f,[key]:value}));[m
+[32m+[m[32m const save=async(e:React.FormEvent)=>{e.preventDefault();setBusy(true);try{const payload={...form,officialWebsite:form.officialWebsite||null,registrationUrl:form.registrationUrl||null,sourceUrl:form.sourceUrl||null,meetingUrl:form.meetingUrl||null,startsAt:asIso(form.startsAt),endsAt:asIso(form.endsAt),registrationDeadline:asIso(form.registrationDeadline),skillsToAcquire:form.skillsToAcquire.split(',').map(s=>s.trim()).filter(Boolean),feeCents:form.fee?Math.round(Number(form.fee)*100):null,learningHours:form.learningHours?Number(form.learningHours):null,attachments:form.attachmentUrl?[{label:form.attachmentLabel||'Supporting material',kind:form.attachmentKind,url:form.attachmentUrl}]:[]};let response;if(editing){const {attachments,...updates}=payload;response=await fetch(`/api/admin/learning/${editing.id}`,{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify(updates)});if(response.ok&&attachments.length){const attachResponse=await fetch(`/api/admin/learning/${editing.id}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(attachments[0])});if(!attachResponse.ok)throw new Error((await attachResponse.json()).error||'Experience saved, but the attachment could not be added.');}}else response=await fetch('/api/admin/learning',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok)throw new Error(data.error||'Could not save.');toast.success(editing?'Experience updated.':'Learning experience added.');setDialog(false);await load();}catch(err){toast.error(err instanceof Error?err.message:'Could not save.');}finally{setBusy(false)}};[m
+[32m+[m[32m const remove=async(e:Experience)=>{if(!window.confirm(`Delete “${e.title}” and its reflection/history?`))return;const r=await fetch(`/api/admin/learning/${e.id}`,{method:'DELETE'});if(r.ok){toast.success('Learning record deleted.');await load()}else toast.error('Could not delete this record.')};[m
+[32m+[m[32m const updateStatus=async(e:Experience,next:string)=>{const r=await fetch(`/api/admin/learning/${e.id}`,{method:'PATCH',headers:{'content-type':'application/json'},body:JSON.stringify({status:next})});if(r.ok)await load();else toast.error('Could not update status.')};[m
+[32m+[m[32m const saveReflection=async(draft:boolean)=>{if(!reflecting)return;setBusy(true);try{const r=await fetch('/api/admin/learning/reflection',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...reflection,experienceId:reflecting,draft,rating:reflection.rating?Number(reflection.rating):null})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Could not save reflection.');toast.success(draft?'Reflection draft saved.':'Reflection marked complete.');setReflecting(null);await load()}catch(e){toast.error(e instanceof Error?e.message:'Could not save reflection.')}finally{setBusy(false)}};[m
+[32m+[m[32m const beginReflection=(e:Experience)=>{setReflecting(e.id);const r=e.reflection;setReflection(r?{learned:r.learned??'',technicalKnowledge:r.technicalKnowledge??'',softSkills:r.softSkills??'',takeaways:r.takeaways??'',challenges:r.challenges??'',peopleMet:r.peopleMet??'',ideas:r.ideas??'',applicationPlan:r.applicationPlan??'',actionItems:r.actionItems??'',rating:r.rating?String(r.rating):'',notes:r.notes??'',draft:r.draft}:emptyReflection());setAi('')};[m
+[32m+[m[32m const askAI=async(action:'summary'|'skills'|'gaps'|'action_plan'|'next_steps'|'themes'|'report'|'project_connections')=>{const text=Object.values(reflection).filter(v=>typeof v==='string').join('\n').trim();if(text.length<20){toast.info('Add a little reflection text before asking for suggestions.');return}setAiBusy(true);try{const r=await fetch('/api/admin/learning/ai',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action,text})});const d=await r.json();if(!r.ok)throw new Error(d.error||'AI unavailable.');setAi(d.suggestion)}catch(e){toast.error(e instanceof Error?e.message:'AI unavailable.')}finally{setAiBusy(false)}};[m
+[32m+[m[32m const runInsight=async(action:'themes'|'report'|'project_connections'|'action_plan'|'next_steps',period?:'month'|'year')=>{const now=new Date();const rows=period==='month'?items.filter(e=>e.startsAt&&new Date(e.startsAt).getFullYear()===now.getFullYear()&&new Date(e.startsAt).getMonth()===now.getMonth()):period==='year'?items.filter(e=>e.startsAt&&new Date(e.startsAt).getFullYear()===now.getFullYear()):items;const text=rows.map(e=>`${e.title} (${e.category}, ${e.status}) ${e.description??''} Outcomes: ${e.expectedOutcomes??''} Skills planned: ${e.skillsToAcquire.join(', ')} Reflection: ${e.reflection?.learned??''} Technical: ${e.reflection?.technicalKnowledge??''} Soft skills: ${e.reflection?.softSkills??''} Takeaways: ${e.reflection?.takeaways??''} Application: ${e.reflection?.applicationPlan??''}`).join('\n').slice(0,11500);if(text.length<20){toast.info('There are not enough saved learning notes for that analysis.');return}setAiBusy(true);try{const r=await fetch('/api/admin/learning/ai',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action,text:period?`Learning report for this ${period}.\n${text}`:text})});const d=await r.json();if(!r.ok)throw new Error(d.error||'AI unavailable.');setAi(d.suggestion)}catch(e){toast.error(e instanceof Error?e.message:'AI unavailable.')}finally{setAiBusy(false)}};[m
+[32m+[m[32m const upcoming=items.filter(e=>e.startsAt&&new Date(e.startsAt)>=new Date()&&!['COMPLETED','CANCELLED','REJECTED','DID_NOT_ATTEND'].includes(e.status)).sort((a,b)=>+new Date(a.startsAt!)-+new Date(b.startsAt!));const active=items.filter(e=>e.status==='IN_PROGRESS');const completed=items.filter(e=>e.status==='COMPLETED');const reflections=completed.filter(e=>e.reflection&&!e.reflection.draft);const skills=useMemo(()=>{const m=new Map<string,number>();items.forEach(e=>{const r=e.reflection;if(!r)return;`${r.technicalKnowledge??''},${r.softSkills??''}`.split(/[,;\n]/).map(s=>s.trim()).filter(Boolean).forEach(s=>m.set(s,(m.get(s)??0)+1))});return [...m.entries()].sort((a,b)=>b[1]-a[1])},[items]);const certificates=items.flatMap(e=>e.attachments.filter(a=>a.kind==='CERTIFICATE').map(a=>({...a,title:e.title})));[m
+[32m+[m[32m let shown=items;if(view==='calendar')shown=items.filter(e=>e.startsAt).sort((a,b)=>+new Date(a.startsAt!)-+new Date(b.startsAt!));else if(view==='reflections')shown=completed;else if(view==='certificates')shown=[];else shown=items.filter(e=>view==='overview'?true:true);[m
+[32m+[m[32m shown=shown.filter(e=>(!search||`${e.title} ${e.category} ${e.organizer??''} ${e.city??''} ${e.country??''}`.toLowerCase().includes(search.toLowerCase()))&&(status==='ALL'||e.status===status));[m
+[32m+[m[32m const title=SECTIONS.find(x=>x[0]===view)?.[1]??'Learning';[m
+[32m+[m[32m return <div className="learning-root"><div className="learning-header"><div><p className="learning-kicker"><GraduationCap size={16}/> PERSONAL DEVELOPMENT</p><h1>{title}</h1><p>Make learning intentional. Keep the record honest.</p></div><button className="learning-add" onClick={()=>openForm()}><Plus size={17}/> Add experience</button></div>[m
+[32m+[m[32m <nav className="learning-tabs" aria-label="Learning pages">{SECTIONS.map(([k,label])=><Link key={k} href={k==='overview'?'/admin/learning':`/admin/learning/${k}`} className={view===k?'active':''}>{label}</Link>)}</nav>[m
+[32m+[m[32m {error&&<div className="learning-error">{error}<button onClick={()=>void load()}>Retry</button></div>}{loading?<div className="learning-loading">Loading your learning records…</div>:<>[m
+[32m+[m[32m {(view==='overview'||view==='analytics')&&<>[m
+[32m+[m[32m <section className="learning-stats"><article><span>Registered</span><strong>{items.length}</strong><small>Saved experiences</small></article><article><span>Completed</span><strong>{completed.length}</strong><small>Participation records</small></article><article><span>Upcoming</span><strong>{upcoming.length}</strong><small>With future dates</small></article><article><span>Learning hours</span><strong>{items.reduce((n,e)=>n+(e.learningHours??0),0)||'—'}</strong><small>Only where recorded</small></article><article><span>Reflections</span><strong>{reflections.length}</strong><small>Completed notes</small></article><article><span>Skills</span><strong>{skills.length}</strong><small>From saved reflections</small></article><article><span>Certificates</span><strong>{certificates.length}</strong><small>Attached references</small></article><article><span>In progress</span><strong>{active.length}</strong><small>Active programs</small></article></section>[m
+[32m+[m[32m <div className="learning-columns"><section className="learning-panel"><div className="learning-panel-head"><div><h2>{view==='analytics'?'Participation by status':'Coming up next'}</h2><p>Based on the dates and statuses you saved.</p></div><Link href="/admin/learning/calendar">View calendar <ChevronRight size={15}/></Link></div>{view==='analytics'?<div className="learning-bars">{STATUSES.map(s=>{const n=items.filter(e=>e.status===s).length;const max=Math.max(1,...STATUSES.map(x=>items.filter(e=>e.status===x).length));return <div className="learning-bar-row" key={s}><span>{s.replaceAll('_',' ')}</span><div><i style={{width:`${n/max*100}%`}}/></div><b>{n}</b></div>})}</div>:upcoming.length?upcoming.slice(0,5).map(e=><ExperienceCard key={e.id} e={e} onEdit={()=>openForm(e)} onDelete={()=>void remove(e)} onStatus={v=>void updateStatus(e,v)} onReflect={()=>beginReflection(e)}/>):<Empty text="No upcoming programs yet. Add an experience and give it a date to see it here."/>}</section>[m
+[32m+[m[32m <section className="learning-panel"><div className="learning-panel-head"><div><h2>{view==='analytics'?'Skills appearing in reflections':'Latest completions'}</h2><p>Skills are collected from your reflection text.</p></div><Link href="/admin/learning/skills">Skills growth <ChevronRight size={15}/></Link></div>{view==='analytics'?skills.length?<div className="learning-skill-list">{skills.map(([s,n])=><span key={s}>{s}<b>{n}</b></span>)}</div>:<Empty text="No skills recorded in reflections."/>:completed.length?completed.slice(0,5).map(e=><ExperienceCard key={e.id} e={e} onEdit={()=>openForm(e)} onDelete={()=>void remove(e)} onStatus={v=>void updateStatus(e,v)} onReflect={()=>beginReflection(e)}/>):<Empty text="Completed experiences will appear here."/>}</section></div>[m
+[32m+[m[32m </>}[m
+[32m+[m[32m {view==='analytics'&&<section className="learning-panel learning-insight-panel"><div className="learning-panel-head"><div><h2><Sparkles size={17}/> Optional AI learning companion</h2><p>Suggestions use only saved learning records, never invent achievements, and remain editable below.</p></div></div><div className="learning-ai-tools"><div>{(['themes','action_plan','next_steps','project_connections'] as const).map(a=><button key={a} disabled={aiBusy} onClick={()=>void runInsight(a)}>{a==='project_connections'?'Connect to portfolio projects':a.replaceAll('_',' ')}</button>)}<button disabled={aiBusy} onClick={()=>void runInsight('report','month')}>Monthly report</button><button disabled={aiBusy} onClick={()=>void runInsight('report','year')}>Yearly report</button></div>{aiBusy&&<p>Preparing your suggestion…</p>}{ai&&<div className="learning-ai-output"><b>AI suggestion · review and edit</b><textarea rows={8} value={ai} onChange={e=>setAi(e.target.value)}/><button onClick={()=>navigator.clipboard.writeText(ai)}>Copy suggestion</button></div>}</div></section>}[m
+[32m+[m[32m {(view==='all'||view==='calendar'||view==='reflections')&&<section className="learning-list-wrap"><div className="learning-controls"><label className="learning-search"><Search size={16}/><input placeholder="Search title, category or place" value={search} onChange={e=>setSearch(e.target.value)}/></label><select value={status} onChange={e=>setStatus(e.target.value)}><option value="ALL">All statuses</option>{STATUSES.map(s=><option key={s}>{s}</option>)}</select><span>{shown.length} records</span></div>{shown.length?shown.map(e=><ExperienceCard key={e.id} e={e} onEdit={()=>openForm(e)} onDelete={()=>void remove(e)} onStatus={v=>void updateStatus(e,v)} onReflect={()=>beginReflection(e)}/>):<Empty text={view==='reflections'?'Completed learning experiences are ready for reflection; your saved reflections show here.':'No learning records match this view yet.'}/>}</section>}[m
+[32m+[m[32m {view==='skills'&&<section className="learning-panel"><div className="learning-panel-head"><div><h2>Skills gathered through learning</h2><p>Extracted from your own technical and soft-skill reflection fields; each count represents distinct experiences.</p></div></div>{skills.length?<div className="learning-skill-list">{skills.map(([s,n])=><span key={s}>{s}<b>{n} {n===1?'experience':'experiences'}</b></span>)}</div>:<Empty text="Complete reflections and name skills in the technical knowledge or soft skills fields to build this view."/>}</section>}[m
+[32m+[m[32m {view==='certificates'&&<section className="learning-panel"><div className="learning-panel-head"><div><h2>Certificates & supporting proof</h2><p>Certificate URL references attached to your learning records.</p></div></div>{certificates.length?<div className="learning-cert-list">{certificates.map((c,i)=><a key={i} href={c.url} target="_blank" rel="noreferrer"><BookOpen size={19}/><span><strong>{c.label}</strong><small>{c.title}</small></span><ChevronRight size={16}/></a>)}</div>:<Empty text="No certificates saved. Add an experience and include a certificate URL in supporting materials."/>}</section>}[m
+[32m+[m[32m </>}[m
+[32m+[m[32m {dialog&&<div className="learning-overlay" onMouseDown={e=>{if(e.target===e.currentTarget)setDialog(false)}}><form className="learning-dialog" onSubmit={save}><div className="learning-dialog-head"><div><span>LEARNING RECORD</span><h2>{editing?'Edit experience':'Add learning experience'}</h2></div><button type="button" aria-label="Close" onClick={()=>setDialog(false)}>×</button></div><div className="learning-form-scroll">[m
+[32m+[m[32m <h3>Basic information</h3><div className="learning-form-grid">{field('Program title *','title',form.title,v=>changeForm('title',v),{required:'true',placeholder:'e.g. Product design workshop'})}{field('Category *','category',form.category,v=>changeForm('category',v),{list:'learning-categories',required:'true'})}<datalist id="learning-categories">{CATEGORIES.map(c=><option key={c}/>)}</datalist>{field('Organizer / Institution','organizer',form.organizer,v=>changeForm('organizer',v))}{field('Official website','officialWebsite',form.officialWebsite,v=>changeForm('officialWebsite',v),{type:'url'})}{field('Registration URL','registrationUrl',form.registrationUrl,v=>changeForm('registrationUrl',v),{type:'url'})}{field('Source URL','sourceUrl',form.sourceUrl,v=>changeForm('sourceUrl',v),{type:'url'})}{textarea('Description','description',form.description,v=>changeForm('description',v))}</div>[m
+[32m+[m[32m <h3>Participation</h3><div className="learning-form-grid"><label className="learning-field"><span>Mode</span><select value={form.mode} onChange={e=>changeForm('mode',e.target.value)}><option value="IN_PERSON">Physical / In-person</option><option value="ONLINE">Online / Virtual</option><option value="HYBRID">Hybrid</option></select></label>{field('Country','country',form.country,v=>changeForm('country',v))}{field('City','city',form.city,v=>changeForm('city',v))}{field('Venue','venue',form.venue,v=>changeForm('venue',v))}{field('Meeting URL','meetingUrl',form.meetingUrl,v=>changeForm('meetingUrl',v),{type:'url'})}{field('Start date','startsAt',form.startsAt,v=>changeForm('startsAt',v),{type:'date'})}{field('End date','endsAt',form.endsAt,v=>changeForm('endsAt',v),{type:'date'})}{field('Registration deadline','registrationDeadline',form.registrationDeadline,v=>changeForm('registrationDeadline',v),{type:'date'})}{field('Timezone','timezone',form.timezone,v=>changeForm('timezone',v))}</div>[m
+[32m+[m[32m <h3>Personal goals</h3><div className="learning-form-grid">{textarea('Why I want to participate','motivation',form.motivation,v=>changeForm('motivation',v))}{textarea('Expected learning outcomes','expectedOutcomes',form.expectedOutcomes,v=>changeForm('expectedOutcomes',v))}{field('Skills I want to acquire (comma-separated)','skillsToAcquire',form.skillsToAcquire,v=>changeForm('skillsToAcquire',v))}{textarea('Personal goals','personalGoals',form.personalGoals,v=>changeForm('personalGoals',v))}<label className="learning-field"><span>Priority</span><select value={form.priority} onChange={e=>changeForm('priority',e.target.value)}><option>LOW</option><option>MEDIUM</option><option>HIGH</option></select></label><label className="learning-field"><span>Status</span><select value={form.status} onChange={e=>changeForm('status',e.target.value)}>{STATUSES.map(s=><option key={s}>{s}</option>)}</select></label></div>[m
+[32m+[m[32m <h3>Cost & time</h3><div className="learning-form-grid"><label className="learning-field"><span>Cost</span><select value={form.costType} onChange={e=>changeForm('costType',e.target.value)}><option value="UNKNOWN">Not specified</option><option value="FREE">Free</option><option value="PAID">Paid</option></select></label>{field('Registration fee','fee',form.fee,v=>changeForm('fee',v),{type:'number',min:'0',step:'0.01'})}{field('Learning hours (optional)','learningHours',form.learningHours,v=>changeForm('learningHours',v),{type:'number',min:'0'})}{field('Scholarship / sponsorship','scholarship',form.scholarship,v=>changeForm('scholarship',v))}{field('Other expenses','otherExpenses',form.otherExpenses,v=>changeForm('otherExpenses',v))}</div>[m
+[32m+[m[32m <h3>Supporting material URL</h3>{editing?.attachments.map(a=><p className="learning-existing-file" key={a.id}><a href={a.url} target="_blank" rel="noreferrer">{a.kind}: {a.label}</a></p>)}<div className="learning-form-grid"><label className="learning-field"><span>Material type</span><select value={form.attachmentKind} onChange={e=>changeForm('attachmentKind',e.target.value)}>{['CONFIRMATION','AGENDA','DOCUMENT','CERTIFICATE','PHOTOGRAPH','OTHER'].map(v=><option key={v}>{v}</option>)}</select></label>{field('Label','attachmentLabel',form.attachmentLabel,v=>changeForm('attachmentLabel',v))}{field('HTTPS URL (file uploads are not configured)','attachmentUrl',form.attachmentUrl,v=>changeForm('attachmentUrl',v),{type:'url'})}</div>[m
+[32m+[m[32m </div><footer><button type="button" className="learning-cancel" onClick={()=>setDialog(false)}>Cancel</button><button type="submit" className="learning-add" disabled={busy}>{busy?'Saving…':editing?'Save changes':'Save experience'}</button></footer></form></div>}[m
+[32m+[m[32m {reflecting!==null&&<div className="learning-overlay" onMouseDown={e=>{if(e.target===e.currentTarget)setReflecting(null)}}><section className="learning-dialog reflection-dialog"><div className="learning-dialog-head"><div><span>COMPLETED EXPERIENCE</span><h2>Learning reflection</h2></div><button type="button" onClick={()=>setReflecting(null)} aria-label="Close">×</button></div><div className="learning-form-scroll"><p className="learning-note">Your words stay separate from optional AI suggestions. Saving a draft does not mark the reflection complete.</p><div className="learning-form-grid">{textarea('What did I learn?','learned',reflection.learned,v=>setReflection(r=>({...r,learned:v})))}{textarea('New technical knowledge','technicalKnowledge',reflection.technicalKnowledge,v=>setReflection(r=>({...r,technicalKnowledge:v})))}{textarea('New soft skills','softSkills',reflection.softSkills,v=>setReflection(r=>({...r,softSkills:v})))}{textarea('Biggest takeaways','takeaways',reflection.takeaways,v=>setReflection(r=>({...r,takeaways:v})))}{textarea('Challenges encountered','challenges',reflection.challenges,v=>setReflection(r=>({...r,challenges:v})))}{textarea('Important people I met','peopleMet',reflection.peopleMet,v=>setReflection(r=>({...r,peopleMet:v})))}{textarea('Ideas and opportunities discovered','ideas',reflection.ideas,v=>setReflection(r=>({...r,ideas:v})))}{textarea('How I will apply this','applicationPlan',reflection.applicationPlan,v=>setReflection(r=>({...r,applicationPlan:v})))}{textarea('Action items','actionItems',reflection.actionItems,v=>setReflection(r=>({...r,actionItems:v})))}{textarea('Additional notes','notes',reflection.notes,v=>setReflection(r=>({...r,notes:v})))}<label className="learning-field"><span>Personal assessment (1–5)</span><select value={reflection.rating} onChange={e=>setReflection(r=>({...r,rating:e.target.value}))}><option value="">Not rated</option>{[1,2,3,4,5].map(x=><option key={x}>{x}</option>)}</select></label></div><div className="learning-ai-tools"><h3><Sparkles size={16}/> Optional AI companion</h3><p>Suggestions are derived only from the text above. Review and edit them; nothing is added to your reflection automatically.</p><div>{(['summary','skills','gaps','action_plan','next_steps','themes','project_connections'] as const).map((a)=><button key={a} type="button" disabled={aiBusy} onClick={()=>void askAI(a)}>{a.replaceAll('_',' ')}</button>)}</div>{ai&&<div className="learning-ai-output"><b>AI suggestion · editable</b><textarea value={ai} onChange={e=>setAi(e.target.value)} rows={6}/><button type="button" onClick={()=>setReflection(r=>({...r,notes:[r.notes,`AI suggestion (reviewed):\n${ai}`].filter(Boolean).join('\n\n')}))}>Append reviewed suggestion to notes</button></div>}</div></div><footer><button className="learning-cancel" onClick={()=>setReflecting(null)}>Cancel</button><button className="learning-cancel" disabled={busy} onClick={()=>void saveReflection(true)}>Save draft</button><button className="learning-add" disabled={busy} onClick={()=>void saveReflection(false)}><Check size={16}/> Mark reflection complete</button></footer></section></div>}[m
+[32m+[m[32m </div>[m
+[32m+[m[32m}[m
+[32m+[m[32mfunction Empty({text}:{text:string}){return <div className="learning-empty"><BookOpen size={24}/><p>{text}</p></div>}[m
+[32m+[m[32mfunction ExperienceCard({e,onEdit,onDelete,onStatus,onReflect}:{e:Experience;onEdit:()=>void;onDelete:()=>void;onStatus:(s:string)=>void;onReflect:()=>void}){return <article className="learning-item"><div className="learning-date"><CalendarDays size={15}/><span>{fmtDate(e.startsAt)}</span></div><div className="learning-item-main"><div className="learning-item-title"><h3>{e.title}</h3><span className={`learning-status ${e.status.toLowerCase()}`}>{e.status.replaceAll('_',' ')}</span></div><p>{[e.category,e.organizer,location(e)].filter(Boolean).join(' · ')}</p>{e.description&&<p className="learning-item-desc">{e.description}</p>}<div className="learning-item-bottom"><span>{e.priority} priority</span>{e.learningHours!=null&&<span>{e.learningHours} hours</span>}{e.reflection&&!e.reflection.draft&&<span className="learning-reflection-done">Reflection complete</span>}</div><div className="learning-item-actions"><label>Status <select value={e.status} onChange={x=>onStatus(x.target.value)}>{STATUSES.map(s=><option key={s}>{s}</option>)}</select></label><button onClick={onEdit}>Edit</button>{e.status==='COMPLETED'&&<button onClick={onReflect}>{e.reflection?'Edit reflection':'Write reflection'}</button>}<button aria-label="Delete" onClick={onDelete}><Trash2 size={15}/></button></div>{e.statusHistory.length>0&&<details className="learning-history"><summary>Status history ({e.statusHistory.length})</summary><ol>{e.statusHistory.map(h=><li key={h.id}>{h.fromStatus?`${h.fromStatus.replaceAll('_',' ')} → `:''}{h.toStatus.replaceAll('_',' ')} <small>{fmtDate(h.changedAt)}</small>{h.note&&<span> · {h.note}</span>}</li>)}</ol></details>}</div></article>}[m
+[1mdiff --git a/components/admin/nav.ts b/components/admin/nav.ts[m
+[1mindex 69c3908..adc0b56 100644[m
+[1m--- a/components/admin/nav.ts[m
+[1m+++ b/components/admin/nav.ts[m
+[36m@@ -5,7 +5,7 @@[m [mexport type NavGroup = { label: string; items: NavItem[] };[m
+ [m
+ export const NAV_GROUPS: NavGroup[] = [[m
+   { label: 'Overview', items: [{ href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true, keywords: 'home overview stats' }] },[m
+[31m-  { label: 'Personal', items: [{ href: '/admin/life-ai', label: 'Your Life AI', icon: Brain, keywords: 'ai life planning reflection habits journal personal' }] },[m
+[32m+[m[32m  { label: 'Personal growth', items: [{ href: '/admin/life-ai', label: 'Your Life AI', icon: Brain, keywords: 'ai life planning reflection habits journal personal' }, { href: '/admin/learning', label: 'Learning', icon: GraduationCap, keywords: 'courses workshops growth skills reflection certificates' }] },[m
+   {[m
+     label: 'Content',[m
+     items: [[m
+[1mdiff --git a/drizzle/0020_learning.sql b/drizzle/0020_learning.sql[m
+[1mnew file mode 100644[m
+[1mindex 0000000..c5794f2[m
+[1m--- /dev/null[m
+[1m+++ b/drizzle/0020_learning.sql[m
+[36m@@ -0,0 +1,39 @@[m
+[32m+[m[32mCREATE TABLE IF NOT EXISTS "learning_experiences" ([m
+[32m+[m[32m  "id" serial PRIMARY KEY NOT NULL, "title" text NOT NULL, "category" text NOT NULL, "organizer" text, "description" text,[m
+[32m+[m[32m  "official_website" text, "registration_url" text, "source_url" text, "mode" text DEFAULT 'ONLINE' NOT NULL,[m
+[32m+[m[32m  "country" text, "city" text, "venue" text, "meeting_url" text, "starts_at" timestamptz, "ends_at" timestamptz,[m
+[32m+[m[32m  "registration_deadline" timestamptz, "timezone" text DEFAULT 'UTC' NOT NULL, "motivation" text, "expected_outcomes" text,[m
+[32m+[m[32m  "skills_to_acquire" text[] DEFAULT '{}' NOT NULL, "personal_goals" text, "priority" text DEFAULT 'MEDIUM' NOT NULL,[m
+[32m+[m[32m  "cost_type" text DEFAULT 'UNKNOWN' NOT NULL, "fee_cents" integer, "scholarship" text, "other_expenses" text,[m
+[32m+[m[32m  "learning_hours" integer, "status" text DEFAULT 'INTERESTED' NOT NULL,[m
+[32m+[m[32m  "created_at" timestamptz DEFAULT now() NOT NULL, "updated_at" timestamptz DEFAULT now() NOT NULL[m
+[32m+[m[32m);[m
+[32m+[m[32mCREATE INDEX IF NOT EXISTS "learning_experiences_status_idx" ON "learning_experiences" ("status");[m
+[32m+[m[32mCREATE INDEX IF NOT EXISTS "learning_experiences_dates_idx" ON "learning_experiences" ("starts_at");[m
+[32m+[m[32mCREATE INDEX IF NOT EXISTS "learning_experiences_category_idx" ON "learning_experiences" ("category");[m
+[32m+[m[32mCREATE TABLE IF NOT EXISTS "learning_status_history" ([m
+[32m+[m[32m  "id" serial PRIMARY KEY NOT NULL, "experience_id" integer NOT NULL REFERENCES "learning_experiences"("id") ON DELETE CASCADE,[m
+[32m+[m[32m  "from_status" text, "to_status" text NOT NULL, "note" text, "changed_at" timestamptz DEFAULT now() NOT NULL[m
+[32m+[m[32m);[m
+[32m+[m[32mCREATE INDEX IF NOT EXISTS "learning_status_history_experience_changed_idx" ON "learning_status_history" ("experience_id", "changed_at");[m
+[32m+[m[32mCREATE TABLE IF NOT EXISTS "learning_reflections" ([m
+[32m+[m[32m  "id" serial PRIMARY KEY NOT NULL, "experience_id" integer NOT NULL UNIQUE REFERENCES "learning_experiences"("id") ON DELETE CASCADE,[m
+[32m+[m[32m  "learned" text, "technical_knowledge" text, "soft_skills" text, "takeaways" text, "challenges" text, "people_met" text,[m
+[32m+[m[32m  "ideas" text, "application_plan" text, "action_items" text, "rating" integer, "notes" text,[m
+[32m+[m[32m  "draft" boolean DEFAULT true NOT NULL, "updated_at" timestamptz DEFAULT now() NOT NULL[m
+[32m+[m[32m);[m
+[32m+[m[32mCREATE TABLE IF NOT EXISTS "learning_skills" ([m
+[32m+[m[32m  "id" serial PRIMARY KEY NOT NULL, "name" text NOT NULL, "normalized_name" text NOT NULL UNIQUE, "notes" text,[m
+[32m+[m[32m  "created_at" timestamptz DEFAULT now() NOT NULL[m
+[32m+[m[32m);[m
+[32m+[m[32mCREATE TABLE IF NOT EXISTS "learning_experience_skills" ([m
+[32m+[m[32m  "id" serial PRIMARY KEY NOT NULL, "experience_id" integer NOT NULL REFERENCES "learning_experiences"("id") ON DELETE CASCADE,[m
+[32m+[m[32m  "skill_id" integer NOT NULL REFERENCES "learning_skills"("id") ON DELETE CASCADE,[m
+[32m+[m[32m  "created_at" timestamptz DEFAULT now() NOT NULL, UNIQUE ("experience_id", "skill_id")[m
+[32m+[m[32m);[m
+[32m+[m[32mCREATE TABLE IF NOT EXISTS "learning_attachments" ([m
+[32m+[m[32m  "id" serial PRIMARY KEY NOT NULL, "experience_id" integer NOT NULL REFERENCES "learning_experiences"("id") ON DELETE CASCADE,[m
+[32m+[m[32m  "label" text NOT NULL, "kind" text DEFAULT 'DOCUMENT' NOT NULL, "url" text NOT NULL,[m
+[32m+[m[32m  "created_at" timestamptz DEFAULT now() NOT NULL[m
+[32m+[m[32m);[m
+[32m+[m[32mCREATE INDEX IF NOT EXISTS "learning_attachments_experience_idx" ON "learning_attachments" ("experience_id");[m
+[1mdiff --git a/drizzle/meta/_journal.json b/drizzle/meta/_journal.json[m
+[1mindex 3f74930..af72545 100644[m
+[1m--- a/drizzle/meta/_journal.json[m
+[1m+++ b/drizzle/meta/_journal.json[m
+[36m@@ -141,6 +141,13 @@[m
+       "when": 1794570004000,[m
+       "tag": "0019_remove_hackathon_search_provider",[m
+       "breakpoints": true[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "idx": 20,[m
+[32m+[m[32m      "version": "7",[m
+[32m+[m[32m      "when": 1794827276400,[m
+[32m+[m[32m      "tag": "0020_learning",[m
+[32m+[m[32m      "breakpoints": true[m
+     }[m
+   ][m
+ }[m
+[1mdiff --git a/lib/schema.ts b/lib/schema.ts[m
+[1mindex 1cedb36..35d83dd 100644[m
+[1m--- a/lib/schema.ts[m
+[1m+++ b/lib/schema.ts[m
+[36m@@ -66,3 +66,13 @@[m [mexport const hackathonEvidence = pgTable('hackathon_evidence', { id: serial('id'[m
+ export const hackathonMatches = pgTable('hackathon_matches', { id: serial('id').primaryKey(), hackathonId: integer('hackathon_id').notNull().references(() => hackathons.id, { onDelete: 'cascade' }), profileId: integer('profile_id').notNull().references(() => hackathonProfiles.id, { onDelete: 'cascade' }), startupProfileId: integer('startup_profile_id').references(() => hackathonStartupProfiles.id, { onDelete: 'set null' }), score: integer('score').notNull(), breakdown: jsonb('breakdown').$type<Record<string, number>>().notNull().default({}), explanation: text('explanation'), createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow() }, t => ({ matchUnique: uniqueIndex('hackathon_matches_unique').on(t.hackathonId, t.profileId, t.startupProfileId) }));[m
+ export const savedHackathons = pgTable('saved_hackathons', { id: serial('id').primaryKey(), ownerKey: text('owner_key').notNull().default('admin'), hackathonId: integer('hackathon_id').notNull().references(() => hackathons.id, { onDelete: 'cascade' }), status: text('status').notNull().default('Saved'), notes: text('notes'), applicationDetails: text('application_details'), projectIdea: text('project_idea'), teamInfo: text('team_info'), userDeadline: timestamp('user_deadline', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow() }, t => ({ ownerHackathonUnique: uniqueIndex('saved_hackathons_owner_hackathon_unique').on(t.ownerKey, t.hackathonId), statusIndex: index('saved_hackathons_status_idx').on(t.ownerKey, t.status) }));[m
+ export type HackathonProfileRow = typeof hackathonProfiles.$inferSelect; export type HackathonStartupProfileRow = typeof hackathonStartupProfiles.$inferSelect; export type HackathonRow = typeof hackathons.$inferSelect; export type HackathonEvidenceRow = typeof hackathonEvidence.$inferSelect; export type HackathonMatchRow = typeof hackathonMatches.$inferSelect; export type SavedHackathonRow = typeof savedHackathons.$inferSelect;[m
+[32m+[m
+[32m+[m[32mexport const learningExperiences = pgTable('learning_experiences', {[m
+[32m+[m[32m  id: serial('id').primaryKey(), title: text('title').notNull(), category: text('category').notNull(), organizer: text('organizer'), description: text('description'), officialWebsite: text('official_website'), registrationUrl: text('registration_url'), sourceUrl: text('source_url'), mode: text('mode').notNull().default('ONLINE'), country: text('country'), city: text('city'), venue: text('venue'), meetingUrl: text('meeting_url'), startsAt: timestamp('starts_at', { withTimezone: true }), endsAt: timestamp('ends_at', { withTimezone: true }), registrationDeadline: timestamp('registration_deadline', { withTimezone: true }), timezone: text('timezone').notNull().default('UTC'), motivation: text('motivation'), expectedOutcomes: text('expected_outcomes'), skillsToAcquire: text('skills_to_acquire').array().notNull().default([]), personalGoals: text('personal_goals'), priority: text('priority').notNull().default('MEDIUM'), costType: text('cost_type').notNull().default('UNKNOWN'), feeCents: integer('fee_cents'), scholarship: text('scholarship'), otherExpenses: text('other_expenses'), learningHours: integer('learning_hours'), status: text('status').notNull().default('INTERESTED'), createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow()[m
+[32m+[m[32m}, t => ({ statusIndex: index('learning_experiences_status_idx').on(t.status), datesIndex: index('learning_experiences_dates_idx').on(t.startsAt), categoryIndex: index('learning_experiences_category_idx').on(t.category) }));[m
+[32m+[m[32mexport const learningStatusHistory = pgTable('learning_status_history', { id: serial('id').primaryKey(), experienceId: integer('experience_id').notNull().references(() => learningExperiences.id, { onDelete: 'cascade' }), fromStatus: text('from_status'), toStatus: text('to_status').notNull(), note: text('note'), changedAt: timestamp('changed_at', { withTimezone: true }).notNull().defaultNow() }, t => ({ experienceChangedIndex: index('learning_status_history_experience_changed_idx').on(t.experienceId, t.changedAt) }));[m
+[32m+[m[32mexport const learningReflections = pgTable('learning_reflections', { id: serial('id').primaryKey(), experienceId: integer('experience_id').notNull().references(() => learningExperiences.id, { onDelete: 'cascade' }), learned: text('learned'), technicalKnowledge: text('technical_knowledge'), softSkills: text('soft_skills'), takeaways: text('takeaways'), challenges: text('challenges'), peopleMet: text('people_met'), ideas: text('ideas'), applicationPlan: text('application_plan'), actionItems: text('action_items'), rating: integer('rating'), notes: text('notes'), draft: boolean('draft').notNull().default(true), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow() }, t => ({ experienceUnique: uniqueIndex('learning_reflections_experience_unique').on(t.experienceId) }));[m
+[32m+[m[32mexport const learningSkills = pgTable('learning_skills', { id: serial('id').primaryKey(), name: text('name').notNull(), normalizedName: text('normalized_name').notNull(), notes: text('notes'), createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow() }, t => ({ normalizedUnique: uniqueIndex('learning_skills_normalized_unique').on(t.normalizedName) }));[m
+[32m+[m[32mexport const learningExperienceSkills = pgTable('learning_experience_skills', { id: serial('id').primaryKey(), experienceId: integer('experience_id').notNull().references(() => learningExperiences.id, { onDelete: 'cascade' }), skillId: integer('skill_id').notNull().references(() => learningSkills.id, { onDelete: 'cascade' }), createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow() }, t => ({ relationUnique: uniqueIndex('learning_experience_skills_unique').on(t.experienceId, t.skillId) }));[m
+[32m+[m[32mexport const learningAttachments = pgTable('learning_attachments', { id: serial('id').primaryKey(), experienceId: integer('experience_id').notNull().references(() => learningExperiences.id, { onDelete: 'cascade' }), label: text('label').notNull(), kind: text('kind').notNull().default('DOCUMENT'), url: text('url').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow() }, t => ({ experienceIndex: index('learning_attachments_experience_idx').on(t.experienceId) }));[m
+[32m+[m[32mexport type LearningExperienceRow = typeof learningExperiences.$inferSelect;[m
+[1mdiff --git a/plan.md b/plan.md[m
+[1mindex 0d8763b..8f2f98f 100644[m
+[1m--- a/plan.md[m
+[1m+++ b/plan.md[m
+[36m@@ -125,3 +125,13 @@[m [mThe protected Opportunities workspace remains backed by the existing profile, op[m
+ ### Opportunities design[m
+ [m
+ Chosen movement: **evidence-led AI operations desk**. It uses compact Linear/Vercel-like density, navy surfaces, blue action accents, green readiness states, and gold attention states. Principles: show the source beside the claim, keep human approval visible, make the next action obvious, and preserve readable responsive behavior. The layout uses a command header, horizontal accessible tabs, metric rail, two-column briefing surfaces, responsive opportunity cards, Kanban-style status columns, and a selected-record detail panel. Motion is limited to small state transitions and includes a reduced-motion fallback. Candidate profile and settings stay deliberately operational; no unsupported provider controls or secret values are exposed.[m
+[32m+[m
+[32m+[m[32m# Learning & Growth Management (2026-11)[m
+[32m+[m
+[32m+[m[32m## Implementation and structure[m
+[32m+[m
+[32m+[m[32mAdd a separate protected `/admin/learning` workspace to this Next.js App Router application. Reuse the admin shell, `getSession`/`isAdminRequest`, same-origin write protections, PostgreSQL/Drizzle, and the existing server AI provider. Keep Learning separate from Experiences, Hackathons, Opportunities and Life AI. The workspace exposes Overview, All Learning, Calendar, My Reflections, Skills Growth, Certificates and Analytics routes.[m
+[32m+[m
+[32m+[m[32mAdd normalized tables for learning experiences, participation status history, reflections, reusable skills, experience-skill relationships and labeled attachment references. The repository has no general authenticated binary-upload API; supporting materials therefore use validated external/document URL references until storage upload infrastructure is explicitly available. Add schema definitions in `lib/schema.ts`, additive SQL migration `drizzle/0020_learning.sql`, protected and Zod-validated API handlers in `app/api/admin/learning`, route pages in `app/admin/(protected)/learning`, a focused workspace in `components/admin/LearningWorkspace.tsx`, and feature styling in `app/admin/learning.css`. Update navigation and `public/manus-routes.json`.[m
+[32m+[m
+[32m+[m[32mFollow existing admin controls and responsive conventions with the requested Learning colors as feature-scoped accents and Fraunces/Inter font stacks. All analytics derive only from saved records; no fabricated or seeded statistics. Calendar uses recorded event dates. Optional AI analyses only user-entered content, prohibits inventing achievements or personal facts, and labels all generated text as editable suggestions separate from reflection fields.[m
+[1mdiff --git a/public/manus-routes.json b/public/manus-routes.json[m
+[1mindex 3c4c5a2..f9c2132 100644[m
+[1m--- a/public/manus-routes.json[m
+[1m+++ b/public/manus-routes.json[m
+[36m@@ -1 +1,148 @@[m
+[31m-{"routes":[{"path":"/","title":"Home"},{"path":"/admin","title":"Admin dashboard"},{"path":"/admin/activity","title":"Admin activity"},{"path":"/admin/appointments","title":"Admin appointments"},{"path":"/admin/audit","title":"Admin audit"},{"path":"/admin/books","title":"Book management"},{"path":"/admin/content","title":"Admin content"},{"path":"/admin/hackathons","title":"Hackathons"},{"path":"/admin/life-ai","title":"Your Life AI"},{"path":"/admin/life-ai/profile","title":"My Life Profile"},{"path":"/admin/life-ai/memory","title":"Memory & Personalization"},{"path":"/admin/login","title":"Admin login"},{"path":"/admin/mentorship","title":"Admin mentorship"},{"path":"/admin/messages","title":"Admin messages"},{"path":"/admin/opportunities","title":"Admin opportunities"},{"path":"/admin/projects","title":"Admin projects"},{"path":"/admin/settings","title":"Admin settings"},{"path":"/admin/videos","title":"Admin videos"},{"path":"/book","title":"Book a meeting"},{"path":"/books","title":"Books"},{"path":"/content","title":"Writing"},{"path":"/content/:slug","title":"Article detail"},{"path":"/experience/:slug","title":"Experience detail"},{"path":"/journey","title":"How I work"},{"path":"/media","title":"Media library"},{"path":"/mentorship","title":"Mentorship"},{"path":"/opportunities","title":"Opportunities"},{"path":"/projects/:slug-or-id","title":"Project detail"},{"path":"/videos","title":"Videos and media"}]}[m
+[32m+[m[32m{[m
+[32m+[m[32m  "routes": [[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/",[m
+[32m+[m[32m      "title": "Home"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin",[m
+[32m+[m[32m      "title": "Admin dashboard"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/activity",[m
+[32m+[m[32m      "title": "Admin activity"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/appointments",[m
+[32m+[m[32m      "title": "Admin appointments"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/audit",[m
+[32m+[m[32m      "title": "Admin audit"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/books",[m
+[32m+[m[32m      "title": "Book management"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/content",[m
+[32m+[m[32m      "title": "Admin content"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/hackathons",[m
+[32m+[m[32m      "title": "Hackathons"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/life-ai",[m
+[32m+[m[32m      "title": "Your Life AI"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/life-ai/profile",[m
+[32m+[m[32m      "title": "My Life Profile"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/life-ai/memory",[m
+[32m+[m[32m      "title": "Memory & Personalization"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/login",[m
+[32m+[m[32m      "title": "Admin login"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/mentorship",[m
+[32m+[m[32m      "title": "Admin mentorship"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/messages",[m
+[32m+[m[32m      "title": "Admin messages"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/opportunities",[m
+[32m+[m[32m      "title": "Admin opportunities"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/projects",[m
+[32m+[m[32m      "title": "Admin projects"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/settings",[m
+[32m+[m[32m      "title": "Admin settings"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/videos",[m
+[32m+[m[32m      "title": "Admin videos"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/book",[m
+[32m+[m[32m      "title": "Book a meeting"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/books",[m
+[32m+[m[32m      "title": "Books"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/content",[m
+[32m+[m[32m      "title": "Writing"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/content/:slug",[m
+[32m+[m[32m      "title": "Article detail"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/experience/:slug",[m
+[32m+[m[32m      "title": "Experience detail"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/journey",[m
+[32m+[m[32m      "title": "How I work"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/media",[m
+[32m+[m[32m      "title": "Media library"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/mentorship",[m
+[32m+[m[32m      "title": "Mentorship"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/opportunities",[m
+[32m+[m[32m      "title": "Opportunities"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/projects/:slug-or-id",[m
+[32m+[m[32m      "title": "Project detail"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/videos",[m
+[32m+[m[32m      "title": "Videos and media"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/learning",[m
+[32m+[m[32m      "title": "Learning overview"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/learning/all",[m
+[32m+[m[32m      "title": "All learning"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/learning/calendar",[m
+[32m+[m[32m      "title": "Learning calendar"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/learning/reflections",[m
+[32m+[m[32m      "title": "My reflections"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/learning/skills",[m
+[32m+[m[32m      "title": "Skills growth"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/learning/certificates",[m
+[32m+[m[32m      "title": "Learning certificates"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    {[m
+[32m+[m[32m      "path": "/admin/learning/analytics",[m
+[32m+[m[32m      "title": "Learning analytics"[m
+[32m+[m[32m    }[m
+[32m+[m[32m  ][m
+[32m+[m[32m}[m

@@ -141,6 +141,13 @@
       "when": 1794570004000,
       "tag": "0019_remove_hackathon_search_provider",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1794827276400,
+      "tag": "0020_learning",
+      "breakpoints": true
     }
   ]
 }
