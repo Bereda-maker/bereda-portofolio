@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, ChevronLeft, ChevronRight, Menu, Search, X } from 'lucide-react';
 import CommandPalette from './CommandPalette';
 import ThemeToggle from './AdminTheme';
@@ -12,8 +12,10 @@ export default function AdminShell({ unread, children }: { unread: number; child
   const pathname = usePathname();
   const [drawer, setDrawer] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  const [navScrolling, setNavScrolling] = useState(false);
   const [palette, setPalette] = useState(false);
   const [isMac, setIsMac] = useState(false);
+  const navScrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => { setIsMac(/Mac|iPhone|iPad/.test(navigator.platform)); }, []);
   useEffect(() => {
@@ -21,6 +23,7 @@ export default function AdminShell({ unread, children }: { unread: number; child
     if (stored !== null) setSidebarCollapsed(stored !== 'false');
   }, []);
   useEffect(() => { setDrawer(false); }, [pathname]);
+  useEffect(() => () => { if (navScrollTimer.current) clearTimeout(navScrollTimer.current); }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -38,6 +41,11 @@ export default function AdminShell({ unread, children }: { unread: number; child
       window.localStorage.setItem('bereda-admin-sidebar-collapsed', String(next));
       return next;
     });
+  };
+  const handleNavScroll = () => {
+    setNavScrolling(true);
+    if (navScrollTimer.current) clearTimeout(navScrollTimer.current);
+    navScrollTimer.current = setTimeout(() => setNavScrolling(false), 650);
   };
 
   return (
@@ -57,14 +65,14 @@ export default function AdminShell({ unread, children }: { unread: number; child
           <button type="button" className="admin-icon-btn admin-drawer-close" aria-label="Close menu" onClick={() => setDrawer(false)}><X size={18} /></button>
         </div>
 
-        <nav className="admin-nav" aria-label="Admin navigation">
+        <nav className={`admin-nav${navScrolling ? ' is-scrolling' : ''}`} aria-label="Admin navigation" onScroll={handleNavScroll}>
           {NAV_GROUPS.map((group) => (
             <div key={group.label} className="admin-nav-group">
               <span className="admin-nav-label">{group.label}</span>
               {group.items.map((item) => {
                 const active = isActive(item, pathname);
                 return (
-                    <Link key={item.href} href={item.href} aria-current={active ? 'page' : undefined} aria-label={item.label} data-tooltip={item.label} className={`admin-nav-link${active ? ' active' : ''}`}>
+                    <Link key={item.href} href={item.href} aria-current={active ? 'page' : undefined} title={item.label} data-tooltip={item.label} className={`admin-nav-link${active ? ' active' : ''}`}>
                       <item.icon size={17} aria-hidden="true" />
                       <span className="admin-nav-text">{item.label}</span>
                     {item.badge === 'unread' && unread > 0 && <span className="admin-nav-badge" aria-label={`${unread} unread`}>{unread > 99 ? '99+' : unread}</span>}
@@ -76,7 +84,7 @@ export default function AdminShell({ unread, children }: { unread: number; child
         </nav>
 
         <div className="admin-sidebar-footer">
-          <Link href="/" target="_blank" rel="noopener noreferrer" className="admin-nav-link" data-tooltip="View public site" aria-label="View public site"><ArrowUpRight size={17} aria-hidden="true" /><span className="admin-nav-text">View public site</span></Link>
+          <Link href="/" target="_blank" rel="noopener noreferrer" className="admin-nav-link" data-tooltip="View public site" title="View public site" aria-label="View public site"><ArrowUpRight size={17} aria-hidden="true" /><span className="admin-nav-text">View public site</span></Link>
           <LogoutButton />
         </div>
       </aside>

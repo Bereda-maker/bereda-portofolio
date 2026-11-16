@@ -18,7 +18,7 @@ export default function LogoutButton() {
   };
 
   return (
-    <button type="button" onClick={logout} disabled={loading} className="admin-nav-link admin-signout" data-tooltip="Sign out" aria-label={loading ? 'Signing out…' : 'Sign out'}>
+    <button type="button" onClick={logout} disabled={loading} className="admin-nav-link admin-signout" data-tooltip="Sign out" title="Sign out" aria-label={loading ? 'Signing out…' : 'Sign out'}>
       <LogOut size={17} aria-hidden="true" />
       <span className="admin-nav-text">{loading ? 'Signing out…' : 'Sign out'}</span>
     </button>
