@@ -2,6 +2,7 @@ import './admin.css';
 import './appointments.css';
 import './life-ai.css';
 import './opportunities.css';
+import './hackathons.css';
 import { AdminThemeSync } from '@/components/admin/AdminTheme';
 import { ADMIN_THEME_INIT_SCRIPT } from '@/lib/admin-theme';
 

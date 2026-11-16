@@ -24,7 +24,11 @@ export async function GET() {
       db.select().from(savedHackathons).where(eq(savedHackathons.ownerKey, ownerKey)).orderBy(desc(savedHackathons.updatedAt)),
       db.select().from(hackathonSearchUsage).orderBy(desc(hackathonSearchUsage.createdAt)).limit(10),
     ]);
-    return NextResponse.json({ profile, startupProfiles, hackathons: opportunities, saved, provider: { serpapi: serpApiStatus() }, recentUsage: usage, sourceStatuses: HACKATHON_SOURCES.map((source) => ({ ...source, serpapi: serpApiStatus().configured ? 'enabled' : 'not_configured' })) });
+    const [matches, evidence] = await Promise.all([
+      db.select().from(hackathonMatches).where(eq(hackathonMatches.profileId, profile.id)),
+      db.select().from(hackathonEvidence).orderBy(desc(hackathonEvidence.capturedAt)).limit(300),
+    ]);
+    return NextResponse.json({ profile, startupProfiles, hackathons: opportunities, saved, matches, evidence, provider: { serpapi: serpApiStatus() }, recentUsage: usage, sourceStatuses: HACKATHON_SOURCES.map((source) => ({ ...source, serpapi: serpApiStatus().configured ? 'enabled' : 'not_configured' })) });
   } catch (error) { console.error('[admin/hackathons GET]', error instanceof Error ? error.message : error); return NextResponse.json({ error: 'Hackathons database is unavailable. Apply migrations 0015_hackathons.sql and 0016_hackathon_serpapi.sql.' }, { status: 503 }); }
 }
 
