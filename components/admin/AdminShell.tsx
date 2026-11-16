@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ArrowUpRight, Menu, Search, X } from 'lucide-react';
+import { ArrowUpRight, ChevronLeft, ChevronRight, Menu, Search, X } from 'lucide-react';
 import CommandPalette from './CommandPalette';
 import ThemeToggle from './AdminTheme';
 import LogoutButton from './LogoutButton';
@@ -11,10 +11,15 @@ import { ALL_NAV_ITEMS, NAV_GROUPS, isActive } from './nav';
 export default function AdminShell({ unread, children }: { unread: number; children: React.ReactNode }) {
   const pathname = usePathname();
   const [drawer, setDrawer] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [palette, setPalette] = useState(false);
   const [isMac, setIsMac] = useState(false);
 
   useEffect(() => { setIsMac(/Mac|iPhone|iPad/.test(navigator.platform)); }, []);
+  useEffect(() => {
+    const stored = window.localStorage.getItem('bereda-admin-sidebar-collapsed');
+    if (stored !== null) setSidebarCollapsed(stored !== 'false');
+  }, []);
   useEffect(() => { setDrawer(false); }, [pathname]);
 
   useEffect(() => {
@@ -27,18 +32,28 @@ export default function AdminShell({ unread, children }: { unread: number; child
   }, []);
 
   const current = ALL_NAV_ITEMS.find((item) => isActive(item, pathname));
+  const toggleSidebar = () => {
+    setSidebarCollapsed((collapsed) => {
+      const next = !collapsed;
+      window.localStorage.setItem('bereda-admin-sidebar-collapsed', String(next));
+      return next;
+    });
+  };
 
   return (
     <div className="admin-shell">
       <a href="#admin-main" className="admin-skip">Skip to content</a>
       {drawer && <div className="admin-scrim" onClick={() => setDrawer(false)} aria-hidden="true" />}
 
-      <aside className={`admin-sidebar${drawer ? ' open' : ''}`} aria-label="Sidebar">
+      <aside className={`admin-sidebar${drawer ? ' open' : ''}${sidebarCollapsed ? ' collapsed' : ''}`} aria-label="Sidebar">
         <div className="admin-sidebar-head">
           <Link href="/admin" className="admin-brand">
             <span className="admin-brand-mark">B</span>
             <span className="admin-brand-copy"><strong>Bereda</strong><span>Control center</span></span>
           </Link>
+          <button type="button" className="admin-icon-btn admin-sidebar-toggle" aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'} aria-expanded={!sidebarCollapsed} onClick={toggleSidebar}>
+            {sidebarCollapsed ? <ChevronRight size={17} /> : <ChevronLeft size={17} />}
+          </button>
           <button type="button" className="admin-icon-btn admin-drawer-close" aria-label="Close menu" onClick={() => setDrawer(false)}><X size={18} /></button>
         </div>
 
@@ -49,9 +64,9 @@ export default function AdminShell({ unread, children }: { unread: number; child
               {group.items.map((item) => {
                 const active = isActive(item, pathname);
                 return (
-                  <Link key={item.href} href={item.href} aria-current={active ? 'page' : undefined} className={`admin-nav-link${active ? ' active' : ''}`}>
-                    <item.icon size={17} aria-hidden="true" />
-                    <span>{item.label}</span>
+                    <Link key={item.href} href={item.href} aria-current={active ? 'page' : undefined} aria-label={item.label} data-tooltip={item.label} className={`admin-nav-link${active ? ' active' : ''}`}>
+                      <item.icon size={17} aria-hidden="true" />
+                      <span className="admin-nav-text">{item.label}</span>
                     {item.badge === 'unread' && unread > 0 && <span className="admin-nav-badge" aria-label={`${unread} unread`}>{unread > 99 ? '99+' : unread}</span>}
                   </Link>
                 );
@@ -61,7 +76,7 @@ export default function AdminShell({ unread, children }: { unread: number; child
         </nav>
 
         <div className="admin-sidebar-footer">
-          <Link href="/" target="_blank" rel="noopener noreferrer" className="admin-nav-link"><ArrowUpRight size={17} aria-hidden="true" /><span>View public site</span></Link>
+          <Link href="/" target="_blank" rel="noopener noreferrer" className="admin-nav-link" data-tooltip="View public site" aria-label="View public site"><ArrowUpRight size={17} aria-hidden="true" /><span className="admin-nav-text">View public site</span></Link>
           <LogoutButton />
         </div>
       </aside>
