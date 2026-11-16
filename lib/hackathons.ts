@@ -37,18 +37,18 @@ export function canTransitionStatus(from: HackathonStatus, to: HackathonStatus):
 
 export type HackathonSource = { id: string; name: string; url: string; mode: 'verified_api' | 'browse_only'; feedUrl?: string; note: string; hostPatterns: readonly string[] };
 export const HACKATHON_SOURCES: readonly HackathonSource[] = [
-  { id: 'devpost', name: 'Devpost', url: 'https://devpost.com/hackathons', mode: 'browse_only', hostPatterns: ['devpost.com'], note: 'Official event pages are searched only when SerpApi is configured.' },
-  { id: 'hackathonradar', name: 'Hackathon Radar', url: 'https://www.hackathonradar.com', mode: 'browse_only', hostPatterns: ['hackathonradar.com'], note: 'Official event pages are searched only when SerpApi is configured.' },
-  { id: 'mlh', name: 'Major League Hacking', url: 'https://mlh.io', mode: 'browse_only', hostPatterns: ['mlh.io'], note: 'Official event pages are searched only when SerpApi is configured.' },
-  { id: 'hackerearth', name: 'HackerEarth', url: 'https://www.hackerearth.com/challenges', mode: 'browse_only', hostPatterns: ['hackerearth.com'], note: 'Official challenge pages are searched only when SerpApi is configured.' },
-  { id: 'devfolio', name: 'Devfolio', url: 'https://devfolio.co/hackathons', mode: 'browse_only', hostPatterns: ['devfolio.co'], note: 'Official event pages are searched only when SerpApi is configured.' },
-  { id: 'dorahacks', name: 'DoraHacks', url: 'https://dorahacks.io', mode: 'browse_only', hostPatterns: ['dorahacks.io'], note: 'Official event pages are searched only when SerpApi is configured.' },
-  { id: 'angelhack', name: 'AngelHack', url: 'https://angelhack.com', mode: 'verified_api', feedUrl: 'https://angelhack.com/wp-json/wp/v2/event', hostPatterns: ['angelhack.com'], note: 'Official public WordPress event API plus SerpApi official-page search.' },
-  { id: 'kaggle', name: 'Kaggle Competitions', url: 'https://www.kaggle.com/competitions', mode: 'browse_only', hostPatterns: ['kaggle.com'], note: 'Official competition pages are searched only when SerpApi is configured.' },
-  { id: 'lablab', name: 'lablab.ai', url: 'https://lablab.ai', mode: 'browse_only', hostPatterns: ['lablab.ai'], note: 'Official event pages are searched only when SerpApi is configured.' },
-  { id: 'ethglobal', name: 'ETHGlobal', url: 'https://ethglobal.com', mode: 'browse_only', hostPatterns: ['ethglobal.com'], note: 'Official event pages are searched only when SerpApi is configured.' },
-  { id: 'hackathons-fun', name: 'Hackathons Around the World', url: 'https://hackathons.fun', mode: 'browse_only', hostPatterns: ['hackathons.fun'], note: 'Official event pages are searched only when SerpApi is configured.' },
-  { id: 'hkton', name: 'hkton', url: 'https://hkton.com', mode: 'browse_only', hostPatterns: ['hkton.com'], note: 'Official event pages are searched only when SerpApi is configured.' },
+  { id: 'devpost', name: 'Devpost', url: 'https://devpost.com/hackathons', mode: 'browse_only', hostPatterns: ['devpost.com'], note: 'Browse the official platform to review current events; automated records are not created from this source.' },
+  { id: 'hackathonradar', name: 'Hackathon Radar', url: 'https://www.hackathonradar.com', mode: 'browse_only', hostPatterns: ['hackathonradar.com'], note: 'Browse the official platform to review current events; automated records are not created from this source.' },
+  { id: 'mlh', name: 'Major League Hacking', url: 'https://mlh.io', mode: 'browse_only', hostPatterns: ['mlh.io'], note: 'Browse the official platform to review current events; automated records are not created from this source.' },
+  { id: 'hackerearth', name: 'HackerEarth', url: 'https://www.hackerearth.com/challenges', mode: 'browse_only', hostPatterns: ['hackerearth.com'], note: 'Browse the official platform to review current challenges; automated records are not created from this source.' },
+  { id: 'devfolio', name: 'Devfolio', url: 'https://devfolio.co/hackathons', mode: 'browse_only', hostPatterns: ['devfolio.co'], note: 'Browse the official platform to review current events; automated records are not created from this source.' },
+  { id: 'dorahacks', name: 'DoraHacks', url: 'https://dorahacks.io', mode: 'browse_only', hostPatterns: ['dorahacks.io'], note: 'Browse the official platform to review current events; automated records are not created from this source.' },
+  { id: 'angelhack', name: 'AngelHack', url: 'https://angelhack.com', mode: 'verified_api', feedUrl: 'https://angelhack.com/wp-json/wp/v2/event', hostPatterns: ['angelhack.com'], note: 'Official public WordPress event API discovery.' },
+  { id: 'kaggle', name: 'Kaggle Competitions', url: 'https://www.kaggle.com/competitions', mode: 'browse_only', hostPatterns: ['kaggle.com'], note: 'Browse the official platform to review current competitions; automated records are not created from this source.' },
+  { id: 'lablab', name: 'lablab.ai', url: 'https://lablab.ai', mode: 'browse_only', hostPatterns: ['lablab.ai'], note: 'Browse the official platform to review current events; automated records are not created from this source.' },
+  { id: 'ethglobal', name: 'ETHGlobal', url: 'https://ethglobal.com', mode: 'browse_only', hostPatterns: ['ethglobal.com'], note: 'Browse the official platform to review current events; automated records are not created from this source.' },
+  { id: 'hackathons-fun', name: 'Hackathons Around the World', url: 'https://hackathons.fun', mode: 'browse_only', hostPatterns: ['hackathons.fun'], note: 'Browse the official platform to review current events; automated records are not created from this source.' },
+  { id: 'hkton', name: 'hkton', url: 'https://hkton.com', mode: 'browse_only', hostPatterns: ['hkton.com'], note: 'Browse the official platform to review current events; automated records are not created from this source.' },
 ] as const;
 const SOURCE_REGISTRY = HACKATHON_SOURCES.map((source) => source.url) as readonly string[];
 export function approvedHackathonSources(): readonly string[] { return SOURCE_REGISTRY; }

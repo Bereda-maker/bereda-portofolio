@@ -134,6 +134,13 @@
       "when": 1794570003000,
       "tag": "0018_hackathon_manual_entries",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1794570004000,
+      "tag": "0019_remove_hackathon_search_provider",
+      "breakpoints": true
     }
   ]
 }
