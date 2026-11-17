@@ -15,7 +15,10 @@
     "db:migrate": "node scripts/migrate.mjs",
     "db:seed": "node scripts/seed.mjs",
     "db:studio": "drizzle-kit studio",
-    "test:learning-validation": "tsx --test tests/learning-validation.test.ts"
+    "test:learning-validation": "tsx --test tests/learning-validation.test.ts",
+    "test:finance": "tsx --test tests/finance.test.ts",
+    "test:finance-summary": "tsx --test tests/finance-summary.test.ts",
+    "test:finance-validation": "tsx --test tests/finance-validation.test.ts"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",

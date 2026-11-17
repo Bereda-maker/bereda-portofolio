@@ -29,20 +29,80 @@
       "title": "Admin content"
     },
     {
+      "path": "/admin/finance",
+      "title": "Personal Finance overview"
+    },
+    {
+      "path": "/admin/finance/allocation",
+      "title": "Personal Finance allocation"
+    },
+    {
+      "path": "/admin/finance/budgets",
+      "title": "Personal Finance budgets"
+    },
+    {
+      "path": "/admin/finance/income",
+      "title": "Personal Finance income"
+    },
+    {
+      "path": "/admin/finance/reports",
+      "title": "Personal Finance reports"
+    },
+    {
+      "path": "/admin/finance/savings",
+      "title": "Personal Finance savings and investments"
+    },
+    {
+      "path": "/admin/finance/settings",
+      "title": "Personal Finance settings"
+    },
+    {
+      "path": "/admin/finance/transactions",
+      "title": "Personal Finance transactions"
+    },
+    {
       "path": "/admin/hackathons",
       "title": "Hackathons"
+    },
+    {
+      "path": "/admin/learning",
+      "title": "Learning overview"
+    },
+    {
+      "path": "/admin/learning/all",
+      "title": "All learning"
+    },
+    {
+      "path": "/admin/learning/analytics",
+      "title": "Learning analytics"
+    },
+    {
+      "path": "/admin/learning/calendar",
+      "title": "Learning calendar"
+    },
+    {
+      "path": "/admin/learning/certificates",
+      "title": "Learning certificates"
+    },
+    {
+      "path": "/admin/learning/reflections",
+      "title": "My reflections"
+    },
+    {
+      "path": "/admin/learning/skills",
+      "title": "Skills growth"
     },
     {
       "path": "/admin/life-ai",
       "title": "Your Life AI"
     },
     {
-      "path": "/admin/life-ai/profile",
-      "title": "My Life Profile"
-    },
-    {
       "path": "/admin/life-ai/memory",
       "title": "Memory & Personalization"
+    },
+    {
+      "path": "/admin/life-ai/profile",
+      "title": "My Life Profile"
     },
     {
       "path": "/admin/login",
@@ -115,34 +175,6 @@
     {
       "path": "/videos",
       "title": "Videos and media"
-    },
-    {
-      "path": "/admin/learning",
-      "title": "Learning overview"
-    },
-    {
-      "path": "/admin/learning/all",
-      "title": "All learning"
-    },
-    {
-      "path": "/admin/learning/calendar",
-      "title": "Learning calendar"
-    },
-    {
-      "path": "/admin/learning/reflections",
-      "title": "My reflections"
-    },
-    {
-      "path": "/admin/learning/skills",
-      "title": "Skills growth"
-    },
-    {
-      "path": "/admin/learning/certificates",
-      "title": "Learning certificates"
-    },
-    {
-      "path": "/admin/learning/analytics",
-      "title": "Learning analytics"
     }
   ]
 }
