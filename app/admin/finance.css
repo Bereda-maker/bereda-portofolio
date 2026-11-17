@@ -207,3 +207,88 @@
   .finance-root *, .finance-root h1, .finance-root h2, .finance-root h3, .finance-root td, .finance-root th, .finance-root strong, .finance-root small, .finance-root p, .finance-root span { color: #111 !important; }
   .finance-panel { break-inside: avoid; }
 }
+
+/* Desktop refinement: use the space beside the global admin rail, then let the
+   overview read like a ledger dashboard instead of nested half-width cards. */
+@media (min-width: 721px) {
+  .admin-content:has(.finance-root) {
+    width: 100%;
+    max-width: none;
+    padding: clamp(1.35rem, 2.15vw, 2.6rem) clamp(1.2rem, 2.1vw, 2.75rem) 3.5rem;
+  }
+  .finance-root { max-width: 1680px; }
+  .finance-heading {
+    min-height: 5.25rem;
+    padding: 0 0 1.25rem;
+    border-bottom: 1px solid var(--finance-border);
+  }
+  .finance-heading h1 { font-size: clamp(1.8rem, 2.2vw, 2.35rem); }
+  .finance-heading-controls label { min-width: 10.5rem; }
+  .finance-nav {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: .35rem;
+    padding: .4rem;
+    border-radius: .8rem;
+  }
+  .finance-nav a {
+    min-width: 0;
+    min-height: 2.9rem;
+    padding-inline: .45rem;
+    font-size: .76rem;
+    white-space: nowrap;
+  }
+  .finance-nav a.active { box-shadow: inset 0 -2px 0 var(--finance-gold); }
+  .finance-overview { display: grid; gap: 1.1rem; }
+  .finance-overview > .finance-metrics { grid-column: 1 / -1; }
+  .finance-overview-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: start;
+    gap: 1rem;
+  }
+  .finance-overview-grid > .finance-panel:nth-child(1) { grid-column: span 7; }
+  .finance-overview-grid > .finance-panel:nth-child(2) { grid-column: span 5; }
+  .finance-overview-grid > .finance-panel:nth-child(3) { grid-column: span 5; }
+  .finance-overview-grid > .finance-panel:nth-child(4) { grid-column: span 3; }
+  .finance-overview-grid > .finance-panel:nth-child(5) { grid-column: span 7; }
+  .finance-overview-grid > .finance-panel:nth-child(6) { grid-column: span 5; }
+  .finance-overview > .finance-ai-panel { margin-top: 0; }
+  .finance-layout { grid-template-columns: minmax(0, 1.12fr) minmax(22rem, .88fr); gap: 1.2rem; }
+  .finance-section { gap: 1.2rem; }
+  .finance-panel { padding: clamp(1.15rem, 1.3vw, 1.6rem); border-radius: 1.05rem; }
+  .finance-panel-title { margin-bottom: 1.15rem; }
+  .finance-panel-title h2 { font-size: 1.08rem; }
+  .finance-metrics { gap: .9rem; }
+  .finance-metric { min-height: 7.35rem; padding: 1.1rem 1.2rem; }
+  .finance-metric strong { font-size: clamp(1.2rem, 1.55vw, 1.65rem); }
+  .finance-form { max-width: 58rem; }
+  .finance-layout > .finance-panel:last-child { min-width: 0; }
+  .finance-toolbar { min-height: 2.8rem; }
+  .finance-record { padding-block: .8rem; }
+  .finance-record strong { font-size: .82rem; }
+  .finance-record span, .finance-record small { font-size: .72rem; }
+  .finance-budget-row { padding-block: .95rem; }
+  .finance-table { font-size: .76rem; }
+  .finance-table th { font-size: .68rem; }
+  .finance-table th, .finance-table td { padding: .78rem .7rem; }
+}
+@media (min-width: 721px) and (max-width: 1320px) {
+  .finance-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .finance-overview-grid > .finance-panel:nth-child(n) { grid-column: span 6; }
+  .finance-overview-grid > .finance-panel:nth-child(5) { grid-column: span 8; }
+  .finance-overview-grid > .finance-panel:nth-child(6) { grid-column: span 4; }
+}
+@media (min-width: 721px) and (max-width: 1050px) {
+  .finance-layout { grid-template-columns: 1fr; }
+  .finance-overview-grid > .finance-panel:nth-child(n) { grid-column: 1 / -1; }
+}
+@media (max-width: 720px) {
+  .finance-overview { display: grid; gap: .9rem; }
+  .finance-overview-grid { grid-template-columns: 1fr; }
+}
+@media (min-width: 721px) {
+  .finance-overview { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .finance-overview > .finance-metrics,
+  .finance-overview > .finance-overview-grid,
+  .finance-overview > .finance-ai-panel { grid-column: 1 / -1; }
+}
