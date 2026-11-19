@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Check, CheckCheck, ChevronDown, Copy, Inbox, Mail, MailOpen, Reply, Search, Trash2, X } from 'lucide-react';
 import type { MessageRow } from '@/lib/schema';
 import { fullDate, initials, timeAgo } from '@/lib/admin-format';
+import { formatBudget } from '@/lib/contact-budget';
 import { EmptyAdminState } from './AdminSetupState';
 import { useConfirm, useToast } from './AdminUI';
 
@@ -26,7 +27,7 @@ export default function MessagesList({ initialMessages }: { initialMessages: Mes
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return rows.filter((r) => (filter === 'all' || (filter === 'unread' ? !r.read : r.read)) && (!q || `${r.name} ${r.email} ${r.message}`.toLowerCase().includes(q)));
+    return rows.filter((r) => (filter === 'all' || (filter === 'unread' ? !r.read : r.read)) && (!q || `${r.name} ${r.email} ${r.message} ${formatBudget(r.budgetAmount) ?? ''}`.toLowerCase().includes(q)));
   }, [rows, filter, query]);
 
   const patchRead = async (id: number, read: boolean, quiet = false) => {
@@ -133,7 +134,7 @@ export default function MessagesList({ initialMessages }: { initialMessages: Mes
                 <button type="button" className="admin-msg-head" aria-expanded={open} aria-controls={`msg-${m.id}`} onClick={() => toggleOpen(m)}>
                   <span className="admin-avatar" aria-hidden="true">{initials(m.name)}</span>
                   <span className="admin-row-body">
-                    <span className="admin-row-title"><strong>{m.name}</strong>{!m.read && <span className="admin-dot" aria-label="Unread" />}<span className="admin-row-email">{m.email}</span></span>
+                    <span className="admin-row-title"><strong>{m.name}</strong>{!m.read && <span className="admin-dot" aria-label="Unread" />}<span className="admin-row-email">{m.email}</span>{formatBudget(m.budgetAmount) && <span className="admin-row-email" title="Estimated budget">· {formatBudget(m.budgetAmount)}</span>}</span>
                     {!open && <span className="admin-row-sub">{m.message}</span>}
                   </span>
                   <time className="admin-row-meta" dateTime={new Date(m.createdAt).toISOString()} title={fullDate(m.createdAt)} suppressHydrationWarning>{timeAgo(m.createdAt)}</time>
@@ -142,6 +143,7 @@ export default function MessagesList({ initialMessages }: { initialMessages: Mes
                 {open && (
                   <div id={`msg-${m.id}`} className="admin-msg-body">
                     <p className="admin-msg-meta" suppressHydrationWarning>Received {fullDate(m.createdAt)}</p>
+                    {formatBudget(m.budgetAmount) && <p className="admin-msg-meta"><strong>Estimated budget:</strong> {formatBudget(m.budgetAmount)}</p>}
                     <p className="admin-msg-text">{m.message}</p>
                     <div className="admin-actions">
                       <a href={`mailto:${m.email}?subject=${encodeURIComponent('Re: your message')}`} className="admin-button"><Reply size={15} aria-hidden="true" />Reply by email</a>
