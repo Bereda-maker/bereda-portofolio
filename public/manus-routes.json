@@ -175,6 +175,38 @@
     {
       "path": "/videos",
       "title": "Videos and media"
+    },
+    {
+      "path": "/admin/meals",
+      "title": "Meals & Nutrition overview"
+    },
+    {
+      "path": "/admin/meals/foods",
+      "title": "Meals food catalog"
+    },
+    {
+      "path": "/admin/meals/planner",
+      "title": "Meals daily planner"
+    },
+    {
+      "path": "/admin/meals/tracking",
+      "title": "Meals nutrition tracking"
+    },
+    {
+      "path": "/admin/meals/profile",
+      "title": "Meals body profile"
+    },
+    {
+      "path": "/admin/meals/history",
+      "title": "Meals history"
+    },
+    {
+      "path": "/admin/meals/spending",
+      "title": "Meals spending"
+    },
+    {
+      "path": "/admin/meals/settings",
+      "title": "Meals settings"
     }
   ]
 }

@@ -18,7 +18,12 @@
     "test:learning-validation": "tsx --test tests/learning-validation.test.ts",
     "test:finance": "tsx --test tests/finance.test.ts",
     "test:finance-summary": "tsx --test tests/finance-summary.test.ts",
-    "test:finance-validation": "tsx --test tests/finance-validation.test.ts"
+    "test:finance-validation": "tsx --test tests/finance-validation.test.ts",
+    "test:meals-engine": "tsx --test tests/meals-engine.test.ts",
+    "test:meals-validation": "tsx --test tests/meals-validation.test.ts",
+    "test:meals-money": "tsx --test tests/meals-money.test.ts",
+    "test:meals-targets": "tsx --test tests/meals-targets.test.ts",
+    "test:meals-acceptance": "tsx --test tests/meals-acceptance.test.ts"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",

@@ -162,6 +162,13 @@
       "when": 1794900441291,
       "tag": "0022_personal_finance",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1794956400000,
+      "tag": "0023_meals_nutrition",
+      "breakpoints": true
     }
   ]
 }

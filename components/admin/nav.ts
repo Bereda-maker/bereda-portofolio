@@ -1,4 +1,4 @@
-import { BookOpen, Brain, Briefcase, CalendarDays, FileText, FolderKanban, GraduationCap, LayoutDashboard, Mail, ScrollText, Settings, Trophy, Video, Wallet, type LucideIcon } from 'lucide-react';
+import { BookOpen, Brain, Briefcase, CalendarDays, FileText, FolderKanban, GraduationCap, LayoutDashboard, Mail, ScrollText, Settings, Trophy, Video, Wallet, Utensils, type LucideIcon } from 'lucide-react';
 
 export type NavItem = { href: string; label: string; icon: LucideIcon; exact?: boolean; badge?: 'unread'; keywords?: string };
 export type NavGroup = { label: string; items: NavItem[] };
@@ -6,7 +6,7 @@ export type NavGroup = { label: string; items: NavItem[] };
 export const NAV_GROUPS: NavGroup[] = [
   { label: 'Overview', items: [{ href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true, keywords: 'home overview stats' }] },
   { label: 'Personal growth', items: [{ href: '/admin/life-ai', label: 'Your Life AI', icon: Brain, keywords: 'ai life planning reflection habits journal personal' }, { href: '/admin/learning', label: 'Learning', icon: GraduationCap, keywords: 'courses workshops growth skills reflection certificates' }] },
-  { label: 'Personal management', items: [{ href: '/admin/finance', label: 'Personal Finance', icon: Wallet, keywords: 'income budget spending stewardship savings investments reports allocation' }] },
+  { label: 'Personal management', items: [{ href: '/admin/finance', label: 'Personal Finance', icon: Wallet, keywords: 'income budget spending stewardship savings investments reports allocation' }, { href: '/admin/meals', label: 'Meals & Nutrition', icon: Utensils, keywords: 'meals food nutrition planner tracking body profile history spending' }] },
   {
     label: 'Content',
     items: [
