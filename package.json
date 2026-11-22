@@ -23,7 +23,8 @@
     "test:meals-validation": "tsx --test tests/meals-validation.test.ts",
     "test:meals-money": "tsx --test tests/meals-money.test.ts",
     "test:meals-targets": "tsx --test tests/meals-targets.test.ts",
-    "test:meals-acceptance": "tsx --test tests/meals-acceptance.test.ts"
+    "test:meals-acceptance": "tsx --test tests/meals-acceptance.test.ts",
+    "test:meals-planner-ui": "tsx --test tests/meals-planner-ui.test.ts"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",

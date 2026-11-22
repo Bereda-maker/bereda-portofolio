@@ -107,3 +107,7 @@
 .meals-hydration-card>div{display:grid;gap:.25rem}.meals-hydration-card>div span{color:var(--admin-muted);font-size:.84rem}
 .meals-hydration-form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:.6rem;align-items:end}
 @media(max-width:600px){.meals-hydration-form{grid-template-columns:1fr}}
+.meals-planner-readiness{display:grid;gap:.35rem;margin-bottom:.9rem;padding:.8rem .9rem;border:1px solid color-mix(in srgb,var(--meal-gold) 55%,var(--admin-border));border-left:4px solid var(--meal-gold);border-radius:9px;background:color-mix(in srgb,var(--meal-cream) 35%,var(--admin-surface,transparent))}
+.meals-planner-readiness strong,.meals-plan-empty strong{color:var(--meal-deep)}
+.meals-planner-readiness p,.meals-plan-empty p{margin:0;color:var(--admin-muted);font-size:.85rem;line-height:1.5}
+.meals-plan-empty{display:grid;gap:.4rem;border:1px dashed var(--admin-border);border-radius:9px;padding:.8rem;background:color-mix(in srgb,var(--meal-cream) 25%,var(--admin-surface,transparent))}
