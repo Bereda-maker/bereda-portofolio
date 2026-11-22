@@ -11,9 +11,20 @@ test('planner does not present catalog-only foods or a hard-coded 1 g serving as
   assert.match(component, /suggestedServingQuantity/);
   assert.doesNotMatch(component, /defaultValue="1" required aria-label="New item quantity"/);
   assert.match(component, /No foods are ready to plan yet/);
-  assert.match(component, /Catalog foods are not stock/);
+  assert.match(component, /catalog foods are not stock/);
   assert.match(component, /href="\/admin\/meals\/spending#purchase-inventory"/);
   assert.match(component, /id="purchase-inventory"/);
+});
+
+test('empty state reports live stock, missing suggested portions, and unverified estimates', () => {
+  assert.match(component, /Current stock is recorded for/);
+  assert.match(component, /need a suggested serving size/);
+  assert.match(component, /estimateStatus==='estimated_unverified'/);
+  assert.match(component, /not lab-verified/);
+  assert.match(component, /const plannerReadyMessage=/);
+  assert.match(component, /treat them as estimates/);
+  assert.match(component, /href="\/admin\/meals\/foods#nutrition-profile"/);
+  assert.match(component, /id="nutrition-profile"/);
 });
 
 test('a generation with no eligible meals does not persist an empty plan', () => {
