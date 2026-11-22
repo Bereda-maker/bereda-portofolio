@@ -28,6 +28,14 @@ test('profile validation stores age as years and requires a height unit with hei
   assert.equal(profileSchema.safeParse({ ageYears: 121, preferences: [], restrictions: [], allergies: [] }).success, false);
 });
 
+test('profile validation accepts a user-set daily protein goal but rejects nonpositive or implausibly large inputs', () => {
+  const base = { preferences: [], restrictions: [], allergies: [] };
+  assert.equal(profileSchema.safeParse({ ...base, proteinTargetGPerDay: '120' }).success, true);
+  assert.equal(profileSchema.safeParse({ ...base, proteinTargetGPerDay: null }).success, true);
+  assert.equal(profileSchema.safeParse({ ...base, proteinTargetGPerDay: '0' }).success, false);
+  assert.equal(profileSchema.safeParse({ ...base, proteinTargetGPerDay: '501' }).success, false);
+});
+
 test('plan revisions require a complete operation and separate serving measures', () => {
   assert.equal(actionSchema.safeParse({ action: 'plan.item.revise', data: { planId: 1, itemId: 2, operation: 'adjust', quantity: '150', unit: 'g' } }).success, true);
   assert.equal(actionSchema.safeParse({ action: 'plan.item.revise', data: { planId: 1, operation: 'add', foodId: 5, quantity: '2', unit: 'piece', mealType: 'SNACK' } }).success, true);

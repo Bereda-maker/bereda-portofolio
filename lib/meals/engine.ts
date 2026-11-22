@@ -71,9 +71,9 @@ export function prorateMinorUnits(totalMinorInput:string|bigint,partInput:Decima
 
 export interface StockItem { foodId:string; quantity:Measurement; expiresOn?:string|null; available?:boolean }
 export interface MealCandidate { id:string; name:string; items:{foodId:string; amount:Measurement}[]; servings?:number; mealType?:string; explanation?:string }
-export interface SelectionInput { foods:FoodProfile[]; stock:StockItem[]; candidates:MealCandidate[]; budget:DecimalInput; prices:Record<string,{amount:DecimalInput; package:Measurement}>; date:string; allergens?:string[]; restrictions?:string[]; preferences?:string[]; limit?:number }
+export interface SelectionInput { foods:FoodProfile[]; stock:StockItem[]; candidates:MealCandidate[]; budget:DecimalInput; prices:Record<string,{amount:DecimalInput; package:Measurement}>; date:string; allergens?:string[]; restrictions?:string[]; preferences?:string[]; proteinTargetGPerDay?:DecimalInput; limit?:number }
 export interface SelectedMeal { candidate:MealCandidate; cost:Decimal; nutrition:Partial<Record<Nutrient,Decimal>>; preferenceScore?:number }
-export interface SelectionResult { meals:SelectedMeal[]; alternatives:SelectedMeal[]; shortfall:Decimal; reason:string|null }
+export interface SelectionResult { meals:SelectedMeal[]; alternatives:SelectedMeal[]; shortfall:Decimal; proteinTargetGPerDay?:Decimal; plannedProteinG:Decimal; proteinShortfallG:Decimal|null; reason:string|null }
 export function selectAffordableMeals(input:SelectionInput):SelectionResult {
   const foods=new Map(input.foods.map(f=>[f.id,f])); const stock=new Map(input.stock.map(s=>[s.foodId,s])); const excluded=new Set([...(input.allergens||[]),...(input.restrictions||[])].map(x=>x.toLowerCase()));
   const ranked:SelectedMeal[]=[]; const limit=Math.max(0,Math.min(100,input.limit??20));
@@ -85,8 +85,8 @@ export function selectAffordableMeals(input:SelectionInput):SelectionResult {
     }
     if(valid){const prefs=new Set((input.preferences||[]).map(x=>x.toLowerCase()));const preferenceScore=candidate.items.reduce((score,line)=>score+(foods.get(line.foodId)?.tags||[]).filter(tag=>prefs.has(tag.toLowerCase())).length,0);ranked.push({candidate,cost:fmt(cost),preferenceScore,nutrition:Object.fromEntries(Object.entries(totals).map(([k,v])=>[k,fmt(v as bigint)])) as Partial<Record<Nutrient,Decimal>>});}
   }
-  // Preferences are soft signals; exact user-entered restrictions/allergies are hard filters. No unvalidated nutrition target is assumed.
-  ranked.sort((a,b)=>{if((a.preferenceScore||0)!==(b.preferenceScore||0))return (b.preferenceScore||0)-(a.preferenceScore||0);const aCoverage=Object.keys(a.nutrition).length,bCoverage=Object.keys(b.nutrition).length;if(aCoverage!==bCoverage)return bCoverage-aCoverage;const ap=parse(a.nutrition.proteinG||'0'),bp=parse(b.nutrition.proteinG||'0'),ac=parse(a.cost),bc=parse(b.cost);if((ac===BigInt(0))!==(bc===BigInt(0)))return ac===BigInt(0)?-1:1;const left=ap*bc,right=bp*ac;if(left!==right)return left>right?-1:1;const c=ac-bc;return c<BigInt(0)?-1:c>BigInt(0)?1:a.candidate.id.localeCompare(b.candidate.id);});
+  // Preferences are soft signals; exact user-entered restrictions/allergies are hard filters. Only an explicit user-entered protein goal changes protein ranking.
+  ranked.sort((a,b)=>{const ap=parse(a.nutrition.proteinG||'0'),bp=parse(b.nutrition.proteinG||'0'),ac=parse(a.cost),bc=parse(b.cost);if(input.proteinTargetGPerDay!==undefined){if((ac===BigInt(0))!==(bc===BigInt(0)))return ac===BigInt(0)?-1:1;const left=ap*bc,right=bp*ac;if(left!==right)return left>right?-1:1;if(ap!==bp)return ap>bp?-1:1;}if((a.preferenceScore||0)!==(b.preferenceScore||0))return (b.preferenceScore||0)-(a.preferenceScore||0);const aCoverage=Object.keys(a.nutrition).length,bCoverage=Object.keys(b.nutrition).length;if(aCoverage!==bCoverage)return bCoverage-aCoverage;if((ac===BigInt(0))!==(bc===BigInt(0)))return ac===BigInt(0)?-1:1;const left=ap*bc,right=bp*ac;if(left!==right)return left>right?-1:1;const c=ac-bc;return c<BigInt(0)?-1:c>BigInt(0)?1:a.candidate.id.localeCompare(b.candidate.id);});
   const chosen:SelectedMeal[]=[];let spent=BigInt(0);const remainingStock=new Map<string,{basis:MeasurementBasis;quantity:bigint}>();
   for(const row of input.stock){const m=measurementInBasis(row.quantity);if(m)remainingStock.set(row.foodId,{basis:m.basis,quantity:parse(m.quantity)});}
   const foodUseCount=new Map<string,number>();
@@ -98,7 +98,9 @@ export function selectAffordableMeals(input:SelectionInput):SelectionResult {
     chosen.push(item);for(const line of item.candidate.items)foodUseCount.set(line.foodId,(foodUseCount.get(line.foodId)||0)+1);spent+=c;
   }
   const alternatives=ranked.filter(x=>!chosen.some(c=>c.candidate.id===x.candidate.id)); const remaining=parse(input.budget)-spent;
-  return {meals:chosen,alternatives,shortfall:fmt(remaining>BigInt(0)?remaining:BigInt(0)),reason:chosen.length?null:'No candidates met stock, safety, measurement and budget rules.'};
+  const plannedProtein=chosen.reduce((sum,meal)=>sum+parse(meal.nutrition.proteinG||'0'),BigInt(0));
+  const proteinTarget=input.proteinTargetGPerDay===undefined?undefined:parse(input.proteinTargetGPerDay);
+  return {meals:chosen,alternatives,shortfall:fmt(remaining>BigInt(0)?remaining:BigInt(0)),...(proteinTarget===undefined?{}:{proteinTargetGPerDay:fmt(proteinTarget)}),plannedProteinG:fmt(plannedProtein),proteinShortfallG:proteinTarget===undefined?null:fmt(plannedProtein<proteinTarget?proteinTarget-plannedProtein:BigInt(0)),reason:chosen.length?null:'No candidates met stock, safety, measurement and budget rules.'};
 }
 
 export function adultBmi(weightKg:DecimalInput,heightMetres:DecimalInput,ageYears:number):{bmi:Decimal; informationalOnly:true; limitation:string}|null {

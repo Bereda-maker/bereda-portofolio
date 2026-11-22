@@ -35,6 +35,13 @@ test('selection applies deterministic protein preference within budget and repor
  const stock=[{foodId:'bean',quantity:{amount:'500',unit:'g' as const}},{foodId:'rice',quantity:{amount:'500',unit:'g' as const}}];const prices={bean:price,rice:price};
  const result=selectAffordableMeals({foods,stock,candidates,prices,budget:'1',date:'2026-01-01',limit:1});assert.equal(result.meals[0].candidate.id,'high');assert.equal(result.alternatives[0].candidate.id,'low');
 });
+test('saved protein goal prioritizes protein per cost and reports estimated shortfall',()=>{
+ const foods=[food,{...food,id:'rice',name:'Rice',basis:{kind:'per-100g' as const,values:{proteinG:'2'}}}];
+ const candidates=[{id:'low',name:'Rice portion',items:[{foodId:'rice',amount:{amount:'100',unit:'g' as const}}]},{id:'high',name:'Bean portion',items:[{foodId:'bean',amount:{amount:'100',unit:'g' as const}}]}];
+ const stock=[{foodId:'bean',quantity:{amount:'500',unit:'g' as const}},{foodId:'rice',quantity:{amount:'500',unit:'g' as const}}];const prices={bean:price,rice:price};
+ const result=selectAffordableMeals({foods,stock,candidates,prices,budget:'1',date:'2026-01-01',proteinTargetGPerDay:'120',limit:1});
+ assert.equal(result.meals[0]?.candidate.id,'high');assert.equal(result.proteinTargetGPerDay,'120');assert.equal(result.plannedProteinG,'7.25');assert.equal(result.proteinShortfallG,'112.75');
+});
 test('safety helpers refuse prescriptive targets and do not apply adult BMI to minors',()=>{
  assert.deepEqual(nutritionSafety({ageYears:16,pregnantOrLactating:true}).reasons,['minor','pregnancy-or-lactation']);assert.equal(nutritionSafety({ageYears:16}).adultBmiAllowed,false);assert.equal(adultBmi('60','1.7',17),null);assert.equal(adultBmi('60','1.7',30)?.informationalOnly,true);
 });

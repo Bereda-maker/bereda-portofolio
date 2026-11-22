@@ -75,6 +75,7 @@ export const profileSchema = z.object({
   ageYears: z.number().int().min(0).max(120).nullable().optional(), height: positiveDecimal.nullable().optional(),
   heightUnit: z.enum(['cm', 'in']).nullable().optional(), birthDate: date.nullable().optional(),
   sex: text(40).nullable().optional(), activityLevel: text(80).nullable().optional(), fitnessGoal: z.enum(['weight_gain', 'maintenance', 'weight_loss', 'balanced']).nullable().optional(),
+  proteinTargetGPerDay: positiveDecimal.nullable().optional().refine((value) => value == null || Number(value) <= 500, 'Protein goal must be 500 g/day or less.'),
   preferences: tags, restrictions: tags, allergies: tags, mealFrequency: z.number().int().min(1).max(10).nullable().optional(),
   weightKg: positiveDecimal.nullable().optional(), pregnantOrLactating: z.boolean().nullable().optional(),
   eatingDisorderConcern: z.boolean().nullable().optional(), medicalCondition: text(1000).nullable().optional(),

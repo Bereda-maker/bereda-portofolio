@@ -30,3 +30,15 @@ test('empty state reports live stock, missing suggested portions, and unverified
 test('a generation with no eligible meals does not persist an empty plan', () => {
   assert.match(route, /if\(!selected\.meals\.length\)return \{plan:null,planItems:\[\]/);
 });
+
+test('profile and draft display the saved protein goal and explicitly identify a shortfall', () => {
+  assert.match(component, /name="proteinTargetGPerDay"/);
+  assert.match(component, /proteinTargetGPerDay:f\.get\('proteinTargetGPerDay'\)/);
+  assert.match(component, /Protein goal not met/);
+  assert.match(component, /Estimated shortfall/);
+  assert.match(component, /not a medically validated prescription/);
+  assert.match(route, /proteinTargetGPerDay:proteinTarget/);
+  assert.match(route, /remainingKnownG/);
+  assert.match(route, /proteinGoal:proteinTarget\?/);
+  assert.match(component, /No eligible plan was generated from current stock and budget/);
+});
