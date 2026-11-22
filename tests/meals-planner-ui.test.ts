@@ -12,6 +12,8 @@ test('planner does not present catalog-only foods or a hard-coded 1 g serving as
   assert.doesNotMatch(component, /defaultValue="1" required aria-label="New item quantity"/);
   assert.match(component, /No foods are ready to plan yet/);
   assert.match(component, /Catalog foods are not stock/);
+  assert.match(component, /href="\/admin\/meals\/spending#purchase-inventory"/);
+  assert.match(component, /id="purchase-inventory"/);
 });
 
 test('a generation with no eligible meals does not persist an empty plan', () => {
